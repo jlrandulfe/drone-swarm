@@ -1,3 +1,0 @@
-[submodule "simulation/Firmware"]
-	path = simulation/Firmware
-	url = https://github.com/DronesForBlood/Firmware.git
