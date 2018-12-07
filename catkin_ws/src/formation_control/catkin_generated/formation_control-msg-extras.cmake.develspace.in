@@ -1,0 +1,2 @@
+set(formation_control_MESSAGE_FILES "")
+set(formation_control_SERVICE_FILES "/home/job/catkin_ws/src/formation_control/srv/Formation.srv")

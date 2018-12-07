@@ -1,0 +1,8 @@
+prefix=/usr/local
+
+Name: formation_control
+Description: Description of formation_control
+Version: 0.0.0
+Cflags: -I/usr/local/include
+Libs: -L/usr/local/lib -lformation_control
+Requires: roscpp rospy sensor_msgs std_msgs message_runtime
