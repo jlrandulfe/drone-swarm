@@ -16,6 +16,7 @@ from error_estimator import error_functions
 class ErrorEstimatorNode():
 
     def __init__(self):
+        self.start = False
         # Errors matrix
         self.errors = np.array([[0, 1, 2],[1, 0, 3],[2, 3, 0]])
         self.predicted_distances = np.array()
@@ -40,17 +41,18 @@ class ErrorEstimatorNode():
         self.predicted_distances = array_operations.multiarray2np(data)
         self.errors = error_functions.simple_differences(
                 self.desired_distances, self.predicted_distances)
+        self.errors_pub.publish(array_operations.np2multiarray(self.errors))
         return
 
     def pat_gen_start_callback(self, data):
-        self.desired_distances = array_operations.multiarray2np(data)
+        self.desired_distances = array_operations.multiarray2np(data.data)
+        self.start = True
         return
 
     def run(self):
-        rate = rospy.Rate(10)
-        while not rospy.is_shutdown():
-            self.errors_pub.publish(array_operations.np2multiarray(self.errors))
-            rate.sleep()
+        while not self.start:
+            rospy.sleep(1)
+        rospy.spin()
         return
 
 
