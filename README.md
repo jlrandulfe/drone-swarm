@@ -54,8 +54,8 @@ source ./setup.bash
 ## Initializing Pattern (Package: Formation Control)
 
 The *formation_control* package creates the coordinates, calculates the distances, and creates the links between drones in a desired shape. The formations currently supported are polygon, grids, and v-shape.
-<img src="images/pentagon.jpeg" width="40">
-![alt-text-1](images/pentagon.jpeg width="40") ![alt-text-2](images/grid.png =40x40) ![alt-text-3](images/v-shape.jpg =40x40)
+
+<img src="images/pentagon.jpeg" width="80">  <img src="images/grid.png" width="80">  <img src="images/v-shape.jpg" width="80">
 
 For the grid and v-shape formations the number of drones to be used is theoretically limitless, however this has not been tested. For the polygon shape, it cannot be used for more than 9 drones, since at 9+ drones the connections create a non-planar graph. This code requires a minimum of 3 drones at all times.
 
