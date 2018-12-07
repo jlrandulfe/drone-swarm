@@ -47,3 +47,13 @@ source ./setup.bash
     ```bash
     roslaunch offboardnode offboardnode.py
     ```
+
+
+
+
+## Initializing Pattern (Package: Formation Control)
+
+The *formation_control* package creates the coordinates, calculates the distances, and creates the links between drones in a desired shape. The formations currently supported are polygon, grids, and v-shape.
+
+![alt-text-1](images/pentagon.jpeg "Pentagon") ![alt-text-2](images/grid.png "5x5 Grid") ![alt-text-3](images/v-shape.jpg "5x5 Grid")
+
