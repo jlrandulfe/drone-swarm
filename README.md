@@ -62,17 +62,19 @@ For the grid and v-shape formations the number of drones to be used is theoretic
 ### Function
 The code creates a class, which takes in the parameters specified. It then creates coordinates for the shape's points, and from this determines the connections between drones necessary to maintain a steady formation. The resulting connections make a planar graph. The procedure for this differs for each formation type chosen:
 
-#### polygon
+#### Polygon
 The coordinates for this shape take the distance as the radius of the polygon, the amount of drones as the amount of vertices in the polygon (eg 5 drones creates a pentagon)
 The polygon connections are created by selecting an initial node, finding the two nearest neighbours, create a triangular connection between these nodes, and then assigning the initial node to be complete. This node can then no longer be selected. It then chooses a neighbour of a neighbour that was just connected, and repeats the procedure. Once this has been completed, it will connect non-complete nodes to each other until the minimum number of connections has been reached. The minimum number of connections needed for a stable formation is defined as *2N - 3*. After 9 drones the code attempts to select a non-complete node and create a triangle with nearest non-complete nodes, which can intersect existing edges. A solution for this may be devised in the future. (ADD IMAGE SHOWING STEPS)
 
-#### grid
+#### Grid
+The grid coordinates are determined by the amount of drones and the distance. In this shape the distance refers to the length of the full side of the grid. That is to say that if the distance is specified as 10, and it is a grid of 3x3, then on the x axis there will be a drone at position 0, 5, and position 10.
+
 The grid pattern connection method follows a simple structure for a complete square (eg 3x3 or 4x4). The algorithm iterates through the row elements, connecting the node with the next neighbour in the row, the neighbour in the row directly below, and its next neighbour in a row (ADD IMAGE). Once the iterator reaches the end of the row, it establishes only a connection with the neighbour in the row directly below. This process is then repeated for the next rows until the final row is selected, in which case the connections formed are once more with the next neighbour untill the final element, which needs no extra connections.
 
 When the amount of drones exceeds a complete square (eg 10 drones), the drones are added first at the end of the rows as an extra column, and if that is full then an extra row is created. The connections created for these are done in a similar fashion as described before.
 
-#### v-shape
-The generation of the coordinates for this formation takes requires distance, number of drones and the angle desired for the v-shape.
+#### V-shape
+The generation of the coordinates for this formation takes requires distance, number of drones and the angle desired for the v-shape. The distance in this function indicates the distance between drones on one of the edges of the shape. That is to say that in one of the edges of the full v-shape, the distance specified is between two neighbouring nodes on that edge. This is distinct from the previous two shapes which use the distance to represent the entire shape.
 
 The v-shape formation is the easiest to connect, since there are only two ways to connect them. If we consider the following shape: \bigwedge, then any node added to the left direction, will form a triangular connection to the two nodes in the layer above. An addition to the right edge connects to the left node in the same layer and the node above its own edge. This constantly forms a planar graph.
 
@@ -92,13 +94,17 @@ ros::NodeHandle n;
 ros::ServiceClient client = n.serviceClient<formation_control::Formation>("formation_control");
 ```
 
-Next assign the values you wish to use:
+Next assign the values you wish to use. The values are as follows:
++ amount of drones -> integer
++ shape type -> character, 'p' for polygon, 'g' for grid, and 'v' for v-shape.
++ distance -> Dimensionless
++ angle -> degrees, only used for the v-shape formation, but needs to be passed for all formations to avoid errors.
 ```cpp
 	formation_control::Formation srv;
 	srv.request.amount_of_drones = 9;
-	srv.request.shape_type = shape;
-	srv.request.distance = distance;
-	srv.request.angle = v_shape_angle;
+	srv.request.shape_type = 'g';
+	srv.request.distance = 10;
+	srv.request.angle = 45;
 ```
 The recommended storage for the result is a 2D float array:
 
