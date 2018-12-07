@@ -10,6 +10,7 @@ import geometry_msgs.msg
 import std_msgs.msg
 # Local libraries
 from error_estimator import array_operations
+from error_estimator import error_functions
 
 
 class ErrorEstimatorNode():
@@ -37,6 +38,8 @@ class ErrorEstimatorNode():
 
     def kalman_callback(self, data):
         self.predicted_distances = array_operations.multiarray2np(data)
+        self.errors = error_functions.simple_differences(
+                self.desired_distances, self.predicted_distances)
         return
 
     def pat_gen_start_callback(self, data):
