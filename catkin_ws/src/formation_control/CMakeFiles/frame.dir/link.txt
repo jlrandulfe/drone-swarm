@@ -1,1 +1,0 @@
-/usr/bin/c++  -fPIC   -shared -Wl,-soname,libframe.so -o ../../devel/lib/libframe.so CMakeFiles/frame.dir/src/frame.cpp.o 
