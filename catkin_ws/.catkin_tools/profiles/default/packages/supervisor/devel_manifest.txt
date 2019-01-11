@@ -1,5 +1,0 @@
-supervisor
-/home/job/gnc/drone-swarm/catkin_ws/devel/.private/supervisor/lib/pkgconfig/supervisor.pc /home/job/gnc/drone-swarm/catkin_ws/devel/lib/pkgconfig/supervisor.pc
-/home/job/gnc/drone-swarm/catkin_ws/devel/.private/supervisor/lib/supervisor/supervisor /home/job/gnc/drone-swarm/catkin_ws/devel/lib/supervisor/supervisor
-/home/job/gnc/drone-swarm/catkin_ws/devel/.private/supervisor/share/supervisor/cmake/supervisorConfig.cmake /home/job/gnc/drone-swarm/catkin_ws/devel/share/supervisor/cmake/supervisorConfig.cmake
-/home/job/gnc/drone-swarm/catkin_ws/devel/.private/supervisor/share/supervisor/cmake/supervisorConfig-version.cmake /home/job/gnc/drone-swarm/catkin_ws/devel/share/supervisor/cmake/supervisorConfig-version.cmake

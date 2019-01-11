@@ -50,9 +50,9 @@ find_package(formation_control REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include
- # LIBRARIES supervisor
- # CATKIN_DEPENDS roscpp rospy std_msgs  formation_control
- # DEPENDS   formation_control
+  LIBRARIES supervisor
+  CATKIN_DEPENDS roscpp rospy std_msgs  
+ # DEPENDS   
 
 )
 

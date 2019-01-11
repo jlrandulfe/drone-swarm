@@ -1,6 +1,6 @@
 #include "ros/ros.h"
-#include "formation_control/Formation.h" //service
 #include "formation_control/frame.hpp"
+#include "formation_control/Formation.h" //service
 
 
 class Supervisor
