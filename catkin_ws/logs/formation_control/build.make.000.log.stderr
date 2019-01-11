@@ -1,0 +1,5 @@
+/usr/bin/ld: cannot find -lframe
+collect2: error: ld returned 1 exit status
+make[2]: *** [/home/job/gnc/drone-swarm/catkin_ws/devel/.private/formation_control/lib/formation_control/execute] Error 1
+make[1]: *** [CMakeFiles/execute.dir/all] Error 2
+make: *** [all] Error 2

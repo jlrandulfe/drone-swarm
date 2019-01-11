@@ -1,0 +1,29 @@
+CMake Warning (dev) at /opt/ros/kinetic/share/ros/core/rosbuild/public.cmake:155 (project):
+  Policy CMP0048 is not set: project() command manages VERSION variables.
+  Run "cmake --help-policy CMP0048" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+
+  The following variable(s) would be set to empty:
+
+    formation_control_VERSION
+[36mCall Stack (most recent call first):[0m
+  CMakeLists.txt:68 (rosbuild_init)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+[rosbuild] Building package formation_control
+[rosbuild] Error from syntax check of formation_control/manifest.xml
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/opt/ros/kinetic/lib/python2.7/dist-packages/roslib/manifest.py", line 139, in parse_file
+    return roslib.manifestlib.parse_file(Manifest(), file)
+  File "/opt/ros/kinetic/lib/python2.7/dist-packages/roslib/manifestlib.py", line 497, in parse_file
+    raise ValueError("Invalid/non-existent manifest file: %s"%file)
+ValueError: Invalid/non-existent manifest file: manifest.xml
+[31m[1mCMake Error[0m at /opt/ros/kinetic/share/ros/core/rosbuild/private.cmake:78 (message):
+  [rosbuild] Syntax check of formation_control/manifest.xml failed; aborting
+[36mCall Stack (most recent call first):[0m
+  /opt/ros/kinetic/share/ros/core/rosbuild/public.cmake:174 (_rosbuild_check_manifest)
+  CMakeLists.txt:68 (rosbuild_init)
+
+
+make: *** [cmake_check_build_system] Error 1

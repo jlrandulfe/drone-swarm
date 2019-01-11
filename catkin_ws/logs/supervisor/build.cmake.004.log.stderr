@@ -1,0 +1,17 @@
+[31m[1mCMake Error[0m at /home/job/gnc/drone-swarm/catkin_ws/src/supervisor/CMakeLists.txt:17 (find_package):
+  By not providing "Findformation_control_lib.cmake" in CMAKE_MODULE_PATH
+  this project has asked CMake to find a package configuration file provided
+  by "formation_control_lib", but CMake did not find one.
+
+  Could not find a package configuration file provided by
+  "formation_control_lib" with any of the following names:
+
+    formation_control_libConfig.cmake
+    formation_control_lib-config.cmake
+
+  Add the installation prefix of "formation_control_lib" to CMAKE_PREFIX_PATH
+  or set "formation_control_lib_DIR" to a directory containing one of the
+  above files.  If "formation_control_lib" provides a separate development
+  package or SDK, be sure it has been installed.
+
+

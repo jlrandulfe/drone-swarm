@@ -1,17 +1,27 @@
-#include "supervisor/Model/supervisor.hpp"
+#include "ros/ros.h"
+#include "formation_control/Formation.h" //service
 
-Supervisor::Supervisor(ros::NodeHandle nh): n(nh)
+
+/*
+
+IMPORTANT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+the distance value differs in function per shape type:
+	(p) polygon -> the distance specified is the radius of the polygon
+	(g) grid -> the distance specified is the full length of the side of the grid (aka side of a square)
+	(v) v-shape -> the distance specified is the distance between drones along the v lines, this call also uses the angle value
+*/
+int main(int argc, char **argv)
 {
-
-}
-
-Supervisor::~Supervisor()
-{
-
-}
-
-void Supervisor::getFormation(int amount_of_drones, float distance, float v_shape_angle, char shape)
-{
+	ros::init(argc, argv, "srv_call");
+  	ros::init(argc, argv, "add_two_ints_client");
+  	ros::NodeHandle n;
+	
+	int amount_of_drones = 10;
+	float distance = 10;
+	float v_shape_angle = 45;
+	char shape = 'g';
+  	
   	ros::ServiceClient client = n.serviceClient<formation_control::Formation>("formation_control");
   	formation_control::Formation srv;
   	srv.request.amount_of_drones = amount_of_drones;
@@ -19,8 +29,8 @@ void Supervisor::getFormation(int amount_of_drones, float distance, float v_shap
 	srv.request.distance = distance;
 	srv.request.angle = v_shape_angle;
 	float result[amount_of_drones][amount_of_drones];
-
-	if (client.call(srv))
+  	
+  	if (client.call(srv))
   	{
 		std::cout << "Matrix Size: " << srv.response.matrix_size << std::endl;
 		int iterator = 0;
@@ -48,18 +58,6 @@ void Supervisor::getFormation(int amount_of_drones, float distance, float v_shap
 		ROS_ERROR("Failed to call service formation_control");
 		return 1;
   	}
+
+  	return 0;
 }
-
-
-int main(int argc, char **argv)
-{
-	ros::init(argc, argv, "srv_call");
-  	ros::NodeHandle n;
-
-	Supervisor sup(n);
-
-	sup.getFormation(5, 5, 20, 'g');
-	return 0;
-}
-
-
