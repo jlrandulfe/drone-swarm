@@ -41,11 +41,11 @@ class SimNQuads():
 
     def new_iteration(self, t, dt, U=None):
         # Simulation
-        #TODO: Generalize for N drones
-        X = np.append(self.quads[0].xyz[0:2], np.append(self.quads[1].xyz[0:2],
-                      self.quads[2].xyz[0:2]))
-        V = np.append(self.quads[0].v_ned[0:2], np.append(self.quads[1].v_ned[0:2],
-                      self.quads[2].v_ned[0:2]))
+        X = np.array([])
+        V = np.array([])
+        for i in range(self.ndrones):
+            X = np.append(X, self.quads[i].xyz[0:2])
+            V = np.append(V, self.quads[i].v_ned[0:2])
         if U is None:
             U = self.fc.u_acc(X, V)
 
@@ -58,8 +58,8 @@ class SimNQuads():
             plt.figure(0)
             self.axis3d.cla()
             for i in range(self.ndrones):
-                ani.draw3d(self.axis3d, self.quads[i].xyz, self.quads[i].Rot_bn(),
-                           self.quadcolor[i])
+                ani.draw3d(self.axis3d, self.quads[i].xyz,
+                           self.quads[i].Rot_bn(), self.quadcolor[i])
             self.axis3d.set_xlim(-5, 5)
             self.axis3d.set_ylim(-5, 5)
             self.axis3d.set_zlim(0, 10)

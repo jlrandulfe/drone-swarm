@@ -16,10 +16,10 @@ import pycopter.quadrotor as quad
 
 class DroneSwarmNode():
 
-    def __init__(self, n_drones=3):
+    def __init__(self):
         self.start = False
         self.drones = []
-        self.n_drones = n_drones
+        self.n_drones = 0
         self.fc = None
         self.U = None
 
@@ -76,6 +76,8 @@ class DroneSwarmNode():
         """
         Initialize the quadrotor drones and store them in a list
         """
+        self.start = True
+        self.n_drones = 3
         # Initial conditions
         att_0 = np.array([0.0, 0.0, 0.0])
         pqr_0 = np.array([0.0, 0.0, 0.0])
@@ -129,6 +131,8 @@ class DroneSwarmNode():
         return
 
     def run(self):
+        while not self.start:
+            pass
         it = 0
         rate = rospy.Rate(100)
         while it < len(self.time):
