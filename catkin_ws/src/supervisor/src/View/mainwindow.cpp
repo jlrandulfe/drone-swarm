@@ -1,4 +1,4 @@
-#include "../include/supervisor/mainwindow.h"
+#include "../../include/supervisor/View/mainwindow.h"
 #include "ui_mainwindow.h"
 #include <iostream>
 

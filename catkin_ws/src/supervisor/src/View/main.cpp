@@ -1,4 +1,4 @@
-#include <include/supervisor/mainwindow.h>
+#include "../../include/supervisor/View/mainwindow.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])

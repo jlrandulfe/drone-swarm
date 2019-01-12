@@ -12,11 +12,11 @@ TARGET = View
 TEMPLATE = app
 CONFIG += qt
 
-SOURCES += src/main.cpp\
-        src/mainwindow.cpp \
+SOURCES += main.cpp\
+        mainwindow.cpp \
 #        src/qcustomplot.cpp
 
-HEADERS  += include/supervisor/mainwindow.h \
+HEADERS  += ../../include/supervisor/View/mainwindow.h \
 #    include/supervisor/qcustomplot.h \
 
-FORMS    += src/mainwindow.ui
+FORMS    += mainwindow.ui
