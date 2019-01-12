@@ -58,7 +58,7 @@ catkin_python_setup()
 add_service_files(
   FILES
   PycopterStartPositions.srv
-  PycopterStartStopRequest.srv
+  PycopterStartStop.srv
 )
 
 ## Generate actions in the 'action' folder

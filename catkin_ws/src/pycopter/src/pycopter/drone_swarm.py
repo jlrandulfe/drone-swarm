@@ -13,7 +13,8 @@ from pycopter import formation_distance as form
 from pycopter import simulation
 import pycopter.quadrotor as quad
 from pycopter.srv import PycopterStartPositions
-from pycopter.srv import PycopterStartStop, PycopterStartStopResponse
+from pycopter.srv import PycopterStartStop
+from pycopter.srv import PycopterStartStopResponse
 
 
 class DroneSwarmNode():
@@ -47,17 +48,8 @@ class DroneSwarmNode():
         # Initialize the quadrotors
         self.init_formation()
 
-        # Desired heading.
-        #TODO: Generalize for n drones
-        self.drones[0].yaw_d = -np.pi
-        self.drones[1].yaw_d = np.pi/2
-        self.drones[2].yaw_d = 0
 
-        # Instantiate the sim class
-        tf=60
-        self.dt=5e-2
-        self.time = np.linspace(0, tf, tf/self.dt)
-        self.quad_sim = simulation.SimNQuads(self.drones, self.fc, self.time)
+
 
         # ROS subscriber
         rospy.Subscriber("controller/control_value",
@@ -84,7 +76,7 @@ class DroneSwarmNode():
             resp = setup_pycopter(True)
             self.n_drones = resp.matrix_size
             positions = resp.data
-        except rospy.ServiceException, e:
+        except (rospy.ServiceException, e):
             print("Service call failed: {}".format(e))
             return -1
         # Initial conditions
@@ -105,6 +97,17 @@ class DroneSwarmNode():
             self.drones.append(quad.quadrotor(1, self.m, self.l, self.J, 
                     self.CDl, self.CDr, self.kt, self.km, self.kw, att_0,
                     pqr_0, xyz_0[i], v_ned_0, w_0))
+        # Desired heading.
+        #TODO: Generalize for n drones
+        self.drones[0].yaw_d = -np.pi
+        self.drones[1].yaw_d = np.pi/2
+        self.drones[2].yaw_d = 0
+        # Instantiate the simulation class
+        tf=60
+        self.dt=5e-2
+        self.time = np.linspace(0, tf, tf/self.dt)
+        self.quad_sim = simulation.SimNQuads(self.drones, self.fc, self.time)
+
         return 0
 
     def init_formation(self):
@@ -164,11 +167,13 @@ class DroneSwarmNode():
         run. Exits when the simulation final time is reached.
         """
         # Wait until the supervisor server is ready
+        rospy.loginfo("Waiting for supervisor service")
         rospy.wait_for_service("supervisor/pycopter")
         init = self.init_drones()
         # If there was an error, exit execution
         if init == -1:
             return
+        rospy.loginfo("Setting start/stop service up")
         rospy.Service('pycopter/start_stop', PycopterStartStop,
                       self.handle_start_stop)
         while not self.start:
