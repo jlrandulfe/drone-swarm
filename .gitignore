@@ -106,7 +106,9 @@ venv.bak/
 # ROS auxiliary files
 devel/
 log/
+logs/
 .catkin_workspace
+.catkin_tools
 
 # Catkin custom files
 CATKIN_IGNORE
