@@ -1,0 +1,22 @@
+#!/usr/bin/env python3
+"""
+Error estimator node. Inits a node and imports main script
+"""
+# Global libraries
+import argparse
+# Third-party libraries
+import rospy
+# Local libraries
+from error_estimator import error_estimator
+
+
+if __name__ == "__main__":
+    # Parse input arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-p1", "--param1", type=lambda t:abs(float(t)),
+                        default=0.0, help="Parameter 1")
+
+    args = parser.parse_args(rospy.myargv()[1:])
+    
+    rospy.init_node("error_estimator", anonymous=True)
+    error_estimator.main()

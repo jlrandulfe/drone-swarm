@@ -1,0 +1,4 @@
+bool a
+---
+int64 matrix_size
+float64[] data
