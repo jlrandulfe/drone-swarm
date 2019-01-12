@@ -29,17 +29,18 @@ private slots:
     void updateScene();
 
 private:
+
     Ui::MainWindow *ui;
 
-
-//    QGraphicsView view;
-
-    //QGraphicsPixmapItem *drones;
+    void addPoint(double x, double y);
+    void clearData();
+    void plot();
 
     std::string shapeSelection;
     int droneAmount;
     float droneDistance;
     float droneAngle = 0.0f;
+    float random;
 };
 
 #endif // MAINWINDOW_H

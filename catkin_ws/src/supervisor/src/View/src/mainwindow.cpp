@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+#include "../include/supervisor/mainwindow.h"
 #include "ui_mainwindow.h"
 #include <iostream>
 
@@ -15,6 +15,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->droneAmountSpinBox->setRange(3,20);
     ui->droneAmountLabel->setText(tr("Amount of drones (3-20)"));
     qDebug() << droneAngle;
+
+//    ui->plot->addGraph();
+//    ui->plot->graph(0)->setScatterStyle(QCPScatterStyle::ssCircle);
+//    ui->plot->graph(0)->setLineStyle(QCPGraph::lsNone);
 
     // Connect
     connect( ui->shapeCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(on_shapeCombo_currentTextChanged(QString)));
@@ -38,24 +42,24 @@ void MainWindow::on_shapeCombo_currentTextChanged(const QString &arg1)
     if (arg1.toStdString() == "Grid")
     {
         shapeSelection = "g";
-        ui->droneAngleLabel->setEnabled(FALSE);
-        ui->droneAngleSpinbox->setEnabled(FALSE);
+        ui->droneAngleLabel->setEnabled(false);
+        ui->droneAngleSpinbox->setEnabled(false);
         ui->droneAmountSpinBox->setRange(3,20);
         ui->droneAmountLabel->setText(tr("Amount of drones (3-20)"));
     }
     if (arg1.toStdString() == "Polygon")
     {
         shapeSelection = "p";
-        ui->droneAngleLabel->setEnabled(FALSE);
-        ui->droneAngleSpinbox->setEnabled(FALSE);
+        ui->droneAngleLabel->setEnabled(false);
+        ui->droneAngleSpinbox->setEnabled(false);
         ui->droneAmountSpinBox->setRange(3,9);
         ui->droneAmountLabel->setText(tr("Amount of drones (3-9)"));
     }
     if (arg1.toStdString() == "V-shape")
     {
         shapeSelection = "v";
-        ui->droneAngleLabel->setEnabled(TRUE);
-        ui->droneAngleSpinbox->setEnabled(TRUE);
+        ui->droneAngleLabel->setEnabled(true);
+        ui->droneAngleSpinbox->setEnabled(true);
         ui->droneAmountSpinBox->setRange(3,20);
         ui->droneAmountLabel->setText(tr("Amount of drones (3-20)"));
     }
