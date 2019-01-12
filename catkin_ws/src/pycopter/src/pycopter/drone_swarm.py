@@ -12,12 +12,15 @@ import std_msgs.msg
 from pycopter import formation_distance as form
 from pycopter import simulation
 import pycopter.quadrotor as quad
+from pycopter.srv import PycopterStartPositions
+from pycopter.srv import PycopterStartStop, PycopterStartStopResponse
 
 
 class DroneSwarmNode():
 
     def __init__(self):
         self.start = False
+        self.stop = False
         self.drones = []
         self.n_drones = 0
         self.fc = None
@@ -42,7 +45,6 @@ class DroneSwarmNode():
         self.kw = 1/0.18   # rad/s
 
         # Initialize the quadrotors
-        self.init_drones()
         self.init_formation()
 
         # Desired heading.
@@ -76,21 +78,34 @@ class DroneSwarmNode():
         """
         Initialize the quadrotor drones and store them in a list
         """
-        self.start = True
-        self.n_drones = 3
+        try:
+            setup_pycopter = rospy.ServiceProxy('setup_pycopter',
+                                                PycopterStartPositions)
+            resp = setup_pycopter(True)
+            self.n_drones = resp.matrix_size
+            positions = resp.data
+        except rospy.ServiceException, e:
+            print("Service call failed: {}".format(e))
+            return -1
         # Initial conditions
+        for i in range(self.n_drones):
+            if i == 0:
+                xyz_0 = np.array([positions[0], positions[1], 0])
+            else:
+                new_pos = np.array([positions[2*i], positions[2*i+1], 0])
+                xyz_0 = np.vstack((xyz_0, new_pos))
+        # xyz_0 = [np.array([1.0, 1.2, 0.0]),
+        #          np.array([1.2, 2.0, 0.0]),
+        #          np.array([-1.1, 2.6, 0.0])]
         att_0 = np.array([0.0, 0.0, 0.0])
         pqr_0 = np.array([0.0, 0.0, 0.0])
-        #TODO: Generalize for n drones
-        xyz_0 = [np.array([1.0, 1.2, 0.0]),
-                 np.array([1.2, 2.0, 0.0]),
-                 np.array([-1.1, 2.6, 0.0])]
         v_ned_0 = np.array([0.0, 0.0, 0.0])
         w_0 = np.array([0.0, 0.0, 0.0, 0.0])
         for i in range(self.n_drones):
             self.drones.append(quad.quadrotor(1, self.m, self.l, self.J, 
                     self.CDl, self.CDr, self.kt, self.km, self.kw, att_0,
                     pqr_0, xyz_0[i], v_ned_0, w_0))
+        return 0
 
     def init_formation(self):
         """
@@ -108,6 +123,7 @@ class DroneSwarmNode():
 
         self.fc = form.formation_distance(2, 1, dtriang, mu, tilde_mu, Btriang,
                                           5e-2, 5e-1)
+        return
 
     def np2multiarray(self, data, n_coords=2):
         # Define the 2 dimensions of the array.
@@ -130,7 +146,31 @@ class DroneSwarmNode():
         self.U = data.data
         return
 
+    def handle_start_stop(self, req):
+        if req.stop:
+            self.stop = True
+        if req.start:
+            self.start = True
+        return PycopterStartStopResponse(True)
+
     def run(self):
+        """
+        Main execution routine of the DroneSwarm class
+
+        Get initialization parameters from the supervisor node, and then
+        waits until this node sends the start command.
+
+        Afterwards, it goes to a loop where the PyCopter simulation is
+        run. Exits when the simulation final time is reached.
+        """
+        # Wait until the supervisor server is ready
+        rospy.wait_for_service("supervisor/pycopter")
+        init = self.init_drones()
+        # If there was an error, exit execution
+        if init == -1:
+            return
+        rospy.Service('pycopter/start_stop', PycopterStartStop,
+                      self.handle_start_stop)
         while not self.start:
             pass
         it = 0
