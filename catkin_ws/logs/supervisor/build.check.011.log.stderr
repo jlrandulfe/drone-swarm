@@ -1,0 +1,16 @@
+[31m[1mCMake Error[0m at /usr/lib/x86_64-linux-gnu/cmake/Qt5/Qt5Config.cmake:26 (find_package):
+  Could not find a package configuration file provided by "Qt5Widget" with
+  any of the following names:
+
+    Qt5WidgetConfig.cmake
+    qt5widget-config.cmake
+
+  Add the installation prefix of "Qt5Widget" to CMAKE_PREFIX_PATH or set
+  "Qt5Widget_DIR" to a directory containing one of the above files.  If
+  "Qt5Widget" provides a separate development package or SDK, be sure it has
+  been installed.
+[36mCall Stack (most recent call first):[0m
+  CMakeLists.txt:19 (find_package)
+
+
+make: *** [cmake_check_build_system] Error 1

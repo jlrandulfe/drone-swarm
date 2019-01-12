@@ -1,0 +1,6 @@
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:42:54:[m[K [01;31m[Kerror: [m[Kno ‘[01m[Kvoid Supervisor::servicePyCopter(int)[m[K’ member function declared in class ‘[01m[KSupervisor[m[K’
+ void Supervisor::servicePyCopter(int amount_of_drones)
+[01;32m[K                                                      ^[m[K
+make[2]: *** [CMakeFiles/supervisor_main.dir/src/Model/supervisor.cpp.o] Error 1
+make[1]: *** [CMakeFiles/supervisor_main.dir/all] Error 2
+make: *** [all] Error 2

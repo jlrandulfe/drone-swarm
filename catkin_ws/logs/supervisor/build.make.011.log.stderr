@@ -1,0 +1,18 @@
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:[m[K In member function ‘[01m[Kvoid Supervisor::getFormation(int, float, float, char)[m[K’:
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:23:31:[m[K [01;31m[Kerror: [m[Kno matching function for call to ‘[01m[KwaitForService()[m[K’
+  ros::service::waitForService();
+[01;32m[K                               ^[m[K
+In file included from [01m[K/opt/ros/kinetic/include/ros/ros.h:50:0[m[K,
+                 from [01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/include/supervisor/Model/supervisor.hpp:1[m[K,
+                 from [01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:1[m[K:
+[01m[K/opt/ros/kinetic/include/ros/service.h:102:18:[m[K [01;36m[Knote: [m[Kcandidate: bool ros::service::waitForService(const string&, int32_t)
+ ROSCPP_DECL bool waitForService(const std::string& service_name, int32_t timeout);
+[01;32m[K                  ^[m[K
+[01m[K/opt/ros/kinetic/include/ros/service.h:102:18:[m[K [01;36m[Knote: [m[K  candidate expects 2 arguments, 0 provided
+[01m[K/opt/ros/kinetic/include/ros/service.h:111:18:[m[K [01;36m[Knote: [m[Kcandidate: bool ros::service::waitForService(const string&, ros::Duration)
+ ROSCPP_DECL bool waitForService(const std::string& service_name, ros::Duration timeout = ros::Duration(-1));
+[01;32m[K                  ^[m[K
+[01m[K/opt/ros/kinetic/include/ros/service.h:111:18:[m[K [01;36m[Knote: [m[K  candidate expects 2 arguments, 0 provided
+make[2]: *** [CMakeFiles/supervisor_main.dir/src/Model/supervisor.cpp.o] Error 1
+make[1]: *** [CMakeFiles/supervisor_main.dir/all] Error 2
+make: *** [all] Error 2

@@ -1,0 +1,10 @@
+[31m[1mCMake Error[0m at /usr/share/cmake-3.5/Modules/FindPackageHandleStandardArgs.cmake:148 (message):
+  Could NOT find Qt4 (missing: QT_CORE_INCLUDE_DIR QT_CORE_LIBRARY
+  QT_WIDGETS_INCLUDE_DIR QT_WIDGETS_LIBRARY) (found version "4.8.7")
+[36mCall Stack (most recent call first):[0m
+  /usr/share/cmake-3.5/Modules/FindPackageHandleStandardArgs.cmake:388 (_FPHSA_FAILURE_MESSAGE)
+  /usr/share/cmake-3.5/Modules/FindQt4.cmake:1333 (FIND_PACKAGE_HANDLE_STANDARD_ARGS)
+  CMakeLists.txt:19 (find_package)
+
+
+make: *** [cmake_check_build_system] Error 1

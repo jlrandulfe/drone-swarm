@@ -10,11 +10,13 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  #qt_build
 )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 find_package(formation_control REQUIRED)
+find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
 
 
 ################################################
@@ -62,10 +64,14 @@ catkin_package(
 
 include_directories(
   include
+  ${Qt5Widgets_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
+  ${formation_control_INCLUDE_DIRS}
 )
 
-add_executable(supervisor src/Model/supervisor.cpp)
-add_dependencies(supervisor ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(supervisor ${catkin_LIBRARIES})
+#add_executable(view src/View/main.cpp)
+
+add_executable(supervisor_main src/Model/supervisor.cpp)
+add_dependencies(supervisor_main ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(supervisor_main ${catkin_LIBRARIES})
 

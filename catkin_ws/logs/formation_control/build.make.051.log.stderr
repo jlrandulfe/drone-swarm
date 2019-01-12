@@ -1,0 +1,14 @@
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/formation_control/src/frame.cpp:[m[K In function ‘[01m[Kbool add(formation_control::Formation::Request&, formation_control::Formation::Response&)[m[K’:
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/formation_control/src/frame.cpp:725:69:[m[K [01;31m[Kerror: [m[Kconversion from ‘[01m[Kstd::vector<Frame::point>[m[K’ to non-scalar type ‘[01m[Kstd::vector<float>[m[K’ requested
+  std::vector<float> random_positions = frame.randomizeStartPositions(5);
+[01;32m[K                                                                     ^[m[K
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/formation_control/src/frame.cpp:[m[K In function ‘[01m[Kbool add(formation_control::Formation::Request&, formation_control::Formation::Response&)[m[K’:
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/formation_control/src/frame.cpp:725:69:[m[K [01;31m[Kerror: [m[Kconversion from ‘[01m[Kstd::vector<Frame::point>[m[K’ to non-scalar type ‘[01m[Kstd::vector<float>[m[K’ requested
+  std::vector<float> random_positions = frame.randomizeStartPositions(5);
+[01;32m[K                                                                     ^[m[K
+make[2]: *** [CMakeFiles/formation_control.dir/src/frame.cpp.o] Error 1
+make[1]: *** [CMakeFiles/formation_control.dir/all] Error 2
+make[1]: *** Waiting for unfinished jobs....
+make[2]: *** [CMakeFiles/execute.dir/src/frame.cpp.o] Error 1
+make[1]: *** [CMakeFiles/execute.dir/all] Error 2
+make: *** [all] Error 2

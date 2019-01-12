@@ -1,14 +1,13 @@
 #define DEBUG 0
 #define _USE_MATH_DEFINES
 
-#include "ros/ros.h"
-#include <math.h>
+
 #include "formation_control/frame.hpp"
-#include "formation_control/Formation.h"
 
 
 Frame::Frame(int N_drones_, float radius_, char shape, float v_shape_angle_)
 {
+	printf("Created Formation Design\n");
 	N_drones = N_drones_;
 	radius = radius_;
 	std::vector<std::vector<int> > connected_nodes_(N_drones);
@@ -498,27 +497,31 @@ void Frame::createDistanceMatrixForOuput()
 			    std::cout << std::endl;
 			}
  	    }
-
 }
 
-
-//Return methods
-std::vector<std::vector<int> > Frame::getConnectionList()
+std::vector<Frame::point> Frame::randomizeStartPositions(float range)
 {
-	return connected_nodes;
+	float max_number = range;
+	float min_number = -1*range;
+	std::vector<Frame::point> randomized_pos = p_vector;
+	if(DEBUG) std::cout << "Generating Random Positions" << std::endl;
+	for(int i = 0; i < randomized_pos.size(); i++)
+	{
+		srand(time(NULL) + i);
+		float rand_num_ = min_number + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(max_number-min_number)));
+		randomized_pos[i].x = randomized_pos[i].x + rand_num_;
+		srand(time(NULL) + i + 1000);
+		float rand_num__ = min_number + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(max_number-min_number)));
+		randomized_pos[i].y = randomized_pos[i].y + rand_num__;
+		if(DEBUG)
+		{
+			std::cout << "\toriginal positions: " << p_vector[i].x << ", " << p_vector[i].y << std::endl;
+			std::cout << "\trand numbers: " << rand_num_ << ", " << rand_num__ << std::endl;
+			std::cout << "\trand positions: " << randomized_pos[i].x << ", " << randomized_pos[i].y << std::endl << std::endl;			
+		}
+	}
+	return randomized_pos;
 }
-
-
-std::vector<std::vector<Frame::sort_struct> > Frame::getDistanceMatrix()
-{
-	return full_distance_vector;
-}
-
-std::vector<Frame::point> Frame::getCoordinateList()
-{
-	return p_vector;
-}
-
 
 
 
@@ -701,25 +704,37 @@ bool add(formation_control::Formation::Request  &req, formation_control::Formati
 	float distance = req.distance;
 	float v_shape_angle = req.angle;
 	char shape = req.shape_type;
-	std::cout << "amount_of_drones: " << amount_of_drones << ", distance: " << distance << ", shape: " << shape << " , v shape angle: " << v_shape_angle << std::endl;
+	std::cout << "amount_of_drones: " << amount_of_drones << ", distance: " << distance << ", shape: " << shape << " , v shape angle: " << v_shape_angle << ", random range: " << req.random_range<< std::endl;
 	Frame frame(amount_of_drones, distance, shape, v_shape_angle);
-	std::vector<double> result(amount_of_drones*amount_of_drones);
+	std::vector<double> connection_matrix_data(amount_of_drones*amount_of_drones);
+	std::vector<double> start_pose_data(amount_of_drones*2);
+	std::vector<Frame::point> random_positions = frame.randomizeStartPositions(req.random_range);
+
 	int iterator = 0;
 	for(int i = 0; i < amount_of_drones; i++)
 		for (int j = 0; j < amount_of_drones; ++j)
 		{
-			result[iterator] = frame.output[i][j];
+			connection_matrix_data[iterator] = frame.output[i][j];
+			iterator++;
+		}
+		iterator = 0;
+		for(int i = 0; i < amount_of_drones; i++)
+		{
+			start_pose_data[iterator] = random_positions[i].x;//x
+			iterator++;
+			start_pose_data[iterator] = random_positions[i].y;//x
 			iterator++;
 		}
 
-	res.data = result;
+	res.connection_matrix = connection_matrix_data;
+	res.start_pose = start_pose_data;
 	res.matrix_size = amount_of_drones;
 	if(DEBUG)
 	{
-		std::cout << "Sending info: " << std::endl << "Matrix size: " << res.matrix_size << std::endl << "Data: ";
+		std::cout << "Sending info: " << std::endl << "Matrix size: " << res.matrix_size << std::endl << "Connection matrix: ";
 		for (int i = 0; i < amount_of_drones*amount_of_drones; ++i)
 		{
-			std::cout << res.data[i] << ", ";
+			std::cout << res.connection_matrix[i] << ", ";
 		}
 		std::cout << std::endl;
   	}
@@ -740,6 +755,7 @@ int main( int argc, char** argv )
 	char shape = 'g';
 	Frame frame(amount_of_drones, distance, shape, v_shape_angle);
 	ros::NodeHandle n;
+	std::cout << "Starting Service Server" << std::endl << std::endl;
 	ros::ServiceServer service = n.advertiseService("formation_control", add);
 	std::cout << "Ready to receive service calls" << std::endl << std::endl;
 	ros::spin();

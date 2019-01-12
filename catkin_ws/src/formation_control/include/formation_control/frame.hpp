@@ -1,9 +1,12 @@
 #ifndef FRAME_HPP_
 #define FRAME_HPP_
 
+#include <iostream>
+#include <cstdlib> 
 #include <ros/ros.h>
 #include <stdio.h>
-
+#include <math.h>
+#include "formation_control/Formation.h"
 class Frame
 {
 
@@ -23,11 +26,13 @@ class Frame
 		Frame(int N_drones_, float radius_, char shape, float v_shape_angle_);	
 		~Frame();
 		std::vector<point> p_vector;
-		std::vector<std::vector<sort_struct> > getDistanceMatrix();
-		std::vector<std::vector<int> > getConnectionList();
-		std::vector<point> getCoordinateList();
+		// std::vector<std::vector<sort_struct> > getDistanceMatrix();
+		// std::vector<std::vector<int> > getConnectionList();
+		// std::vector<point> getCoordinateList();
 		float** output;
 		void createDistanceMatrixForOuput();
+		std::vector<Frame::point> randomizeStartPositions(float range);
+
 
 	private:
 		

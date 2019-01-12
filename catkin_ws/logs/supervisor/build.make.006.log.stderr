@@ -1,0 +1,16 @@
+In file included from [01m[K/usr/include/x86_64-linux-gnu/qt5/QtGui/qwindowdefs.h:37:0[m[K,
+                 from [01m[K/usr/include/x86_64-linux-gnu/qt5/QtWidgets/qwidget.h:37[m[K,
+                 from [01m[K/usr/include/x86_64-linux-gnu/qt5/QtWidgets/qmainwindow.h:37[m[K,
+                 from [01m[K/usr/include/x86_64-linux-gnu/qt5/QtWidgets/QMainWindow:1[m[K,
+                 from [01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/View/mainwindow.h:4[m[K,
+                 from [01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/View/main.cpp:1[m[K:
+[01m[K/usr/include/x86_64-linux-gnu/qt5/QtCore/qglobal.h:1067:4:[m[K [01;31m[Kerror: [m[K#error "You must build your code with position independent code if Qt was built with -reduce-relocations. " "Compile your code with -fPIC (-fPIE is not enough)."
+ #  error "You must build your code with position independent code if Qt was built with -reduce-relocations. "\
+[01;32m[K    ^[m[K
+In file included from [01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/View/main.cpp:1:0[m[K:
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/View/mainwindow.h:42:24:[m[K [01;35m[Kwarning: [m[Knon-static data member initializers only available with -std=c++11 or -std=gnu++11
+     float droneAngle = 0.0f;
+[01;32m[K                        ^[m[K
+make[2]: *** [CMakeFiles/view.dir/src/View/main.cpp.o] Error 1
+make[1]: *** [CMakeFiles/view.dir/all] Error 2
+make: *** [all] Error 2

@@ -1,0 +1,55 @@
+[33m[1mCMake Warning[0m at /usr/lib/x86_64-linux-gnu/cmake/Qt5/Qt5Config.cmake:26 (find_package):
+  Could not find a package configuration file provided by "Qt5QtCore" with
+  any of the following names:
+
+    Qt5QtCoreConfig.cmake
+    qt5qtcore-config.cmake
+
+  Add the installation prefix of "Qt5QtCore" to CMAKE_PREFIX_PATH or set
+  "Qt5QtCore_DIR" to a directory containing one of the above files.  If
+  "Qt5QtCore" provides a separate development package or SDK, be sure it has
+  been installed.
+[36mCall Stack (most recent call first):[0m
+  CMakeLists.txt:19 (find_package)
+
+
+[33m[1mCMake Warning[0m at /usr/lib/x86_64-linux-gnu/cmake/Qt5/Qt5Config.cmake:26 (find_package):
+  Could not find a package configuration file provided by "Qt5QtGui" with any
+  of the following names:
+
+    Qt5QtGuiConfig.cmake
+    qt5qtgui-config.cmake
+
+  Add the installation prefix of "Qt5QtGui" to CMAKE_PREFIX_PATH or set
+  "Qt5QtGui_DIR" to a directory containing one of the above files.  If
+  "Qt5QtGui" provides a separate development package or SDK, be sure it has
+  been installed.
+[36mCall Stack (most recent call first):[0m
+  CMakeLists.txt:19 (find_package)
+
+
+[31m[1mCMake Error[0m at /usr/lib/x86_64-linux-gnu/cmake/Qt5/Qt5Config.cmake:45 (_qt5_Core_check_file_exists):
+  Unknown CMake command "_qt5_Core_check_file_exists".
+[36mCall Stack (most recent call first):[0m
+  CMakeLists.txt:19 (find_package)
+
+
+[33m[1mCMake Warning[0m at /home/job/gnc/drone-swarm/catkin_ws/src/supervisor/CMakeLists.txt:19 (find_package):
+  Found package configuration file:
+
+    /usr/lib/x86_64-linux-gnu/cmake/Qt5/Qt5Config.cmake
+
+  but it set Qt5_FOUND to FALSE so package "Qt5" is considered to be NOT
+  FOUND.  Reason given by package:
+
+  Failed to find Qt5 component "QtCore" config file at
+  "/usr/lib/x86_64-linux-gnu/cmake/Qt5QtCore/Qt5QtCoreConfig.cmake"
+
+  Failed to find Qt5 component "QtGui" config file at
+  "/usr/lib/x86_64-linux-gnu/cmake/Qt5QtGui/Qt5QtGuiConfig.cmake"
+
+
+
+
+
+make: *** [cmake_check_build_system] Error 1

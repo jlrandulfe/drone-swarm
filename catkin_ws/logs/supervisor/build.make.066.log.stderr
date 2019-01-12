@@ -1,0 +1,7 @@
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:[m[K In function ‘[01m[Kint main(int, char**)[m[K’:
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:141:83:[m[K [01;31m[Kerror: [m[K‘[01m[KservicePyCopterCallback[m[K’ is not a member of ‘[01m[KSupervisor[m[K’
+  ros::ServiceServer pycopter_service = n.advertiseService("supervisor/pycopter", &Supervisor::servicePyCopterCallback, &sup);
+[01;32m[K                                                                                   ^[m[K
+make[2]: *** [CMakeFiles/supervisor_main.dir/src/Model/supervisor.cpp.o] Error 1
+make[1]: *** [CMakeFiles/supervisor_main.dir/all] Error 2
+make: *** [all] Error 2

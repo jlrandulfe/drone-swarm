@@ -1,6 +1,7 @@
-In file included from [01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:1:0[m[K:
-[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/include/supervisor/Model/supervisor.hpp:2:39:[m[K [01;31m[Kfatal error: [m[Kformation_control/frame.hpp: No such file or directory
+In file included from [01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/View/main.cpp:1:0[m[K:
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/View/mainwindow.h:4:23:[m[K [01;31m[Kfatal error: [m[KQMainWindow: No such file or directory
 compilation terminated.
-make[2]: *** [CMakeFiles/supervisor.dir/src/Model/supervisor.cpp.o] Error 1
-make[1]: *** [CMakeFiles/supervisor.dir/all] Error 2
+make[2]: *** [CMakeFiles/view.dir/src/View/main.cpp.o] Error 1
+make[1]: *** [CMakeFiles/view.dir/all] Error 2
+make[1]: *** Waiting for unfinished jobs....
 make: *** [all] Error 2

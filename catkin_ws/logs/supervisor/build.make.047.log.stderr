@@ -1,0 +1,19 @@
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:[m[K In member function ‘[01m[Kvoid Supervisor::publishToPyCopter(int)[m[K’:
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:57:11:[m[K [01;31m[Kerror: [m[Kno match for ‘[01m[Koperator=[m[K’ (operand types are ‘[01m[Kstd_msgs::Float64MultiArray_<std::allocator<void> >::_data_type {aka std::vector<double>}[m[K’ and ‘[01m[Kfloat [(amount_of_drones * 2)][m[K’)
+  msg.data = data;
+[01;32m[K           ^[m[K
+In file included from [01m[K/usr/include/c++/5/vector:69:0[m[K,
+                 from [01m[K/usr/include/boost/format.hpp:17[m[K,
+                 from [01m[K/usr/include/boost/math/policies/error_handling.hpp:31[m[K,
+                 from [01m[K/usr/include/boost/math/special_functions/round.hpp:14[m[K,
+                 from [01m[K/opt/ros/kinetic/include/ros/time.h:58[m[K,
+                 from [01m[K/opt/ros/kinetic/include/ros/ros.h:38[m[K,
+                 from [01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/include/supervisor/Model/supervisor.hpp:1[m[K,
+                 from [01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:1[m[K:
+[01m[K/usr/include/c++/5/bits/vector.tcc:167:5:[m[K [01;36m[Knote: [m[Kcandidate: std::vector<_Tp, _Alloc>& std::vector<_Tp, _Alloc>::operator=(const std::vector<_Tp, _Alloc>&) [with _Tp = double; _Alloc = std::allocator<double>]
+     vector<_Tp, _Alloc>::
+[01;32m[K     ^[m[K
+[01m[K/usr/include/c++/5/bits/vector.tcc:167:5:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kfloat [(amount_of_drones * 2)][m[K’ to ‘[01m[Kconst std::vector<double>&[m[K’
+make[2]: *** [CMakeFiles/supervisor_main.dir/src/Model/supervisor.cpp.o] Error 1
+make[1]: *** [CMakeFiles/supervisor_main.dir/all] Error 2
+make: *** [all] Error 2

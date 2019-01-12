@@ -1,0 +1,7 @@
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:[m[K In member function ‘[01m[Kvoid Supervisor::servicePyCopter(int)[m[K’:
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:45:102:[m[K [01;31m[Kerror: [m[Kinvalid use of non-static member function
+  ros::ServiceServer service = n.advertiseService("supervisor/pycopter", this->servicePyCopterCallback);
+[01;32m[K                                                                                                      ^[m[K
+make[2]: *** [CMakeFiles/supervisor_main.dir/src/Model/supervisor.cpp.o] Error 1
+make[1]: *** [CMakeFiles/supervisor_main.dir/all] Error 2
+make: *** [all] Error 2

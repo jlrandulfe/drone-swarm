@@ -1,0 +1,20 @@
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:[m[K In member function ‘[01m[Kvoid Supervisor::setupSimulation(int, float, float, char, float, float)[m[K’:
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:35:76:[m[K [01;31m[Kerror: [m[Kno matching function for call to ‘[01m[KSupervisor::getFormation(int&, float&, float&, char&, float&)[m[K’
+  this->getFormation(amount_of_drones, distance, v_shape_angle, shape, range);
+[01;32m[K                                                                            ^[m[K
+In file included from [01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:1:0[m[K:
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/include/supervisor/Model/supervisor.hpp:13:7:[m[K [01;36m[Knote: [m[Kcandidate: void Supervisor::getFormation(int, float, float, char)
+  void getFormation(int amount_of_drones, float distance, float v_shape_angle, char shape);
+[01;32m[K       ^[m[K
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/include/supervisor/Model/supervisor.hpp:13:7:[m[K [01;36m[Knote: [m[K  candidate expects 4 arguments, 5 provided
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:[m[K At global scope:
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:38:6:[m[K [01;31m[Kerror: [m[Kprototype for ‘[01m[Kvoid Supervisor::getFormation(int, float, float, char, float)[m[K’ does not match any in class ‘[01m[KSupervisor[m[K’
+ void Supervisor::getFormation(int amount_of_drones, float distance, float v_shape_angle, char shape, float range)
+[01;32m[K      ^[m[K
+In file included from [01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:1:0[m[K:
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/include/supervisor/Model/supervisor.hpp:13:7:[m[K [01;31m[Kerror: [m[Kcandidate is: void Supervisor::getFormation(int, float, float, char)
+  void getFormation(int amount_of_drones, float distance, float v_shape_angle, char shape);
+[01;32m[K       ^[m[K
+make[2]: *** [CMakeFiles/supervisor_main.dir/src/Model/supervisor.cpp.o] Error 1
+make[1]: *** [CMakeFiles/supervisor_main.dir/all] Error 2
+make: *** [all] Error 2

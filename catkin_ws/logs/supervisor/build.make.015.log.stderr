@@ -1,0 +1,11 @@
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:[m[K In member function ‘[01m[Kvoid Supervisor::setupSimulation(int, float, float, char, float, float)[m[K’:
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:35:131:[m[K [01;31m[Kerror: [m[Karray must be initialized with a brace-enclosed initializer
+  float connection_matrix[amount_of_drones][amount_of_drones] = this->getFormation(amount_of_drones, distance, v_shape_angle, shape);
+[01;32m[K                                                                                                                                   ^[m[K
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:[m[K In member function ‘[01m[Kfloat** Supervisor::getFormation(int, float, float, char)[m[K’:
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:76:11:[m[K [01;31m[Kerror: [m[Kcannot convert ‘[01m[Kfloat (*)[amount_of_drones][m[K’ to ‘[01m[Kfloat**[m[K’ in return
+    return result;
+[01;32m[K           ^[m[K
+make[2]: *** [CMakeFiles/supervisor_main.dir/src/Model/supervisor.cpp.o] Error 1
+make[1]: *** [CMakeFiles/supervisor_main.dir/all] Error 2
+make: *** [all] Error 2

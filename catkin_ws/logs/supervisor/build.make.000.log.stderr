@@ -1,6 +1,7 @@
-In file included from [01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:1:0[m[K:
-[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/include/supervisor/Model/supervisor.hpp:2:51:[m[K [01;31m[Kfatal error: [m[Kformation_control/Formation.h: No such file or directory
-compilation terminated.
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:[m[K In member function ‘[01m[Kvoid Supervisor::getFormation(int, float, float, char)[m[K’:
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:49:10:[m[K [01;31m[Kerror: [m[Kreturn-statement with a value, in function returning 'void' [-fpermissive]
+   return 1;
+[01;32m[K          ^[m[K
 make[2]: *** [CMakeFiles/supervisor.dir/src/Model/supervisor.cpp.o] Error 1
 make[1]: *** [CMakeFiles/supervisor.dir/all] Error 2
 make: *** [all] Error 2

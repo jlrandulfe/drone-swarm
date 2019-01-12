@@ -21,6 +21,7 @@ int main(int argc, char **argv)
 	float distance = 10;
 	float v_shape_angle = 45;
 	char shape = 'g';
+	float random_range = 0.9;
   	
   	ros::ServiceClient client = n.serviceClient<formation_control::Formation>("formation_control");
   	formation_control::Formation srv;
@@ -28,8 +29,9 @@ int main(int argc, char **argv)
 	srv.request.shape_type = shape;
 	srv.request.distance = distance;
 	srv.request.angle = v_shape_angle;
-	float result[amount_of_drones][amount_of_drones];
-  	
+	srv.request.random_range = random_range;
+	float connection_matrix_data[amount_of_drones][amount_of_drones];
+  	float start_pose_data[amount_of_drones][2];
   	if (client.call(srv))
   	{
 		std::cout << "Matrix Size: " << srv.response.matrix_size << std::endl;
@@ -37,21 +39,35 @@ int main(int argc, char **argv)
 		for (int i = 0; i < srv.response.matrix_size; ++i)
 			for (int j = 0; j < srv.response.matrix_size; ++j)
 			{
-				result[i][j] = srv.response.data[iterator];
+				connection_matrix_data[i][j] = srv.response.connection_matrix[iterator];
 				iterator++;
 			}
-
-		std::cout << "Printing response" << std::endl;
+		iterator = 0;
+		for(int i = 0; i < amount_of_drones; i++)
+		{
+			start_pose_data[i][0] = srv.response.start_pose[iterator];
+			iterator++;
+			start_pose_data[i][1] = srv.response.start_pose[iterator];
+			iterator++;
+		}
+		iterator = 0;
+		std::cout << "Printing response\nConnection Matrix" << std::endl;
 		for (int i = 0; i < srv.response.matrix_size; ++i)
 		{
 			for (int j = 0; j < srv.response.matrix_size; ++j)
 			{
-				std::cout << result[i][j] << ", ";
+				std::cout << connection_matrix_data[i][j] << ", ";
 				iterator++;
 			}
 			std::cout << std::endl;
 		}
-
+		std::cout << "Start Positions" << std::endl;
+		for (int i = 0; i < amount_of_drones; ++i)
+		{
+				std::cout << "Drone " << i << "  x: " << start_pose_data[i][0] << ", y: " << start_pose_data[i][1] << std::endl;
+				iterator++;
+		}
+	
   	}
   	else
   	{

@@ -1,0 +1,14 @@
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:[m[K In member function ‘[01m[Kvoid Supervisor::getFormation(int, float, float, char)[m[K’:
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:23:2:[m[K [01;31m[Kerror: [m[K‘[01m[KwaitForService[m[K’ is not a member of ‘[01m[Kros[m[K’
+  ros::waitForService();
+[01;32m[K  ^[m[K
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:23:2:[m[K [01;36m[Knote: [m[Ksuggested alternative:
+In file included from [01m[K/opt/ros/kinetic/include/ros/ros.h:50:0[m[K,
+                 from [01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/include/supervisor/Model/supervisor.hpp:1[m[K,
+                 from [01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:1[m[K:
+[01m[K/opt/ros/kinetic/include/ros/service.h:111:18:[m[K [01;36m[Knote: [m[K  ‘[01m[Kros::service::waitForService[m[K’
+ ROSCPP_DECL bool waitForService(const std::string& service_name, ros::Duration timeout = ros::Duration(-1));
+[01;32m[K                  ^[m[K
+make[2]: *** [CMakeFiles/supervisor_main.dir/src/Model/supervisor.cpp.o] Error 1
+make[1]: *** [CMakeFiles/supervisor_main.dir/all] Error 2
+make: *** [all] Error 2

@@ -1,0 +1,26 @@
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/formation_control/src/srv_call.cpp:[m[K In function ‘[01m[Kint main(int, char**)[m[K’:
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/formation_control/src/srv_call.cpp:40:33:[m[K [01;31m[Kerror: [m[K‘[01m[Kformation_control::Formation::Response {aka struct formation_control::FormationResponse_<std::allocator<void> >}[m[K’ has no member named ‘[01m[Kdata[m[K’
+     result[i][j] = srv.response.data[iterator];
+[01;32m[K                                 ^[m[K
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/formation_control/src/frame.cpp:[m[K In function ‘[01m[Kbool add(formation_control::Formation::Request&, formation_control::Formation::Response&)[m[K’:
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/formation_control/src/frame.cpp:721:4:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K;[m[K’ before ‘[01m[Kiterator[m[K’
+    iterator++;
+[01;32m[K    ^[m[K
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/formation_control/src/frame.cpp:723:4:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K;[m[K’ before ‘[01m[Kiterator[m[K’
+    iterator++;
+[01;32m[K    ^[m[K
+make[2]: *** [CMakeFiles/srv_call.dir/src/srv_call.cpp.o] Error 1
+make[1]: *** [CMakeFiles/srv_call.dir/all] Error 2
+make[1]: *** Waiting for unfinished jobs....
+make[2]: *** [CMakeFiles/formation_control.dir/src/frame.cpp.o] Error 1
+make[1]: *** [CMakeFiles/formation_control.dir/all] Error 2
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/formation_control/src/frame.cpp:[m[K In function ‘[01m[Kbool add(formation_control::Formation::Request&, formation_control::Formation::Response&)[m[K’:
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/formation_control/src/frame.cpp:721:4:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K;[m[K’ before ‘[01m[Kiterator[m[K’
+    iterator++;
+[01;32m[K    ^[m[K
+[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/formation_control/src/frame.cpp:723:4:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K;[m[K’ before ‘[01m[Kiterator[m[K’
+    iterator++;
+[01;32m[K    ^[m[K
+make[2]: *** [CMakeFiles/execute.dir/src/frame.cpp.o] Error 1
+make[1]: *** [CMakeFiles/execute.dir/all] Error 2
+make: *** [all] Error 2
