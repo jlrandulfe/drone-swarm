@@ -10,7 +10,7 @@ from pycopter import animation as ani
 
 class Sim3Quads():
 
-    def __init__(self, quads, fc, time, alt_d=4, frames=100):
+    def __init__(self, quads, fc, time, alt_d=4, frames=10):
         # Extract quadcopters from list
         self.q1 = quads[0]
         self.q2 = quads[1]
@@ -41,13 +41,14 @@ class Sim3Quads():
 
         self.frames = frames
 
-    def new_iteration(self, t, dt):
+    def new_iteration(self, t, dt, U=None):
         # Simulation
         X = np.append(self.q1.xyz[0:2], np.append(self.q2.xyz[0:2],
                       self.q3.xyz[0:2]))
         V = np.append(self.q1.v_ned[0:2], np.append(self.q2.v_ned[0:2],
                       self.q3.v_ned[0:2]))
-        U = self.fc.u_acc(X, V)
+        if U is None:
+            U = self.fc.u_acc(X, V)
 
         self.q1.set_a_2D_alt_lya(U[0:2], -self.alt_d)
         self.q2.set_a_2D_alt_lya(U[2:4], -self.alt_d)
@@ -59,7 +60,6 @@ class Sim3Quads():
 
         # Animation
         if self.it%self.frames == 0:
-
             plt.figure(0)
             self.axis3d.cla()
             ani.draw3d(self.axis3d, self.q1.xyz, self.q1.Rot_bn(),

@@ -21,6 +21,7 @@ class DroneSwarmNode():
         self.drones = []
         self.n_drones = n_drones
         self.fc = None
+        self.U = None
 
         # Quadrotors physical properties
         self.m = 0.65 # Kg
@@ -46,14 +47,19 @@ class DroneSwarmNode():
 
         # Desired heading
         self.drones[0].yaw_d = -np.pi
-        self.drones[1].yaw_d =  np.pi/2
-        self.drones[2].yaw_d =  0
+        self.drones[1].yaw_d = np.pi/2
+        self.drones[2].yaw_d = 0
 
         # Instantiate the sim class
         tf=60
         self.dt=5e-2
         self.time = np.linspace(0, tf, tf/self.dt)
         self.quad_sim = simulation.Sim3Quads(self.drones, self.fc, self.time)
+
+        # ROS subscriber
+        rospy.Subscriber("controller/control_value",
+                         std_msgs.msg.Float64MultiArray,
+                         self.controller_callback, queue_size=1)
 
         # ROS publishers
         self.positions_pub = rospy.Publisher(
@@ -116,9 +122,17 @@ class DroneSwarmNode():
         message.data = data.tolist()
         return message
 
+    def controller_callback(self, data):
+        self.U = data.data
+        return
+
     def run(self):
-        for t in self.time:
-            output = self.quad_sim.new_iteration(t, self.dt)
+        it = 0
+        rate = rospy.Rate(100)
+        while it < len(self.time):
+            t = self.time[it]
+            it += 1
+            output = self.quad_sim.new_iteration(t, self.dt, self.U)
             if (output == -1):
                 rospy.logerror("Pycopter simulator crashed")
                 break
@@ -128,11 +142,9 @@ class DroneSwarmNode():
                 velocities_message = self.np2multiarray(V)
                 self.positions_pub.publish(positions_message)
                 self.velocities_pub.publish(velocities_message)
+            rate.sleep()
         self.quad_sim.final_plots(self.time)
         return
-
-
-
 
 
 def main():
