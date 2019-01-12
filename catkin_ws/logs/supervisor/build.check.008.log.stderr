@@ -1,5 +1,0 @@
-[31m[1mCMake Error[0m at /home/job/gnc/drone-swarm/catkin_ws/src/supervisor/CMakeLists.txt:19 (find_package):
-  find_package called with invalid argument "COMPONENT"
-
-
-make: *** [cmake_check_build_system] Error 1

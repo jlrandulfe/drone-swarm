@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 find_package(formation_control REQUIRED)
+find_package(pycopter REQUIRED)
 find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
 
 
