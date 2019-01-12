@@ -1,7 +1,0 @@
-In file included from [01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/src/Model/supervisor.cpp:1:0[m[K:
-[01m[K/home/job/gnc/drone-swarm/catkin_ws/src/supervisor/include/supervisor/Model/supervisor.hpp:13:102:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K;[m[K’ at end of member declaration
-  void getFormation(int amount_of_drones, float distance, float v_shape_angle, char shape, float range)
-[01;32m[K                                                                                                      ^[m[K
-make[2]: *** [CMakeFiles/supervisor_main.dir/src/Model/supervisor.cpp.o] Error 1
-make[1]: *** [CMakeFiles/supervisor_main.dir/all] Error 2
-make: *** [all] Error 2
