@@ -103,7 +103,7 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
- INCLUDE_DIRS include
+ # INCLUDE_DIRS include
  LIBRARIES pycopter
  CATKIN_DEPENDS roscpp rospy std_msgs message_runtime
 #  DEPENDS system_lib
@@ -150,6 +150,10 @@ include_directories(
 #   ${catkin_LIBRARIES}
 # )
 
+add_library(pycopter src/blah.cpp)
+target_link_libraries(pycopter ${catkin_LIBRARIES})
+
+
 #############
 ## Install ##
 #############
@@ -159,10 +163,10 @@ include_directories(
 
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
-# install(PROGRAMS
-#   scripts/my_python_script
-#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+ install(PROGRAMS
+   node/pycopter
+   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+ )
 
 ## Mark executables and/or libraries for installation
 # install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_node

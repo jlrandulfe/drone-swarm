@@ -53,15 +53,18 @@
   <build_depend>rospy</build_depend>
   <build_depend>std_msgs</build_depend>
   <build_depend>formation_control</build_depend>
+  <build_depend>pycopter</build_depend>
   <!-- <build_depend>qt_build</build_depend> -->
   <build_export_depend>roscpp</build_export_depend>
   <build_export_depend>rospy</build_export_depend>
   <build_export_depend>std_msgs</build_export_depend>
   <build_export_depend>formation_control</build_export_depend>
+  <build_export_depend>pycopter</build_export_depend>
   <exec_depend>roscpp</exec_depend>
   <exec_depend>rospy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>formation_control</exec_depend>
+  <exec_depend>pycopter</exec_depend>
   <!-- <exec_depend>qt_build</exec_depend> -->
 
 

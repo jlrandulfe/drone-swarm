@@ -44,7 +44,7 @@ void Supervisor::setupSimulation(int amount_of_drones, float distance, float v_s
 }
 
 
-bool Supervisor::servicePyCopterCallback(formation_control::Formation::Request  &req, formation_control::Formation::Response &res)
+bool Supervisor::servicePyCopterCallback(pycopter::PycopterStartPositions::Request  &req, pycopter::PycopterStartPositions::Response &res)
 {
 	printf("PyCopterService called\n");
 

@@ -68,6 +68,7 @@ include_directories(
   ${Qt5Widgets_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
   ${formation_control_INCLUDE_DIRS}
+  ${pycopter_INCLUDE_DIRS}
 )
 
 #add_executable(view src/View/main.cpp)
