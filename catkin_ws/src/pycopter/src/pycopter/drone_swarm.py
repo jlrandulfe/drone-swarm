@@ -45,7 +45,8 @@ class DroneSwarmNode():
         self.init_drones()
         self.init_formation()
 
-        # Desired heading
+        # Desired heading.
+        #TODO: Generalize for n drones
         self.drones[0].yaw_d = -np.pi
         self.drones[1].yaw_d = np.pi/2
         self.drones[2].yaw_d = 0
@@ -54,7 +55,7 @@ class DroneSwarmNode():
         tf=60
         self.dt=5e-2
         self.time = np.linspace(0, tf, tf/self.dt)
-        self.quad_sim = simulation.Sim3Quads(self.drones, self.fc, self.time)
+        self.quad_sim = simulation.SimNQuads(self.drones, self.fc, self.time)
 
         # ROS subscriber
         rospy.Subscriber("controller/control_value",
@@ -78,6 +79,7 @@ class DroneSwarmNode():
         # Initial conditions
         att_0 = np.array([0.0, 0.0, 0.0])
         pqr_0 = np.array([0.0, 0.0, 0.0])
+        #TODO: Generalize for n drones
         xyz_0 = [np.array([1.0, 1.2, 0.0]),
                  np.array([1.2, 2.0, 0.0]),
                  np.array([-1.1, 2.6, 0.0])]
@@ -134,7 +136,7 @@ class DroneSwarmNode():
             it += 1
             output = self.quad_sim.new_iteration(t, self.dt, self.U)
             if (output == -1):
-                rospy.logerror("Pycopter simulator crashed")
+                rospy.logerr("Pycopter simulator crashed")
                 break
             else:
                 X, V = output
