@@ -1,9 +1,9 @@
-#include "../../include/supervisor/View/mainwindow.h"
+#include "supervisor/View/mainwindow.h"
 #include "ui_mainwindow.h"
 #include <iostream>
 
 
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow(QWidget *parent, Supervisor &sup) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {

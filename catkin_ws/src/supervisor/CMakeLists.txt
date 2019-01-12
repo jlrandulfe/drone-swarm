@@ -70,10 +70,10 @@ add_executable(View ${QT_SOURCES} ${QT_FORMS_HPP} ${QT_MOC_HPP})
 add_executable(supervisor_main src/Model/supervisor.cpp)
 
 add_dependencies(supervisor_main ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
+add_library(Model_lib src/Model/supervisor.cpp)
 target_link_libraries(supervisor_main ${catkin_LIBRARIES})
-target_link_libraries(View Qt5::Widgets Qt5::Quick Qt5::QuickWidgets ${QT_LIBRARIES} ${catkin_LIBRARIES})
-install(TARGETS View RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+target_link_libraries(View Qt5::Widgets Qt5::Quick Qt5::QuickWidgets ${QT_LIBRARIES} ${catkin_LIBRARIES} Model_lib)
+#install(TARGETS View RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 # add modules for qt the easy way
 #qt5_use_modules(lora_ground_control positioning)

@@ -157,7 +157,7 @@ bool add(formation_control::Formation::Request  &req, formation_control::Formati
 
 int main(int argc, char **argv)
 {
-	ros::init(argc, argv, "srv_call");
+	ros::init(argc, argv, "supervisor");
   	ros::NodeHandle n;
 
 	Supervisor sup(n);
