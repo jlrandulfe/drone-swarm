@@ -10,7 +10,7 @@ import geometry_msgs.msg
 import std_msgs.msg
 # Local libraries
 from pycopter import formation_distance as form
-from pycopter import plotter
+from pycopter import simulation
 import pycopter.quadrotor as quad
 
 
@@ -53,7 +53,17 @@ class DroneSwarmNode():
         tf=60
         self.dt=5e-2
         self.time = np.linspace(0, tf, tf/self.dt)
-        self.quad_sim = plotter.Sim3Quads(self.drones, self.fc, self.time)
+        self.quad_sim = simulation.Sim3Quads(self.drones, self.fc, self.time)
+
+        # ROS publishers
+        self.positions_pub = rospy.Publisher(
+                "pycopter/positions",
+                std_msgs.msg.Float64MultiArray,
+                queue_size=10)
+        self.velocities_pub = rospy.Publisher(
+                "pycopter/velocities",
+                std_msgs.msg.Float64MultiArray,
+                queue_size=10)
 
     def init_drones(self):
         """
@@ -87,14 +97,42 @@ class DroneSwarmNode():
         tilde_mu = 0e-2*np.array([1, 1, 1])
 
         self.fc = form.formation_distance(2, 1, dtriang, mu, tilde_mu, Btriang,
-                                     5e-2, 5e-1)
+                                          5e-2, 5e-1)
+
+    def np2multiarray(self, data, n_coords=2):
+        # Define the 2 dimensions of the array.
+        dim_1 = std_msgs.msg.MultiArrayDimension(label="drone_n",
+                                                 size=self.n_drones,
+                                                 stride=self.n_drones*n_coords)
+        dim_2 = std_msgs.msg.MultiArrayDimension(label="coords", size=n_coords,
+                                                 stride=n_coords)
+        # Create the layout of the message, necessary for deserializing it.
+        layout = std_msgs.msg.MultiArrayLayout()
+        layout.dim.append(dim_1)
+        layout.dim.append(dim_2)
+        # Create the output message with the data and the created layout.
+        message = std_msgs.msg.Float64MultiArray()
+        message.layout = layout
+        message.data = data.tolist()
+        return message
 
     def run(self):
-        # plotter.sim_and_plot_3quads(self.drones, self.fc)
         for t in self.time:
-            self.quad_sim.new_iteration(t, self.dt)
+            output = self.quad_sim.new_iteration(t, self.dt)
+            if (output == -1):
+                rospy.logerror("Pycopter simulator crashed")
+                break
+            else:
+                X, V = output
+                positions_message = self.np2multiarray(X)
+                velocities_message = self.np2multiarray(V)
+                self.positions_pub.publish(positions_message)
+                self.velocities_pub.publish(velocities_message)
         self.quad_sim.final_plots(self.time)
         return
+
+
+
 
 
 def main():

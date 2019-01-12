@@ -29,7 +29,7 @@ class Sim3Quads():
         self.Ed_log = np.zeros((time.size, self.fc.edges))
 
         # Plots
-        self.quadcolor = ['r', 'g', 'b']
+        self.quadcolor = ["r", "g", "b"]
         plt.close("all")
         plt.ion()
         self.fig = plt.figure(0)
@@ -114,7 +114,7 @@ class Sim3Quads():
         # Stop if crash
         if (self.q1.crashed==1 or self.q2.crashed==1 or self.q3.crashed==1):
             return -1
-        return 0
+        return (X, V)
 
     def final_plots(self, time):
 
