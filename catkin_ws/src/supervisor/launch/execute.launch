@@ -1,0 +1,4 @@
+<launch>
+  <node name="execute" pkg="formation_control" type="execute" output="screen"/>
+  <node name="View" pkg="supervisor" type="View" output="screen"/>
+</launch>
