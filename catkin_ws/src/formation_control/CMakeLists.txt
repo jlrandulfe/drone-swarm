@@ -63,10 +63,3 @@ target_link_libraries(srv_call ${catkin_LIBRARIES})
 
 add_library(formation_control src/frame.cpp)
 target_link_libraries(formation_control ${catkin_LIBRARIES})
-
-
- install(DIRECTORY include/${PROJECT_NAME}/
-   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-   FILES_MATCHING PATTERN "*.h"
-   PATTERN ".svn" EXCLUDE
- )

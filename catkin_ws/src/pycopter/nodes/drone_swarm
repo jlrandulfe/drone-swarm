@@ -18,6 +18,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args(rospy.myargv()[1:])
     
-    rospy.init_node("error_estimator", anonymous=True)
+    rospy.init_node("drome_swarm_sim", anonymous=True)
     rospy.loginfo("Starting PyCopter")
     drone_swarm.main()

@@ -6,6 +6,7 @@
 #include <QDialog>
 #include <QtGui>
 #include <QtCore>
+#include "supervisor/Model/supervisor.hpp"
 
 namespace Ui {
 class MainWindow;
@@ -16,7 +17,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    /*explicit*/ MainWindow(QWidget *parent/* = 0*/, Supervisor &sup/* = NULL*/);
     ~MainWindow();
 
 private slots:
@@ -26,20 +27,23 @@ private slots:
     void on_droneDistanceSpinbox_valueChanged(double arg1);
     void on_droneAngleSpinbox_valueChanged(double arg1);
     void on_applyButton_clicked();
-    void updateScene();
+    void on_startButton_clicked();
+    void on_stopButton_clicked();
+    void on_initRangeSpinBox_valueChanged(double arg1);
 
 private:
+
     Ui::MainWindow *ui;
+    Supervisor supervisor;
+    void addPoint(double x, double y);
+    void clearData();
+    void plot();
 
-
-//    QGraphicsView view;
-
-    //QGraphicsPixmapItem *drones;
-
-    std::string shapeSelection;
+    char shapeSelection;
     int droneAmount;
     float droneDistance;
     float droneAngle = 0.0f;
+    float droneRandomRange;
 };
 
 #endif // MAINWINDOW_H

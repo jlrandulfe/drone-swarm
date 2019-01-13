@@ -1,0 +1,7 @@
+<launch>
+
+    <node pkg="pycopter" type="drone_swarm" name="drome_swarm_sim" output="screen"/>
+
+    <test test-name="client_service_test" pkg="pycopter" type="test_positions_start_services.py"/>
+
+</launch>

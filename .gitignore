@@ -1,6 +1,7 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+.idea
 *$py.class
 
 # C extensions
@@ -106,7 +107,9 @@ venv.bak/
 # ROS auxiliary files
 devel/
 log/
+logs/
 .catkin_workspace
+.catkin_tools
 
 # Catkin custom files
 CATKIN_IGNORE

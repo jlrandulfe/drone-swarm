@@ -11,24 +11,12 @@ project(supervisor)
 
 # qt_build provides the qt cmake glue, roscpp the comms for a default talker
 find_package(catkin REQUIRED COMPONENTS roscpp std_msgs)
-find_package(formation_control REQUIRED)
-find_package(pycopter REQUIRED)
-include_directories(
-  include
-  ${Qt5Widgets_INCLUDE_DIRS}
-  ${catkin_INCLUDE_DIRS}
-  ${formation_control_INCLUDE_DIRS}
-  ${pycopter_INCLUDE_DIRS}
-)
+include_directories(${catkin_INCLUDE_DIRS})
 # Use this to define what the package will export (e.g. libs, headers).
 # Since the default here is to produce only a binary, we don't worry about
 # exporting anything.
 
-catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES supervisor
-  CATKIN_DEPENDS roscpp rospy std_msgs 
-)
+catkin_package()
 
 ##############################################################################
 # Qt Environment
@@ -51,8 +39,8 @@ find_package(Qt5Widgets CONFIG REQUIRED)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5 COMPONENTS Quick QuickWidgets REQUIRED)
 
-file(GLOB QT_FORMS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/View/*.ui)
-file(GLOB_RECURSE QT_MOC RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS include/supervisor/View/*.h)
+file(GLOB QT_FORMS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.ui)
+file(GLOB_RECURSE QT_MOC RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS include/supervisor/*.h)
 
 QT5_WRAP_UI(QT_FORMS_HPP ${QT_FORMS})
 QT5_WRAP_CPP(QT_MOC_HPP ${QT_MOC})
@@ -61,19 +49,17 @@ QT5_WRAP_CPP(QT_MOC_HPP ${QT_MOC})
 # Sources
 ##############################################################################
 
-file(GLOB_RECURSE QT_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS src/View/*.cpp)
+file(GLOB_RECURSE QT_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS src/*.cpp)
 
 ##############################################################################
 # Binaries
 ##############################################################################
 add_executable(View ${QT_SOURCES} ${QT_FORMS_HPP} ${QT_MOC_HPP})
-add_executable(supervisor_main src/Model/supervisor.cpp)
+	#build/ui_main_window.h)
 
-add_dependencies(supervisor_main ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_library(Model_lib src/Model/supervisor.cpp)
-target_link_libraries(supervisor_main ${catkin_LIBRARIES})
-target_link_libraries(View Qt5::Widgets Qt5::Quick Qt5::QuickWidgets ${QT_LIBRARIES} ${catkin_LIBRARIES} Model_lib)
-#install(TARGETS View RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+target_link_libraries(View Qt5::Widgets Qt5::Quick Qt5::QuickWidgets ${QT_LIBRARIES} ${catkin_LIBRARIES})
+install(TARGETS View RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 # add modules for qt the easy way
 #qt5_use_modules(lora_ground_control positioning)

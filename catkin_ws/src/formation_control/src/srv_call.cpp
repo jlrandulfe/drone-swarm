@@ -14,7 +14,6 @@ the distance value differs in function per shape type:
 int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "srv_call");
-  	ros::init(argc, argv, "add_two_ints_client");
   	ros::NodeHandle n;
 	
 	int amount_of_drones = 10;

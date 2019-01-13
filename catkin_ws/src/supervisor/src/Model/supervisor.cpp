@@ -3,11 +3,7 @@
 Supervisor::Supervisor(ros::NodeHandle nh): n(nh)
 {
 	printf("Created Supervisor\n");
-	printf("Starting PyCopterService\n");
-	pycopter_service = n.advertiseService("supervisor/pycopter", &Supervisor::servicePyCopterCallback, this);
-	printf("Starting KalmanService\n");
-	kalman_service = n.advertiseService("supervisor/kalman", &Supervisor::serviceKalmanCallback, this);
-
+	is_simulation_running = false;
 }
 
 Supervisor::~Supervisor()
@@ -39,49 +35,80 @@ void Supervisor::setupSimulation(int amount_of_drones, float distance, float v_s
 {
 	this->getFormation(amount_of_drones, distance, v_shape_angle, shape, range);
 	//publish connection matrix to error_estimator/controller node and kalman_filter node
-
+	printf("Starting KalmanService\n");
+	kalman_service = n.advertiseService("supervisor/kalman", &Supervisor::serviceKalmanCallback, this);
 	//publish starting locations and number of drones to pycopter
+	printf("Starting PyCopterService\n");
+	pycopter_service = n.advertiseService("supervisor/pycopter", &Supervisor::servicePyCopterCallback, this);
+	printf("Waiting for Pycopter to set up Start Stop Simulation service\n");
+	ros::service::waitForService("pycopter/start_stop");
+	pycopter_client = n.serviceClient<pycopter::PycopterStartStop>("pycopter/start_stop");
+	
+}
+
+void Supervisor::startSimulation()
+{
+	printf("Starting Simulation\n");
+	pycopter::PycopterStartStop srv;
+	srv.request.start = true;
+	srv.request.stop = false;
+	if(pycopter_client.call(srv))
+  	{
+  		is_simulation_running = srv.response.ack;
+  	}
+  	else
+  		printf("Service call to pycopter/start_stop failed\n");
+
+}
+
+void Supervisor::stopSimulation()
+{
+	printf("Stopping Simulation\n");
+	pycopter::PycopterStartStop srv;
+	srv.request.start = false;
+	srv.request.stop = true;
+	if(pycopter_client.call(srv))
+  	{
+  		is_simulation_running = srv.response.ack;
+  	}
+  	else
+  		printf("Service call to pycopter/start_stop failed\n");
+	
 }
 
 
-bool Supervisor::servicePyCopterCallback(formation_control::Formation::Request  &req, formation_control::Formation::Response &res)
+bool Supervisor::servicePyCopterCallback(pycopter::DroneSwarmMultiArray::Request  &req, pycopter::DroneSwarmMultiArray::Response &res)
 {
-	printf("PyCopterService called\n");
-
-	/*
-
-		int iterator = 0;
-		for(int i = 0; i < amount_of_drones; i++)
-		{
-			start_pose_data[iterator] = random_positions[i].x;//x
-			iterator++;
-			start_pose_data[iterator] = random_positions[i].y;//x
-			iterator++;
-		}
-
-	res.data = 
-
-	*/
+	printf("PyCopter Service called\n");
+	std::vector<double> start_pose_data(2*start_pose.size());	
+	int iterator = 0;
+	for(int i = 0; i < start_pose.size(); i++)
+	{
+		start_pose_data[iterator] = start_pose[i][0];//x
+		iterator++;
+		start_pose_data[iterator] = start_pose[i][1];//y
+		iterator++;
+	}
+	res.data = start_pose_data;
+	res.n_rows = start_pose.size();
+	res.n_cols = 2;
+	return true;
 }
 
-bool Supervisor::serviceKalmanCallback(formation_control::Formation::Request  &req, formation_control::Formation::Response &res)
+bool Supervisor::serviceKalmanCallback(pycopter::DroneSwarmMultiArray::Request  &req, pycopter::DroneSwarmMultiArray::Response &res)
 {
-	printf("PyCopterService called\n");
-
-	/*
-
-		int iterator = 0;
-		for(int i = 0; i < amount_of_drones; i++)
+	printf("Kalman Service called\n");
+	std::vector<double> connection_data(2*start_pose.size());	
+	int iterator = 0;
+	for(int i = 0; i < connection_matrix.size(); i++)
+		for (int j = 0; j < connection_matrix.size(); ++j)
 		{
-			start_pose_data[iterator] = random_positions[i].x;//x
-			iterator++;
-			start_pose_data[iterator] = random_positions[i].y;//x
+			connection_data[iterator] = connection_matrix[i][j];
 			iterator++;
 		}
-
-	res.data = 
-
-	*/
+	res.data = connection_data;
+	res.n_rows = res.n_cols = connection_matrix.size();
+	return true;
 }
 
 
@@ -101,7 +128,7 @@ void Supervisor::getFormation(int amount_of_drones, float distance, float v_shap
   	{
 		std::cout << "Matrix Size: " << srv.response.matrix_size << std::endl;
 		int iterator = 0;
-		std::vector<float> temp_storage;
+		std::vector<double> temp_storage;
 		for (int i = 0; i < srv.response.matrix_size; ++i)
 		{
 			for (int j = 0; j < srv.response.matrix_size; ++j)
@@ -148,16 +175,10 @@ void Supervisor::getFormation(int amount_of_drones, float distance, float v_shap
   	}
 }
 
-bool add(formation_control::Formation::Request  &req, formation_control::Formation::Response &res)
-{
-	std::cout << "Received Service Call" << std::endl;
-	
-}
-
 
 int main(int argc, char **argv)
 {
-	ros::init(argc, argv, "srv_call");
+	ros::init(argc, argv, "supervisor");
   	ros::NodeHandle n;
 
 	Supervisor sup(n);

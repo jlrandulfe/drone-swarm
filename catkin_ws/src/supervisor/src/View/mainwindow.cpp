@@ -1,11 +1,14 @@
-#include "mainwindow.h"
+#include "supervisor/View/mainwindow.h"
 #include "ui_mainwindow.h"
 #include <iostream>
+#include <cstdlib>
 
 
-MainWindow::MainWindow(QWidget *parent) :
+
+MainWindow::MainWindow(QWidget *parent, Supervisor &sup) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    supervisor(sup)
 {
     // Init UI
     ui->setupUi(this);
@@ -16,6 +19,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->droneAmountLabel->setText(tr("Amount of drones (3-20)"));
     qDebug() << droneAngle;
 
+//    ui->plot->addGraph();
+//    ui->plot->graph(0)->setScatterStyle(QCPScatterStyle::ssCircle);
+//    ui->plot->graph(0)->setLineStyle(QCPGraph::lsNone);
+
     // Connect
     connect( ui->shapeCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(on_shapeCombo_currentTextChanged(QString)));
 
@@ -24,64 +31,78 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    #include <cstdlib>
+    system("rosnode kill execute");
+    system("rosnode kill pycopter");
 }
 
-void MainWindow::on_droneAmountSpinBox_valueChanged(int arg1)
+void MainWindow::on_shapeCombo_currentTextChanged(const QString &shape)
 {
-    droneAmount = arg1;
-    qDebug() << droneAmount;
-}
-
-void MainWindow::on_shapeCombo_currentTextChanged(const QString &arg1)
-{
-    qDebug() << arg1;
-    if (arg1.toStdString() == "Grid")
+    if (shape.toStdString() == "Grid")
     {
-        shapeSelection = "g";
-        ui->droneAngleLabel->setEnabled(FALSE);
-        ui->droneAngleSpinbox->setEnabled(FALSE);
+        shapeSelection = 'g';
+        ui->droneAngleLabel->setEnabled(false);
+        ui->droneAngleSpinbox->setEnabled(false);
         ui->droneAmountSpinBox->setRange(3,20);
         ui->droneAmountLabel->setText(tr("Amount of drones (3-20)"));
     }
-    if (arg1.toStdString() == "Polygon")
+    else if (shape.toStdString() == "Polygon")
     {
-        shapeSelection = "p";
-        ui->droneAngleLabel->setEnabled(FALSE);
-        ui->droneAngleSpinbox->setEnabled(FALSE);
+        shapeSelection = 'p';
+        ui->droneAngleLabel->setEnabled(false);
+        ui->droneAngleSpinbox->setEnabled(false);
         ui->droneAmountSpinBox->setRange(3,9);
         ui->droneAmountLabel->setText(tr("Amount of drones (3-9)"));
     }
-    if (arg1.toStdString() == "V-shape")
+    else if (shape.toStdString() == "V-shape")
     {
-        shapeSelection = "v";
-        ui->droneAngleLabel->setEnabled(TRUE);
-        ui->droneAngleSpinbox->setEnabled(TRUE);
+        shapeSelection = 'v';
+        ui->droneAngleLabel->setEnabled(true);
+        ui->droneAngleSpinbox->setEnabled(true);
         ui->droneAmountSpinBox->setRange(3,20);
         ui->droneAmountLabel->setText(tr("Amount of drones (3-20)"));
     }
-    qDebug() << QString::fromStdString(shapeSelection);
+    std::cout << "Shape selected: " << shapeSelection << std::endl;
 }
 
-void MainWindow::on_droneDistanceSpinbox_valueChanged(double arg1)
+void MainWindow::on_droneDistanceSpinbox_valueChanged(double distance)
 {
-    droneDistance = static_cast<float>(arg1);
-    qDebug() << droneDistance;
+    droneDistance = static_cast<float>(distance);
+    qDebug() << "Distance: " << droneDistance;
 }
 
-void MainWindow::on_droneAngleSpinbox_valueChanged(double arg1)
+void MainWindow::on_droneAngleSpinbox_valueChanged(double angle)
 {
-    droneAngle = static_cast<float>(arg1);
-    qDebug() << droneAngle;
+    droneAngle = static_cast<float>(angle);
+    qDebug() << "Angle: " << droneAngle;
 }
 
+void MainWindow::on_droneAmountSpinBox_valueChanged(int amount)
+{
+    droneAmount = amount;
+    qDebug() << "Amount: " << droneAmount;
+}
 
 void MainWindow::on_applyButton_clicked()
 {
-
+    qDebug() << "Save settings button clicked";
+    supervisor.setupSimulation(droneAmount, droneDistance, droneAngle, shapeSelection, droneRandomRange);
 }
 
-void MainWindow::updateScene()
+void MainWindow::on_startButton_clicked()
 {
-//    ui->droneScene->;
+    qDebug() << "Start button clicked";
+    supervisor.startSimulation();
 }
 
+void MainWindow::on_stopButton_clicked()
+{
+    qDebug() << "Stop button clicked";
+    supervisor.stopSimulation();
+}
+
+void MainWindow::on_initRangeSpinBox_valueChanged(double range)
+{
+    droneRandomRange = range;
+    qDebug() << "Init range: " << droneRandomRange;
+}

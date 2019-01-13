@@ -6,20 +6,17 @@
 
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets gui #printsupport
 
 TARGET = View
 TEMPLATE = app
-
+CONFIG += qt
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    simviewer.cpp \
-    form.cpp
+#        src/qcustomplot.cpp
 
-HEADERS  += mainwindow.h \
-    simviewer.h \
-    form.h
+HEADERS  += ../../include/supervisor/View/mainwindow.h \
+#    include/supervisor/qcustomplot.h \
 
-FORMS    += mainwindow.ui \
-    form.ui
+FORMS    += mainwindow.ui
