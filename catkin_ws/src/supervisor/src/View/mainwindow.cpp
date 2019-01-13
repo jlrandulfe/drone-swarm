@@ -19,6 +19,10 @@ MainWindow::MainWindow(QWidget *parent, Supervisor &sup) :
     ui->droneAmountLabel->setText(tr("Amount of drones (3-20)"));
     qDebug() << droneAngle;
 
+    ui->applyButton->setStyleSheet("background-color: blue");
+    ui->startButton->setStyleSheet("background-color: green");
+    ui->stopButton->setStyleSheet("background-color: red");
+
 //    ui->plot->addGraph();
 //    ui->plot->graph(0)->setScatterStyle(QCPScatterStyle::ssCircle);
 //    ui->plot->graph(0)->setLineStyle(QCPGraph::lsNone);
@@ -105,4 +109,16 @@ void MainWindow::on_initRangeSpinBox_valueChanged(double range)
 {
     droneRandomRange = range;
     qDebug() << "Init range: " << droneRandomRange;
+}
+
+void MainWindow::on_simTimeSpinbox_valueChanged(double simTime)
+{
+    qDebug() << "Simulation time: " << simTime << " s";
+    simTime = simTime;
+}
+
+void MainWindow::on_simResSpinbox_valueChanged(int simRes)
+{
+    qDebug() << "Simulation timestep resolution: " << simRes << " ms";
+    simRes = simRes;
 }
