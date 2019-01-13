@@ -107,7 +107,7 @@ class DroneSwarmNode():
         self.dt=5e-2
         self.time = np.linspace(0, tf, tf/self.dt)
         self.quad_sim = simulation.SimNQuads(self.drones, self.fc, self.time)
-
+        rospy.loginfo("The drone simulation has been set-up")
         return 0
 
     def init_formation(self):
@@ -152,8 +152,10 @@ class DroneSwarmNode():
     def handle_start_stop(self, req):
         if req.stop:
             self.stop = True
+            rospy.logwarn("Received STOP command")
         if req.start:
             self.start = True
+            rospy.logwarn("Received START command")
         return PycopterStartStopResponse(True)
 
     def run(self):
@@ -174,7 +176,7 @@ class DroneSwarmNode():
         if init == -1:
             return
         rospy.loginfo("Setting start/stop service up")
-        rospy.Service('pycopter/start_stop', PycopterStartStop,
+        rospy.Service("pycopter/start_stop", PycopterStartStop,
                       self.handle_start_stop)
         while not self.start:
             pass
