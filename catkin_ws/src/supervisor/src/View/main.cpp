@@ -1,4 +1,4 @@
-#include "../../include/supervisor/View/mainwindow.h"
+#include "supervisor/View/mainwindow.h"
 #include <QApplication>
 // #include "supervisor/Model/supervisor.hpp"
 
