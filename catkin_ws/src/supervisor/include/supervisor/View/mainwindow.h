@@ -47,7 +47,7 @@ private:
     float droneAngle = 0.0f;
     float droneRandomRange;
     float simTime = 30;
-    int simRes = 50;
+    float simRes = 50;
 };
 
 #endif // MAINWINDOW_H

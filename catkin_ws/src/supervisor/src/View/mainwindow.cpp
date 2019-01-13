@@ -37,7 +37,8 @@ MainWindow::~MainWindow()
     delete ui;
     #include <cstdlib>
     system("rosnode kill execute");
-    system("rosnode kill pycopter");
+    system("rosnode kill drome_swarm_sim");
+    system("rosnode kill kalman_filter");
 }
 
 void MainWindow::on_shapeCombo_currentTextChanged(const QString &shape)
@@ -90,7 +91,7 @@ void MainWindow::on_droneAmountSpinBox_valueChanged(int amount)
 void MainWindow::on_applyButton_clicked()
 {
     qDebug() << "Save settings button clicked";
-    supervisor.setupSimulation(droneAmount, droneDistance, droneAngle, shapeSelection, droneRandomRange);
+    supervisor.setupSimulation(droneAmount, droneDistance, droneAngle, shapeSelection, droneRandomRange, simRes, simTime);
 }
 
 void MainWindow::on_startButton_clicked()
@@ -111,14 +112,14 @@ void MainWindow::on_initRangeSpinBox_valueChanged(double range)
     qDebug() << "Init range: " << droneRandomRange;
 }
 
-void MainWindow::on_simTimeSpinbox_valueChanged(double simTime)
+void MainWindow::on_simTimeSpinbox_valueChanged(double simTime_)
 {
+    simTime = simTime_;
     qDebug() << "Simulation time: " << simTime << " s";
-    simTime = simTime;
 }
 
-void MainWindow::on_simResSpinbox_valueChanged(int simRes)
+void MainWindow::on_simResSpinbox_valueChanged(int simRes_)
 {
+    simRes = simRes_;
     qDebug() << "Simulation timestep resolution: " << simRes << " ms";
-    simRes = simRes;
 }
