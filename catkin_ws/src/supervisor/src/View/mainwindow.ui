@@ -26,7 +26,7 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>9</x>
@@ -41,7 +41,7 @@
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <layout class="QHBoxLayout" name="horizontalLayout_9">
          <item>
           <layout class="QVBoxLayout" name="verticalLayout">
@@ -164,7 +164,7 @@
              <item>
               <widget class="QLabel" name="initRangeLabel">
                <property name="text">
-                <string>Init range:</string>
+                <string>Init range [m]:</string>
                </property>
               </widget>
              </item>
