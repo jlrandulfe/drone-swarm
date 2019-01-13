@@ -33,23 +33,29 @@ class ErrorEstimatorNode():
                          std_msgs.msg.Float64MultiArray,
                          self.pat_gen_start_callback, queue_size=1)
 
-        # Drone controller topic publishers
-        #self.errors_pub = rospy.Publisher(
-         #       "error_estimator/errors",
-          #      std_msgs.msg.Float64MultiArray,
-           #     queue_size=1)
-        self.control_variable_pub = rospy.Publisher(
+        # Drone controller topic publisher
+        self.control_var_pub = rospy.Publisher(
                 "error_estimator/control_value",
                 std_msgs.msg.Float64MultiArray,
                 queue_size=1)
-        
         return
 
     def kalman_callback(self, data):
+        """
+        Calculate and send the control variable of the drones
+
+        The control is done with a P controller fed with the actual
+        distances between the drones, which are obtained in the Kalman
+        node.
+
+        It will not work until the desired distances are obtained from
+        the pattern generator.
+        """
+        if not self.start:
+            return
         self.predicted_distances = array_operations.multiarray2np(data)
         self.errors = error_functions.simple_differences(
                 self.desired_distances, self.predicted_distances)
-        
 
         #kalman P gain
         Kp = 1.2
@@ -59,19 +65,23 @@ class ErrorEstimatorNode():
 
         for j in range(0, len(self.errors)):
             if(self.errors[drone-1,j] != 0.0):
-            #this is the row of the drone i am
+            # This is the row of the drone i am
 
-                #add op the unit vector*e of all in this row
+                # Add up the unit vector of all in this row
+                unit_vector = (self.desired_distances[drone-1,j]
+                               / dist(self.desired_distances[drone-1,j]))
                 if drone-1 > j:
-                    units = units - (self.desired_distances[drone-1,j]/dist(self.desired_distances[drone-1,j]))*self.errors[drone-1,j]
+                    units -= unit_vector * self.errors[drone-1,j]
                 elif drone-1 < j:
-                    units = units + (self.desired_distances[drone-1,j]/dist(self.desired_distances[drone-1,j]))*self.errors[drone-1,j]
+                    units += unit_vector * self.errors[drone-1,j]
 
-        self.control_variable_pub.publish(array_operations.np2multiarray(Kp*units))
-        #self.errors_pub.publish(array_operations.np2multiarray(self.errors))
+        self.control_var_pub.publish(array_operations.np2multiarray(Kp*units))
         return
 
     def pat_gen_start_callback(self, data):
+        """
+        Store the desired distances, and allow the controller to start
+        """
         self.desired_distances = array_operations.multiarray2np(data.data)
         self.start = True
         return
