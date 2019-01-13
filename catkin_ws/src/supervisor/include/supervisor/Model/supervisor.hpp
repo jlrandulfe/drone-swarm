@@ -1,9 +1,8 @@
 #include "ros/ros.h"
 #include "formation_control/Formation.h" //service
-#include "pycopter/PycopterStartPositions.h" //service
+#include "pycopter/DroneSwarmMultiArray.h" //service
 #include "pycopter/PycopterStartStop.h" //service
 
-// #include "std_msgs/Float64MultiArray.h"
 
 
 class Supervisor
@@ -18,11 +17,11 @@ public:
 
 private:
 	void getFormation(int amount_of_drones, float distance, float v_shape_angle, char shape, float range);
-	bool servicePyCopterCallback(pycopter::PycopterStartPositionsRequest  &req, pycopter::PycopterStartPositionsResponse &res);
-	bool serviceKalmanCallback(formation_control::Formation::Request  &req, formation_control::Formation::Response &res);
+	bool servicePyCopterCallback(pycopter::DroneSwarmMultiArray::Request  &req, pycopter::DroneSwarmMultiArray::Response &res);
+	bool serviceKalmanCallback(pycopter::DroneSwarmMultiArray::Request  &req, pycopter::DroneSwarmMultiArray::Response &res);
 	// void servicePyCopter(int amount_of_drones);
 	ros::ServiceClient pycopter_client;
-
+	
 	bool is_simulation_running;
 
 	ros::NodeHandle n;

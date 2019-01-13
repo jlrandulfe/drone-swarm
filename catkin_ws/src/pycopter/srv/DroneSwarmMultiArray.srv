@@ -1,0 +1,5 @@
+bool a
+---
+int64 n_rows
+int64 n_cols
+float64[] data
