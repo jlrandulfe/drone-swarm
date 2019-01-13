@@ -54,8 +54,8 @@ class Kalman:
 
 
 	def predict(self, state_sim, relative_velocities):
-		print(" PREDICTION ")
-		print("\n")
+		#print(" PREDICTION ")
+		#print("\n")
 		# predict the position in the plane of the drone
 		# How the position evolvers -> dynamics
 		#self.next_pos_x = self.state_X[0] + relative_velocities[0] * self.dt
@@ -91,11 +91,11 @@ class Kalman:
 		self.predict_cov_P = self.F.dot(self.cov_P).dot(self.F.transpose()) + self.Q
 		self.state_X = self.predict_state_X
 		self.cov_P = self.predict_cov_P
-		print(" predict_State : ", self.predict_state_X)
-		print("\n")
+		#print(" predict_State : ", self.predict_state_X)
+		#print("\n")
 
-		print(" predict_cov_P : ", self.predict_cov_P)
-		print("\n")
+		#print(" predict_cov_P : ", self.predict_cov_P)
+		#print("\n")
 
 	def distance (self, x, y):
 
@@ -106,8 +106,8 @@ class Kalman:
 		return d
 
 	def update(self, state_sim, distance_sensor):
-		print(" UPDATE ") # STEP K
-		print("\n")
+		#print(" UPDATE ") # STEP K
+		#print("\n")
 		# correct the KF
 		#print(" predict_State size: ", self.predict_state_X.size)
 		#print("\n")
@@ -118,8 +118,8 @@ class Kalman:
 		# scalar * 2D array
 		self.state_X = state_sim
 		dist = (self.distance(self.state_X[0], self.state_X[1]))
-		print(" dist: ", dist)
-		print("\n")
+		#print(" dist: ", dist)
+		#print("\n")
 
 		if dist.any() == 0:
 			pass
@@ -134,8 +134,8 @@ class Kalman:
 		#print(" H shape: ", self.H.shape)
 		#print("\n")
 
-		print(" H : ", self.H)
-		print("\n")
+		#print(" H : ", self.H)
+		#print("\n")
 
 		#print(" previous_State size: ", previous_state.shape)
 		#print("\n")
@@ -154,18 +154,18 @@ class Kalman:
 		#print(" R size: ", self.R.shape)
 		#print("\n")
 
-		print(" R: ", self.R)
-		print("\n")
+		#print(" R: ", self.R)
+		#print("\n")
 
 		S = self.H.dot(self.cov_P).dot(self.H.reshape(2, 1)) + self.R
 
 		#print(" S size: ", S.shape)
 		#print("\n")
-		print(" P : ", self.cov_P)
-		print("\n")
+		#print(" P : ", self.cov_P)
+		#print("\n")
 
-		print(" S : ", S)
-		print("\n")
+		#print(" S : ", S)
+		#print("\n")
 
 		#print(" first mult size: ", (self.H * self.radar_sigma))
 		#print("\n")
@@ -176,35 +176,35 @@ class Kalman:
 			#print(" P * Ht size: ", (self.cov_P.dot(self.H.reshape(2, 1))).shape)
 			#print("\n")
 
-			print(" P * Ht : ", (self.cov_P.dot(self.H.reshape(2, 1))))
-			print("\n")
+			#print(" P * Ht : ", (self.cov_P.dot(self.H.reshape(2, 1))))
+			#print("\n")
 
 			#print(" K size: ", self.K.shape)
 			#print("\n")
 
-			print(" K : ", self.K)
-			print("\n")
-			print(" prueba2: ", self.H.dot(self.cov_P))
-			print("\n")
-			print(" prueba1: ", np.outer(self.K, self.H.dot(self.cov_P)))
-			print("\n")
-			self.cov_P = self.cov_P - np.outer(self.K, self.H.dot(self.cov_P)) # si updateo cov matrix no estiammos bien
+			#print(" K : ", self.K)
+			#print("\n")
+			#print(" prueba2: ", self.H.dot(self.cov_P))
+			#print("\n")
+			#print(" prueba1: ", np.outer(self.K, self.H.dot(self.cov_P)))
+			#print("\n")
+			self.cov_P = self.cov_P - np.outer(self.K, self.H.dot(self.cov_P))
 		else:
 			self.K = self.cov_P.dot(self.H.reshape(2, 1)).dot(la.inv(S))
 			self.cov_P = self.cov_P - np.outer(self.K, self.H.dot(self.cov_P))
 
-		self.state_X = self.state_X + self.K * (self.error(distance_sensor)) # distance_measure should be an input!!
+		self.state_X = self.state_X + self.K * (self.error(distance_sensor))
 
-		print(" H : ", self.H)
-		print("\n")
-		print(" cov_P: ", self.cov_P)
-		print("\n")
+		#print(" H : ", self.H)
+		#print("\n")
+		#print(" cov_P: ", self.cov_P)
+		#print("\n")
 
-		print(" state_X: ", self.state_X)
-		print("\n")
+		#print(" state_X: ", self.state_X)
+		#print("\n")
 
-		print(" cov_P: ", self.cov_P)
-		print("\n")
+		#print(" cov_P: ", self.cov_P)
+		#print("\n")
 
 	def error(self, distance_sensor):
 
@@ -216,8 +216,8 @@ class Kalman:
 		#self.err_plot[self.i] = distance_sensor - dist_estimation
 		rmse = np.sqrt(dist_estimation*dist_estimation - distance_sensor*distance_sensor)
 		#self.i = self.i +1
-		print(" Error: ", err)
-		print("\n")
+		#print(" Error: ", err)
+		#print("\n")
 
 		#print(" RMSE CALC: ", rmse)
 		#print("\n")
