@@ -10,8 +10,11 @@ class KalmanFilter:
         rospy.init_node('kalman_filter')
         rospy.loginfo("kalman_filter node created")
 
-        # Pycopter position subscriber
-        #rospy.Subscriber('/current_pose', Float64MultiArray, self.pose_cb) # floatmultiarray from .py simulator
+        # Pycopter position and velocity subscriber
+        rospy.Subscriber("pycopter/positions", std_msgs.msg.Float64MultiArray, self.pos_cb, queue_size = 1)
+        rospy.Subscriber("pycopter/velocities", std_msgs.msg.Float64MultiArray, self.vel_cb, queue_size=1)
+        # floatmultiarray from .py simulator
+
         # create pattern example
         self.kalman_pub = rospy.Publisher('kalman_estimation', Float64MultiArray, queue_size = 1)
 
@@ -24,7 +27,7 @@ class KalmanFilter:
         self.kf = []
         self.id = np.zeros((self.nr_drones * self.nr_drones, 2))
         self.states_drones = [0, 0, 1.5, 2.3, 4, 2, 1, 1]
-        self.relative_velocities_drones = [0, 0, -1.5, 0.5, 1, -2, 1.5, 0.1]
+        self.velocities_drones = [0, 0, -1.5, 0.5, 1, -2, 1.5, 0.1]
         self.kalman_matrix = np.zeros((self.nr_drones, self.nr_drones))
 
         print('Kalman_OUTPUT: ')
@@ -48,6 +51,23 @@ class KalmanFilter:
         #resp1 = add_two_ints(x, y)
         #except rospy.ServiceException as exc:
         #  print("Service did not process request: " + str(exc))
+
+        try:
+            setup_pycopter = rospy.ServiceProxy("supervisor/kalman",)
+            resp = setup_pycopter(True)
+            self.nr_drones = resp.n_rows
+            positions = resp.data
+        except rospy.ServiceException as e:
+            print("Service call failed: {}".format(e))
+            return -1
+            # Initial conditions
+        for i in range(self.nr_drones):
+            if i == 0:
+                xyz_0 = np.array([positions[0], positions[1]])
+            else:
+                new_pos = np.array([positions[2 * i], positions[2 * i + 1], 0])
+                xyz_0 = np.vstack((xyz_0, new_pos))
+
         self.loop()
 
     def loop(self):
@@ -67,6 +87,12 @@ class KalmanFilter:
 
         self.pattern = pattern
         array_operations.multiarray2np(self.pattern)
+
+    def pos_cb(self, pos_msg):
+        self.states_drones = pos_msg.data
+
+    def vel_cb(self, vel_msg):
+        self.velocities_drones = vel_msg.data
 
     def create_kalman_filters(self):
 
@@ -111,8 +137,8 @@ class KalmanFilter:
             #print(self.state[0])
             relative_x = self.states_drones[2*id_drone] - self.states_drones[2*id_estimation]
             relative_y = self.states_drones[(2*id_drone) + 1] - self.states_drones[(2*id_estimation) + 1]
-            velocity_relative_x = self.relative_velocities_drones[2*id_drone] - self.relative_velocities_drones[2*id_estimation]
-            velocity_relative_y = self.relative_velocities_drones[(2*id_drone)+1] - self.relative_velocities_drones[2*id_estimation]
+            velocity_relative_x = self.velocities_drones[2*id_drone] - self.velocities_drones[2*id_estimation]
+            velocity_relative_y = self.velocities_drones[(2*id_drone)+1] - self.velocities_drones[2*id_estimation]
             relative_velocities[0] = velocity_relative_x
             relative_velocities[1] = velocity_relative_y
             state_simulator[0] = relative_x
