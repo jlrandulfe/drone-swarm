@@ -7,20 +7,20 @@ Module for testing the service client functionality of pycopter
 import rospy
 import std_msgs.msg
 # Local libraries
-from pycopter.srv import PycopterStartPositions
-from pycopter.srv import PycopterStartPositionsResponse
+from pycopter.srv import DroneSwarmMultiArray
+from pycopter.srv import DroneSwarmMultiArrayResponse
 from pycopter.srv import PycopterStartStop
 
 start = False
 ndrones = 3
 
 def handle_start_positions(req):
-    resp = PycopterStartPositionsResponse()
+    resp = DroneSwarmMultiArrayResponse()
     if ndrones == 2:
-        resp.matrix_size = 2
+        resp.n_rows = 2
         resp.data = [1, 2, 0, 1]
     elif ndrones == 3:
-        resp.matrix_size = 3
+        resp.n_rows = 3
         resp.data = [1, 2, 1, 3, 2, 3]
     rospy.loginfo("Response sent back")
     global start
@@ -29,7 +29,7 @@ def handle_start_positions(req):
 
 def main():
     # Instantiate the error_estimator node class and run it
-    rospy.Service('supervisor/pycopter', PycopterStartPositions,
+    rospy.Service('supervisor/pycopter', DroneSwarmMultiArray,
                   handle_start_positions)
     rospy.loginfo("The service is ready")
     while not start:

@@ -12,7 +12,7 @@ import std_msgs.msg
 from pycopter import formation_distance as form
 from pycopter import simulation
 import pycopter.quadrotor as quad
-from pycopter.srv import PycopterStartPositions
+from pycopter.srv import DroneSwarmMultiArray
 from pycopter.srv import PycopterStartStop
 from pycopter.srv import PycopterStartStopResponse
 
@@ -69,7 +69,7 @@ class DroneSwarmNode():
         """
         try:
             setup_pycopter = rospy.ServiceProxy("supervisor/pycopter",
-                                                PycopterStartPositions)
+                                                DroneSwarmMultiArray)
             resp = setup_pycopter(True)
             self.n_drones = resp.n_rows
             positions = resp.data
