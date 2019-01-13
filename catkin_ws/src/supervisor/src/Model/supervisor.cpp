@@ -77,9 +77,9 @@ void Supervisor::stopSimulation()
 }
 
 
-bool Supervisor::servicePyCopterCallback(pycopter::PycopterStartPositions::Request  &req, pycopter::PycopterStartPositions::Response &res)
+bool Supervisor::servicePyCopterCallback(pycopter::DroneSwarmMultiArray::Request  &req, pycopter::DroneSwarmMultiArray::Response &res)
 {
-	printf("PyCopterService called\n");
+	printf("PyCopter Service called\n");
 	std::vector<double> start_pose_data(2*start_pose.size());	
 	int iterator = 0;
 	for(int i = 0; i < start_pose.size(); i++)
@@ -90,24 +90,24 @@ bool Supervisor::servicePyCopterCallback(pycopter::PycopterStartPositions::Reque
 		iterator++;
 	}
 	res.data = start_pose_data;
-	res.matrix_size = start_pose.size();
+	res.n_rows = start_pose.size();
+	res.n_cols = 2;
 	return true;
 }
 
-bool Supervisor::serviceKalmanCallback(formation_control::Formation::Request  &req, formation_control::Formation::Response &res)
+bool Supervisor::serviceKalmanCallback(pycopter::DroneSwarmMultiArray::Request  &req, pycopter::DroneSwarmMultiArray::Response &res)
 {
-	printf("PyCopterService called\n");
-	std::vector<double> start_pose_data(2*start_pose.size());	
+	printf("Kalman Service called\n");
+	std::vector<double> connection_data(2*start_pose.size());	
 	int iterator = 0;
-	for(int i = 0; i < start_pose.size(); i++)
-	{
-		start_pose_data[iterator] = start_pose[i][0];//x
-		iterator++;
-		start_pose_data[iterator] = start_pose[i][1];//y
-		iterator++;
-	}
-	res.data = start_pose_data;
-	res.matrix_size = start_pose.size();
+	for(int i = 0; i < connection_matrix.size(); i++)
+		for (int j = 0; j < connection_matrix.size(); ++j)
+		{
+			connection_data[iterator] = connection_matrix[i][j];
+			iterator++;
+		}
+	res.data = connection_data;
+	res.n_rows = res.n_cols = connection_matrix.size();
 	return true;
 }
 
@@ -173,12 +173,6 @@ void Supervisor::getFormation(int amount_of_drones, float distance, float v_shap
   	{
 		ROS_ERROR("Failed to call service formation_control");
   	}
-}
-
-bool add(formation_control::Formation::Request  &req, formation_control::Formation::Response &res)
-{
-	std::cout << "Received Service Call" << std::endl;
-	
 }
 
 
