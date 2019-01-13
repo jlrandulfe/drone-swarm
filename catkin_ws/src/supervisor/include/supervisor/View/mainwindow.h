@@ -27,10 +27,7 @@ private slots:
     void on_droneDistanceSpinbox_valueChanged(double arg1);
     void on_droneAngleSpinbox_valueChanged(double arg1);
     void on_applyButton_clicked();
-    void updateScene();
-
     void on_startButton_clicked();
-
     void on_stopButton_clicked();
 
 private:

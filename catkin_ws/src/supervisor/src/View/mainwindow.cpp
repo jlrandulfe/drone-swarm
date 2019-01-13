@@ -30,15 +30,8 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_droneAmountSpinBox_valueChanged(int arg1)
-{
-    droneAmount = arg1;
-    qDebug() << droneAmount;
-}
-
 void MainWindow::on_shapeCombo_currentTextChanged(const QString &arg1)
 {
-    qDebug() << arg1;
     if (arg1.toStdString() == "Grid")
     {
         shapeSelection = "g";
@@ -69,33 +62,32 @@ void MainWindow::on_shapeCombo_currentTextChanged(const QString &arg1)
 void MainWindow::on_droneDistanceSpinbox_valueChanged(double arg1)
 {
     droneDistance = static_cast<float>(arg1);
-    qDebug() << droneDistance;
+    qDebug() << "Distance: " << droneDistance;
 }
 
 void MainWindow::on_droneAngleSpinbox_valueChanged(double arg1)
 {
     droneAngle = static_cast<float>(arg1);
-    qDebug() << droneAngle;
+    qDebug() << "Angle: " << droneAngle;
 }
 
+void MainWindow::on_droneAmountSpinBox_valueChanged(int arg1)
+{
+    droneAmount = arg1;
+    qDebug() << "Amount: " << droneAmount;
+}
 
 void MainWindow::on_applyButton_clicked()
 {
-
+    qDebug() << "Save settings button clicked";
 }
-
-void MainWindow::updateScene()
-{
-//    ui->droneScene->;
-}
-
 
 void MainWindow::on_startButton_clicked()
 {
-
+    qDebug() << "Start button clicked";
 }
 
 void MainWindow::on_stopButton_clicked()
 {
-
+    qDebug() << "Stop button clicked";
 }
