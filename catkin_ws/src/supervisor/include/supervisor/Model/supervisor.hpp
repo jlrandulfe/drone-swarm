@@ -21,7 +21,7 @@ private:
 	bool serviceKalmanCallback(pycopter::DroneSwarmMultiArray::Request  &req, pycopter::DroneSwarmMultiArray::Response &res);
 	// void servicePyCopter(int amount_of_drones);
 	ros::ServiceClient pycopter_client;
-
+	
 	bool is_simulation_running;
 
 	ros::NodeHandle n;
