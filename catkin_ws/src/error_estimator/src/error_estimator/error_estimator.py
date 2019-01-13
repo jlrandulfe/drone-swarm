@@ -57,7 +57,7 @@ class ErrorEstimatorNode():
         self.errors = error_functions.simple_differences(
                 self.desired_distances, self.predicted_distances)
 
-        #kalman P gain
+        # P gain
         Kp = 1.2
         units = np.zeros([1,2])
 
