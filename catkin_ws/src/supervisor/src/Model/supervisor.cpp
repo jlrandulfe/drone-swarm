@@ -45,21 +45,18 @@ void Supervisor::setupSimulation(int amount_of_drones, float distance, float v_s
 bool Supervisor::servicePyCopterCallback(pycopter::PycopterStartPositions::Request  &req, pycopter::PycopterStartPositions::Response &res)
 {
 	printf("PyCopterService called\n");
-
-	/*
-
-		int iterator = 0;
-		for(int i = 0; i < amount_of_drones; i++)
-		{
-			start_pose_data[iterator] = random_positions[i].x;//x
-			iterator++;
-			start_pose_data[iterator] = random_positions[i].y;//x
-			iterator++;
-		}
-
-	res.data = 
-
-	*/
+	std::vector<double> start_pose_data(2*start_pose.size());	
+	int iterator = 0;
+	for(int i = 0; i < start_pose.size(); i++)
+	{
+		start_pose_data[iterator] = start_pose[i][0];//x
+		iterator++;
+		start_pose_data[iterator] = start_pose[i][1];//y
+		iterator++;
+	}
+	res.data = start_pose_data;
+	res.matrix_size = start_pose.size();
+	return true;
 }
 
 bool Supervisor::serviceKalmanCallback(formation_control::Formation::Request  &req, formation_control::Formation::Response &res)
@@ -80,6 +77,7 @@ bool Supervisor::serviceKalmanCallback(formation_control::Formation::Request  &r
 	res.data = 
 
 	*/
+	return true;
 }
 
 
@@ -99,7 +97,7 @@ void Supervisor::getFormation(int amount_of_drones, float distance, float v_shap
   	{
 		std::cout << "Matrix Size: " << srv.response.matrix_size << std::endl;
 		int iterator = 0;
-		std::vector<float> temp_storage;
+		std::vector<double> temp_storage;
 		for (int i = 0; i < srv.response.matrix_size; ++i)
 		{
 			for (int j = 0; j < srv.response.matrix_size; ++j)

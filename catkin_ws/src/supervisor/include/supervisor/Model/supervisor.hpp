@@ -19,8 +19,8 @@ private:
 
 
 	ros::NodeHandle n;
-	std::vector<std::vector<float> > connection_matrix;
-	std::vector<std::vector<float> > start_pose;
+	std::vector<std::vector<double> > connection_matrix;
+	std::vector<std::vector<double> > start_pose;
 	ros::ServiceServer pycopter_service;
 	ros::ServiceServer kalman_service;
 };
