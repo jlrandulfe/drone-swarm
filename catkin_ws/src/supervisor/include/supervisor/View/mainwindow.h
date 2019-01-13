@@ -33,16 +33,16 @@ private slots:
 private:
 
     Ui::MainWindow *ui;
-
+    Supervisor supervisor;
     void addPoint(double x, double y);
     void clearData();
     void plot();
 
-    std::string shapeSelection;
+    char shapeSelection;
     int droneAmount;
     float droneDistance;
     float droneAngle = 0.0f;
-    float random;
+    float droneRandomRange;
 };
 
 #endif // MAINWINDOW_H

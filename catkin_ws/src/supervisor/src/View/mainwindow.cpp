@@ -5,7 +5,8 @@
 
 MainWindow::MainWindow(QWidget *parent, Supervisor &sup) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    supervisor(sup)
 {
     // Init UI
     ui->setupUi(this);
@@ -34,29 +35,29 @@ void MainWindow::on_shapeCombo_currentTextChanged(const QString &arg1)
 {
     if (arg1.toStdString() == "Grid")
     {
-        shapeSelection = "g";
+        shapeSelection = 'g';
         ui->droneAngleLabel->setEnabled(false);
         ui->droneAngleSpinbox->setEnabled(false);
         ui->droneAmountSpinBox->setRange(3,20);
         ui->droneAmountLabel->setText(tr("Amount of drones (3-20)"));
     }
-    if (arg1.toStdString() == "Polygon")
+    else if (arg1.toStdString() == "Polygon")
     {
-        shapeSelection = "p";
+        shapeSelection = 'p';
         ui->droneAngleLabel->setEnabled(false);
         ui->droneAngleSpinbox->setEnabled(false);
         ui->droneAmountSpinBox->setRange(3,9);
         ui->droneAmountLabel->setText(tr("Amount of drones (3-9)"));
     }
-    if (arg1.toStdString() == "V-shape")
+    else if (arg1.toStdString() == "V-shape")
     {
-        shapeSelection = "v";
+        shapeSelection = 'v';
         ui->droneAngleLabel->setEnabled(true);
         ui->droneAngleSpinbox->setEnabled(true);
         ui->droneAmountSpinBox->setRange(3,20);
         ui->droneAmountLabel->setText(tr("Amount of drones (3-20)"));
     }
-    qDebug() << QString::fromStdString(shapeSelection);
+    std::cout << "Shape selected: " << shapeSelection << std::endl;
 }
 
 void MainWindow::on_droneDistanceSpinbox_valueChanged(double arg1)
@@ -80,6 +81,7 @@ void MainWindow::on_droneAmountSpinBox_valueChanged(int arg1)
 void MainWindow::on_applyButton_clicked()
 {
     qDebug() << "Save settings button clicked";
+    supervisor.setupSimulation(droneAmount, droneDistance, droneAngle, shapeSelection, droneRandomRange);
 }
 
 void MainWindow::on_startButton_clicked()

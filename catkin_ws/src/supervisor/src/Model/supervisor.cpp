@@ -3,11 +3,6 @@
 Supervisor::Supervisor(ros::NodeHandle nh): n(nh)
 {
 	printf("Created Supervisor\n");
-	printf("Starting PyCopterService\n");
-	pycopter_service = n.advertiseService("supervisor/pycopter", &Supervisor::servicePyCopterCallback, this);
-	printf("Starting KalmanService\n");
-	kalman_service = n.advertiseService("supervisor/kalman", &Supervisor::serviceKalmanCallback, this);
-
 }
 
 Supervisor::~Supervisor()
@@ -39,8 +34,11 @@ void Supervisor::setupSimulation(int amount_of_drones, float distance, float v_s
 {
 	this->getFormation(amount_of_drones, distance, v_shape_angle, shape, range);
 	//publish connection matrix to error_estimator/controller node and kalman_filter node
-
+	printf("Starting KalmanService\n");
+	kalman_service = n.advertiseService("supervisor/kalman", &Supervisor::serviceKalmanCallback, this);
 	//publish starting locations and number of drones to pycopter
+	printf("Starting PyCopterService\n");
+	pycopter_service = n.advertiseService("supervisor/pycopter", &Supervisor::servicePyCopterCallback, this);
 }
 
 
