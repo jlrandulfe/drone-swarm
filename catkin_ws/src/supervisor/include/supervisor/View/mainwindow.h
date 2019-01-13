@@ -44,10 +44,10 @@ private:
     char shapeSelection;
     int droneAmount;
     float droneDistance;
-    float droneAngle = 0.0f;
+    float droneAngle;
     float droneRandomRange;
-    float simTime = 30;
-    float simRes = 50;
+    float simTime;
+    float simRes;
 };
 
 #endif // MAINWINDOW_H
