@@ -19,9 +19,11 @@ MainWindow::MainWindow(QWidget *parent, Supervisor &sup) :
     ui->droneAmountLabel->setText(tr("Amount of drones (3-20)"));
     qDebug() << droneAngle;
 
-    ui->applyButton->setStyleSheet("background-color: blue");
-    ui->startButton->setStyleSheet("background-color: green");
-    ui->stopButton->setStyleSheet("background-color: red");
+    ui->applyButton->setStyleSheet("background-color: blue; color: rgb(0, 0, 0)");
+    ui->startButton->setStyleSheet("background-color: green; color: rgb(0, 0, 0)");
+    ui->stopButton->setStyleSheet("background-color: red; color: rgb(0, 0, 0)");
+
+    ui->applyButton->
 
 //    ui->plot->addGraph();
 //    ui->plot->graph(0)->setScatterStyle(QCPScatterStyle::ssCircle);
