@@ -3,6 +3,7 @@
 Supervisor::Supervisor(ros::NodeHandle nh): n(nh)
 {
 	printf("Created Supervisor\n");
+	ros::spinOnce();
 }
 
 Supervisor::~Supervisor()

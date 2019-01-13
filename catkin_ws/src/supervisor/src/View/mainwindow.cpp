@@ -1,6 +1,8 @@
 #include "supervisor/View/mainwindow.h"
 #include "ui_mainwindow.h"
 #include <iostream>
+#include <cstdlib>
+
 
 
 MainWindow::MainWindow(QWidget *parent, Supervisor &sup) :
@@ -29,6 +31,9 @@ MainWindow::MainWindow(QWidget *parent, Supervisor &sup) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    #include <cstdlib>
+    system("rosnode kill execute");
+    system("rosnode kill pycopter");
 }
 
 void MainWindow::on_shapeCombo_currentTextChanged(const QString &shape)

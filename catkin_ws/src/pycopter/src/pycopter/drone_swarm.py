@@ -170,7 +170,9 @@ class DroneSwarmNode():
         """
         # Wait until the supervisor server is ready
         rospy.loginfo("Waiting for supervisor service")
-        rospy.wait_for_service("supervisor/pycopter")
+        rospy.wait_for_service("/supervisor/pycopter")
+        rospy.loginfo("Online")
+
         init = self.init_drones()
         # If there was an error, exit execution
         if init == -1:

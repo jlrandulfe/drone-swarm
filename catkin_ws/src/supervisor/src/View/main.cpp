@@ -12,6 +12,7 @@ int main(int argc, char **argv)
 	Supervisor sup(n);
 	MainWindow w(0,sup);
     w.show();
-
+    ros::AsyncSpinner spinner(4); // Use 4 threads
+	spinner.start();
     return a.exec();
 }
