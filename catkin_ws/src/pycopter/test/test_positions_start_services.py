@@ -12,11 +12,16 @@ from pycopter.srv import PycopterStartPositionsResponse
 from pycopter.srv import PycopterStartStop
 
 start = False
+ndrones = 3
 
 def handle_start_positions(req):
     resp = PycopterStartPositionsResponse()
-    resp.matrix_size = 3
-    resp.data = [0, 1, 2, 1, 0, 3, 2, 3, 0]
+    if ndrones == 2:
+        resp.matrix_size = 2
+        resp.data = [1, 2, 0, 1]
+    elif ndrones == 3:
+        resp.matrix_size = 3
+        resp.data = [1, 2, 1, 3, 2, 3]
     rospy.loginfo("Response sent back")
     global start
     start = True
