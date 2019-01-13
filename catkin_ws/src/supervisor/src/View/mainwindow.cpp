@@ -92,11 +92,13 @@ void MainWindow::on_applyButton_clicked()
 void MainWindow::on_startButton_clicked()
 {
     qDebug() << "Start button clicked";
+    supervisor.startSimulation();
 }
 
 void MainWindow::on_stopButton_clicked()
 {
     qDebug() << "Stop button clicked";
+    supervisor.stopSimulation();
 }
 
 void MainWindow::on_initRangeSpinBox_valueChanged(double range)
