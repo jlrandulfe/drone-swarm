@@ -21,7 +21,9 @@ def handle_start_positions(req):
         resp.data = [1, 2, 0, 1]
     elif ndrones == 3:
         resp.n_rows = 3
-        resp.data = [1, 2, 1, 3, 2, 3]
+        resp.data = [1, 2, 1, 3, 2, 3] 
+    resp.param1 = 40 # seconds
+    resp.param2 = 50 # milliseconds
     rospy.loginfo("Response sent back")
     global start
     start = True
