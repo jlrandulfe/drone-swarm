@@ -29,6 +29,7 @@ private slots:
     void on_applyButton_clicked();
     void on_startButton_clicked();
     void on_stopButton_clicked();
+    void on_initRangeSpinBox_valueChanged(double arg1);
 
 private:
 
