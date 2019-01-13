@@ -1,4 +1,5 @@
 <launch>
   <node name="execute" pkg="formation_control" type="execute" output="screen"/>
   <node name="View" pkg="supervisor" type="View" output="screen"/>
+  <node name="pycopter" pkg="pycopter" type="pycopter" output="screen"/>
 </launch>
