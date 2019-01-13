@@ -71,12 +71,12 @@ class DroneSwarmNode():
         Initialize the quadrotor drones and store them in a list
         """
         try:
-            setup_pycopter = rospy.ServiceProxy('setup_pycopter',
+            setup_pycopter = rospy.ServiceProxy("supervisor/pycopter",
                                                 PycopterStartPositions)
             resp = setup_pycopter(True)
             self.n_drones = resp.matrix_size
             positions = resp.data
-        except (rospy.ServiceException, e):
+        except rospy.ServiceException as e:
             print("Service call failed: {}".format(e))
             return -1
         # Initial conditions
