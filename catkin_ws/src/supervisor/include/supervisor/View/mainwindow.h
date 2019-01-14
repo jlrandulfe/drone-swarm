@@ -30,6 +30,8 @@ private slots:
     void on_startButton_clicked();
     void on_stopButton_clicked();
     void on_initRangeSpinBox_valueChanged(double arg1);
+    void on_simTimeSpinbox_valueChanged(double arg1);
+    void on_simResSpinbox_valueChanged(int arg1);
 
 private:
 
@@ -42,8 +44,10 @@ private:
     char shapeSelection;
     int droneAmount;
     float droneDistance;
-    float droneAngle = 0.0f;
+    float droneAngle;
     float droneRandomRange;
+    float simTime;
+    float simRes;
 };
 
 #endif // MAINWINDOW_H

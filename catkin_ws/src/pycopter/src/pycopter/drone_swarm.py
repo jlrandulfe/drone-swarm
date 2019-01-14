@@ -20,8 +20,7 @@ from pycopter.srv import PycopterStartStopResponse
 class DroneSwarmNode():
 
     def __init__(self):
-        self.start = False
-        self.stop = False
+        # Drones control properties
         self.drones = []
         self.n_drones = 0
         self.fc = None
@@ -44,6 +43,12 @@ class DroneSwarmNode():
         self.kt = 3.13e-5  # Ns^2
         self.km = 7.5e-7   # Ns^2
         self.kw = 1/0.18   # rad/s
+
+        # Simulation properties
+        self.tf = 0
+        self.dt = 0
+        self.start = False
+        self.stop = False
 
         # Initialize the quadrotors
         self.init_formation()
@@ -72,6 +77,8 @@ class DroneSwarmNode():
                                                 DroneSwarmMultiArray)
             resp = setup_pycopter(True)
             self.n_drones = resp.n_rows
+            self.tf = resp.param1
+            self.dt = resp.param2 / 1000
             positions = resp.data
         except rospy.ServiceException as e:
             print("Service call failed: {}".format(e))
@@ -97,15 +104,11 @@ class DroneSwarmNode():
                 self.drones[i].yaw_d = -((2*np.pi/self.n_drones)
                                          * (self.n_drones-i))
         # Desired heading.
-        #TODO: Generalize for n drones
-
         # self.drones[0].yaw_d = -np.pi
         # self.drones[1].yaw_d = np.pi/2
         # self.drones[2].yaw_d = 0
         # Instantiate the simulation class
-        tf=60
-        self.dt=5e-2
-        self.time = np.linspace(0, tf, tf/self.dt)
+        self.time = np.linspace(0, self.tf, self.tf/self.dt)
         self.quad_sim = simulation.SimNQuads(self.drones, self.fc, self.time,
                                              self.n_drones)
         rospy.loginfo("The drone simulation has been set-up")
