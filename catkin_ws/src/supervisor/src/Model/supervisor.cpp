@@ -101,7 +101,7 @@ bool Supervisor::servicePyCopterCallback(pycopter::DroneSwarmMultiArray::Request
 bool Supervisor::serviceKalmanCallback(pycopter::DroneSwarmMultiArray::Request  &req, pycopter::DroneSwarmMultiArray::Response &res)
 {
 	printf("Kalman Service called\n");
-	std::vector<double> connection_data(2*start_pose.size());	
+	std::vector<double> connection_data(2*connection_matrix.size());	
 	int iterator = 0;
 	for(int i = 0; i < connection_matrix.size(); i++)
 		for (int j = 0; j < connection_matrix.size(); ++j)
@@ -136,7 +136,6 @@ void Supervisor::getFormation(int amount_of_drones, float distance, float v_shap
 		{
 			for (int j = 0; j < srv.response.matrix_size; ++j)
 			{
-				// result[i][j] = srv.response.connection_matrix[iterator];
 				temp_storage.push_back(srv.response.connection_matrix[iterator]);
 				iterator++;
 			}
