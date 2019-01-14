@@ -18,16 +18,18 @@ class KalmanFilter:
         # floatmultiarray from .py simulator
 
         # create pattern example
-        self.kalman_pub = rospy.Publisher('kalman_estimation', std_msgs.msg.Float64MultiArray, queue_size = 1)
+        self.kalman_pub = rospy.Publisher("kalman/pos_estimation", std_msgs.msg.Float64MultiArray, queue_size = 1)
 
-        s#elf.pattern = np.array([[-1, 0.5, -1, 0.7],
+        #self.pattern = np.array([[-1, 0.5, -1, 0.7],
                                  #[0.5, -1, 0.4, 1.3],
                                  #[-1, 0.4, -1, 0.8],
                                  #[0.7, 1.3, 0.8, -1]])
         #rospy.loginfo("pattern shape: ", self.pattern)
-        self.pattern = None
+        self.pattern = []
         self.nr_drones = None
         self.kf = []
+
+        ## MULTIARRAY OUTPUT x1,y1, x2,y2
 
         #self.states_drones = [0, 0, 1.5, 2.3, 4, 2, 1, 1]
         #self.velocities_drones = [0, 0, -1.5, 0.5, 1, -2, 1.5, 0.1]
@@ -48,21 +50,30 @@ class KalmanFilter:
         #resp1 = add_two_ints(x, y)
         #except rospy.ServiceException as exc:
         #  print("Service did not process request: " + str(exc))
+        rospy.loginfo("Waiting for supervisor service")
+        rospy.wait_for_service("/supervisor/kalman")
+        rospy.loginfo("Online")
 
         try:
-            setup_pycopter = rospy.ServiceProxy("supervisor/kalman", DroneSwarmMultiArray)
-            resp = setup_pycopter(True)
+            setup_kalman = rospy.ServiceProxy("supervisor/kalman", DroneSwarmMultiArray)
+            resp = setup_kalman(True)
             self.nr_drones = resp.n_rows
             connections = resp.data
+            rospy.loginfo("Number of drones: ")
+            rospy.loginfo(self.nr_drones)
+
+            rospy.loginfo("Data: ")
+            rospy.loginfo(connections)
+
         except rospy.ServiceException as e:
             print("Service call failed: {}".format(e))
             return
             # Initial conditions
         self.id = np.zeros((self.nr_drones * self.nr_drones, 2))
         self.kalman_matrix = np.zeros((self.nr_drones, self.nr_drones))
-        self.pattern = array_operations.multiarray2np(connections)
-        print('Pattern input as matrix: ')
-        print(self.pattern)
+        self.pattern = array_operations.multiarray2np(np.array(connections))
+        rospy.loginfo("Pattern input as matrix: ")
+        rospy.loginfo(self.pattern)
         self.loop()
 
     def loop(self):
@@ -78,6 +89,8 @@ class KalmanFilter:
         kalman_multiarray = array_operations.np2multiarray(self.kalman_matrix)
         print('Kalman_OUTPUT: ')
         print(kalman_multiarray)
+        rospy.loginfo("Kalman_OUTPUT:")
+        rospy.loginfo(kalman_multiarray)
         self.kalman_pub.publish(kalman_multiarray)
 
     def pattern_cb(self, pattern):
@@ -95,9 +108,7 @@ class KalmanFilter:
 
     def create_kalman_filters(self):
 
-        rospy.loginfo("Waiting for supervisor service")
-        rospy.wait_for_service("/supervisor/kalman")
-        rospy.loginfo("Online")
+
 
         drones = self.nr_drones
         # Here we create the kalman filters that we need for our drone to estimate the other drone distance.
