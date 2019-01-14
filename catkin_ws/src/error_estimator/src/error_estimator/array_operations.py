@@ -11,10 +11,12 @@ import std_msgs.msg
 # Local libraries
 
 
-def np2multiarray(data):
+def np2multiarray(array):
     """
     Convert a 2D square numpy.array into a Float64MultiArray msg
     """
+    # Copy the input data to avoid corruption of the input data.
+    data = array.copy()
     n_drones = data.shape[0]
     # Define the 2 dimensions of the array.
     dim_1 = std_msgs.msg.MultiArrayDimension(label="drone_n", size=n_drones,
@@ -31,12 +33,43 @@ def np2multiarray(data):
     message.data = data.reshape(data.size).tolist()
     return message
 
-def multiarray2np(data):
+def np2multiarray_3D(array, coords=3):
+    # Copy the input data to avoid corruption of the input data.
+    data = array.copy()
+    # Define the 3 dimensions of the array.
+    dim_1 = std_msgs.msg.MultiArrayDimension(label="drone_n", size=n_drones,
+                                             stride=n_drones*n_drones*coords)
+    dim_2 = std_msgs.msg.MultiArrayDimension(label="drone_n", size=n_drones,
+                                             stride=n_drones*coords)
+    dim_3 = std_msgs.msg.MultiArrayDimension(label="coords", size=coords,
+                                             stride=coords)
+    # Create the output message with the data and the created layout.
+    message = std_msgs.msg.Float64MultiArray()
+    message.layout.dim.append(dim_1)
+    message.layout.dim.append(dim_2)
+    message.layout.dim.append(dim_3)
+    message.data = data.reshape(data.size).tolist()
+    return message
+
+def multiarray2np_sqr(data):
     """
-    Convert a Float64MultiArray msg into a 2D square numpy.array
+    Convert a squared Float64MultiArray msg into a 2D square numpy.array
     """
     np_data = np.array(data.data)
     # Assuming that the output is a square matrix simplifies the problem.
     dim_size = int(np.sqrt(np_data.size))
     data_array = np_data.reshape([dim_size, dim_size])
+    return data_array
+
+def multiarray2np(data):
+    np_data = np.array(data.data)
+    sizes = []
+    for _, dim in enumerate(data.layout.dim):
+        sizes.append(dim.size)
+    # If input matrix is 2D
+    if len(sizes) == 2:
+        data_array = np_data.reshape([sizes[0], sizes[1]])
+    # If input matrix is 3D
+    if len(sizes) == 3:
+        data_array = np_data.reshape([sizes[0], sizes[1], sizes[2]])
     return data_array

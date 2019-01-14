@@ -22,6 +22,7 @@ class ErrorEstimatorNode():
         self.start = False
         # Errors matrix
         self.errors = np.array([[0, 1, 2],[1, 0, 3],[2, 3, 0]])
+        self.predicted_rel_positions = np.array([])
         self.predicted_distances = np.array([])
         self.desired_distances = np.array([])
 
@@ -51,38 +52,36 @@ class ErrorEstimatorNode():
         It will not work until the desired distances are obtained from
         the pattern generator.
         """
+        # Can not go through the routine without the desired distance
+        # been given beforehand.
         if not self.start:
             return
-        self.predicted_distances = array_operations.multiarray2np(data)
+        # Get the relative positions from the Kalman node. With them, calculate
+        # the predicted distances between the drones. Finally, get the errors to
+        # the desired distances.
+        self.predicted_rel_positions = array_operations.multiarray2np(data)
+        self.predicted_distances = np.linalg.norm(self.predicted_rel_positions,
+                                                  axis=2)
         self.errors = error_functions.simple_differences(
                 self.desired_distances, self.predicted_distances)
 
+        # Apply sign to errors, so they are symmetric.
+        sign_matrix = np.triu(np.ones((3)), 1) + np.tril(-1*np.ones((3)), -1)
+        self.errors *= sign_matrix
         # P gain
         Kp = 1.2
-        units = np.zeros([1,2])
 
-        drone = 2 #must be changed to fit with actual drone
+        # Calculate and send the final control variable
+        control_u = self.errors.sum(axis=1) * Kp
 
-        for j in range(0, len(self.errors)):
-            if(self.errors[drone-1,j] != 0.0):
-            # This is the row of the drone i am
-
-                # Add up the unit vector of all in this row
-                unit_vector = (self.desired_distances[drone-1,j]
-                               / dist(self.desired_distances[drone-1,j]))
-                if drone-1 > j:
-                    units -= unit_vector * self.errors[drone-1,j]
-                elif drone-1 < j:
-                    units += unit_vector * self.errors[drone-1,j]
-
-        self.control_var_pub.publish(array_operations.np2multiarray(Kp*units))
+        self.control_var_pub.publish(array_operations.np2multiarray(control_u))
         return
 
     def pat_gen_start_callback(self, data):
         """
         Store the desired distances, and allow the controller to start
         """
-        self.desired_distances = array_operations.multiarray2np(data.data)
+        self.desired_distances = array_operations.multiarray2np_sqr(data.data)
         self.start = True
         return
 
