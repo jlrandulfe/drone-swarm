@@ -11,10 +11,10 @@ class KalmanFilter:
     def __init__(self):
         rospy.init_node('kalman_filter')
         rospy.loginfo("kalman_filter node created")
-
+        self.pycopter_start = False
         # Pycopter position and velocity subscriber
         rospy.Subscriber("pycopter/positions", std_msgs.msg.Float64MultiArray, self.pos_cb, queue_size = 1)
-        rospy.Subscriber("pycopter/velocities", std_msgs.msg.Float64MultiArray, self.vel_cb, queue_size=1)
+        rospy.Subscriber("pycopter/velocities", std_msgs.msg.Float64MultiArray, self.vel_cb, queue_size= 1)
         # floatmultiarray from .py simulator
 
         # create pattern example
@@ -71,13 +71,15 @@ class KalmanFilter:
             # Initial conditions
         self.id = np.zeros((self.nr_drones * self.nr_drones, 2))
         self.kalman_matrix = np.zeros((self.nr_drones, self.nr_drones))
-        self.pattern = array_operations.multiarray2np(np.array(connections))
+        self.pattern = array_operations.multiarray2np(resp)
         rospy.loginfo("Pattern input as matrix: ")
         rospy.loginfo(self.pattern)
+        self.create_kalman_filters()
         self.loop()
 
     def loop(self):
-
+        while not self.pycopter_start:
+            pass
         rate = rospy.Rate(50)
         while not rospy.is_shutdown():
             self.kalman_publisher()
@@ -85,7 +87,7 @@ class KalmanFilter:
 
     def kalman_publisher(self):
 
-        self.create_kalman_filters()
+
         kalman_multiarray = array_operations.np2multiarray(self.kalman_matrix)
         print('Kalman_OUTPUT: ')
         print(kalman_multiarray)
@@ -101,6 +103,9 @@ class KalmanFilter:
     def pos_cb(self, pos_msg):
 
         self.states_drones = pos_msg.data
+        self.pycopter_start = True
+        rospy.loginfo("START BOOL: ")
+        rospy.loginfo(self.pycopter_start)
 
     def vel_cb(self, vel_msg):
 
@@ -130,7 +135,8 @@ class KalmanFilter:
                     rospy.loginfo("number of kalman filters: ")
                     print(nr_kalman_filters)
         print('ID:', self.id)
-        self.kalman_calculations()
+        if self.pycopter_start:
+            self.kalman_calculations()
 
     def kalman_calculations(self):
 
@@ -174,4 +180,7 @@ class KalmanFilter:
            # print(relative_y)
             count = count + 1
 
-KalmanFilter()
+
+if __name__ == "__main__":
+    KalmanFilter()
+
