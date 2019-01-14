@@ -9,14 +9,14 @@ import rospy
 import geometry_msgs.msg
 import std_msgs.msg
 # Local libraries
-from error_estimator import array_operations
-from error_estimator import error_functions
+from controller import array_operations
+from controller import error_functions
 
 def dist(vector):
     length = np.sqrt(pow(vector[0],2)+pow(vector[1],2))
     return length
 
-class ErrorEstimatorNode():
+class PControlNode():
 
     def __init__(self):
         self.start = False
@@ -36,7 +36,7 @@ class ErrorEstimatorNode():
 
         # Drone controller topic publisher
         self.control_var_pub = rospy.Publisher(
-                "error_estimator/control_value",
+                "controller/control_value",
                 std_msgs.msg.Float64MultiArray,
                 queue_size=1)
         return
@@ -86,6 +86,7 @@ class ErrorEstimatorNode():
         return
 
     def run(self):
+        rospy.loginfo("Controller started. Waiting for a desired formation")
         while not self.start:
             rospy.sleep(1)
         rospy.spin()
@@ -94,6 +95,6 @@ class ErrorEstimatorNode():
 
 def main():
     # Instantiate the error_estimator node class and run it
-    error_estimator = ErrorEstimatorNode()
-    error_estimator.run()
+    controller = PControlNode()
+    controller.run()
     return
