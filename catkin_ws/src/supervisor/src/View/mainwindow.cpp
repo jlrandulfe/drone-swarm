@@ -10,10 +10,18 @@ MainWindow::MainWindow(QWidget *parent, Supervisor &sup) :
     ui(new Ui::MainWindow),
     supervisor(sup)
 {
+    shapeSelection = 'g';
+    droneAmount = 3;
+    droneDistance = 5.0;
+    droneAngle = 15.0;
+    droneRandomRange = 0.5;
+    simTime = 30;
+    simRes = 50;
+
     // Init UI
     ui->setupUi(this);
-    ui->shapeCombo->addItem(tr("V-shape"));
     ui->shapeCombo->addItem(tr("Grid"));
+    ui->shapeCombo->addItem(tr("V-shape"));
     ui->shapeCombo->addItem(tr("Polygon"));
     ui->droneAmountSpinBox->setRange(3,20);
     ui->droneAmountLabel->setText(tr("Amount of drones (3-20)"));
