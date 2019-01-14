@@ -31,8 +31,10 @@ Supervisor::~Supervisor()
 
 
 	
-void Supervisor::setupSimulation(int amount_of_drones, float distance, float v_shape_angle, char shape, float range)
+void Supervisor::setupSimulation(int amount_of_drones, float distance, float v_shape_angle, char shape, float range, float resolution, float simtime)
 {
+	simTime = simtime;
+	simRes = resolution;
 	this->getFormation(amount_of_drones, distance, v_shape_angle, shape, range);
 	//publish connection matrix to error_estimator/controller node and kalman_filter node
 	printf("Starting KalmanService\n");
@@ -58,7 +60,6 @@ void Supervisor::startSimulation()
   	}
   	else
   		printf("Service call to pycopter/start_stop failed\n");
-
 }
 
 void Supervisor::stopSimulation()
@@ -92,6 +93,8 @@ bool Supervisor::servicePyCopterCallback(pycopter::DroneSwarmMultiArray::Request
 	res.data = start_pose_data;
 	res.n_rows = start_pose.size();
 	res.n_cols = 2;
+	res.param1 = simTime;
+	res.param2 = simRes;
 	return true;
 }
 
@@ -184,7 +187,7 @@ int main(int argc, char **argv)
 	Supervisor sup(n);
 
 
-	sup.setupSimulation(5, 5, 20, 'g', 0.9);
+	sup.setupSimulation(5, 5, 20, 'g', 0.9, 100, 5);
 	ros::spin();
 	return 0;
 }

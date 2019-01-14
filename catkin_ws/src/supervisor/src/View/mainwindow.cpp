@@ -10,18 +10,28 @@ MainWindow::MainWindow(QWidget *parent, Supervisor &sup) :
     ui(new Ui::MainWindow),
     supervisor(sup)
 {
+    shapeSelection = 'g';
+    droneAmount = 3;
+    droneDistance = 5.0;
+    droneAngle = 15.0;
+    droneRandomRange = 0.5;
+    simTime = 30;
+    simRes = 50;
+
     // Init UI
     ui->setupUi(this);
-    ui->shapeCombo->addItem(tr("V-shape"));
     ui->shapeCombo->addItem(tr("Grid"));
+    ui->shapeCombo->addItem(tr("V-shape"));
     ui->shapeCombo->addItem(tr("Polygon"));
     ui->droneAmountSpinBox->setRange(3,20);
     ui->droneAmountLabel->setText(tr("Amount of drones (3-20)"));
     qDebug() << droneAngle;
 
-    ui->applyButton->setStyleSheet("background-color: blue");
-    ui->startButton->setStyleSheet("background-color: green");
-    ui->stopButton->setStyleSheet("background-color: red");
+    ui->applyButton->setStyleSheet("background-color: blue; color: rgb(0, 0, 0)");
+    ui->startButton->setStyleSheet("background-color: green; color: rgb(0, 0, 0)");
+    ui->stopButton->setStyleSheet("background-color: red; color: rgb(0, 0, 0)");
+
+    ui->applyButton->
 
 //    ui->plot->addGraph();
 //    ui->plot->graph(0)->setScatterStyle(QCPScatterStyle::ssCircle);
@@ -37,7 +47,8 @@ MainWindow::~MainWindow()
     delete ui;
     #include <cstdlib>
     system("rosnode kill execute");
-    system("rosnode kill pycopter");
+    system("rosnode kill drome_swarm_sim");
+    system("rosnode kill kalman_filter");
 }
 
 void MainWindow::on_shapeCombo_currentTextChanged(const QString &shape)
@@ -90,7 +101,7 @@ void MainWindow::on_droneAmountSpinBox_valueChanged(int amount)
 void MainWindow::on_applyButton_clicked()
 {
     qDebug() << "Save settings button clicked";
-    supervisor.setupSimulation(droneAmount, droneDistance, droneAngle, shapeSelection, droneRandomRange);
+    supervisor.setupSimulation(droneAmount, droneDistance, droneAngle, shapeSelection, droneRandomRange, simRes, simTime);
 }
 
 void MainWindow::on_startButton_clicked()
@@ -111,14 +122,14 @@ void MainWindow::on_initRangeSpinBox_valueChanged(double range)
     qDebug() << "Init range: " << droneRandomRange;
 }
 
-void MainWindow::on_simTimeSpinbox_valueChanged(double simTime)
+void MainWindow::on_simTimeSpinbox_valueChanged(double simTime_)
 {
+    simTime = simTime_;
     qDebug() << "Simulation time: " << simTime << " s";
-    simTime = simTime;
 }
 
-void MainWindow::on_simResSpinbox_valueChanged(int simRes)
+void MainWindow::on_simResSpinbox_valueChanged(int simRes_)
 {
+    simRes = simRes_;
     qDebug() << "Simulation timestep resolution: " << simRes << " ms";
-    simRes = simRes;
 }
