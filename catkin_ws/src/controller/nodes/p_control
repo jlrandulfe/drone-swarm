@@ -7,7 +7,7 @@ import argparse
 # Third-party libraries
 import rospy
 # Local libraries
-from error_estimator import error_estimator
+from controller import p_controller
 
 
 if __name__ == "__main__":
@@ -18,5 +18,5 @@ if __name__ == "__main__":
 
     args = parser.parse_args(rospy.myargv()[1:])
     
-    rospy.init_node("error_estimator", anonymous=True)
-    error_estimator.main()
+    rospy.init_node("controller", anonymous=True)
+    p_controller.main()
