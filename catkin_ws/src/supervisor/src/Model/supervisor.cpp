@@ -101,7 +101,7 @@ bool Supervisor::servicePyCopterCallback(pycopter::DroneSwarmMultiArray::Request
 bool Supervisor::serviceKalmanCallback(pycopter::DroneSwarmMultiArray::Request  &req, pycopter::DroneSwarmMultiArray::Response &res)
 {
 	printf("Kalman Service called\n");
-	std::vector<double> connection_data(2*connection_matrix.size());	
+	std::vector<double> connection_data(connection_matrix.size()*connection_matrix.size());	
 	int iterator = 0;
 	for(int i = 0; i < connection_matrix.size(); i++)
 		for (int j = 0; j < connection_matrix.size(); ++j)
