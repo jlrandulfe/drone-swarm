@@ -14,7 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 find_package(pycopter REQUIRED)
-
+find_package(controller REQUIRED)
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -121,6 +121,7 @@ include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
   ${pycopter_INCLUDE_DIRS}
+  ${controller_INCLUDE_DIRS} 
 
 )
 

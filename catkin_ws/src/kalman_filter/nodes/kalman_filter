@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 import rospy
-from kalman_filter import array_operations
+
 from kalman_filter import kalman
 import numpy as np
 from pycopter.srv import DroneSwarmMultiArray
 import std_msgs.msg
+from controller import array_operations
 
 class KalmanFilter:
 
@@ -14,7 +15,7 @@ class KalmanFilter:
         self.pycopter_start = False
         # Pycopter position and velocity subscriber
         rospy.Subscriber("pycopter/positions", std_msgs.msg.Float64MultiArray, self.pos_cb, queue_size = 1)
-        rospy.Subscriber("pycopter/velocities", std_msgs.msg.Float64MultiArray, self.vel_cb, queue_size= 1)
+        rospy.Subscriber("pycopter/velocities", std_msgs.msg.Float64MultiArray, self.vel_cb, queue_size= 10)
         # floatmultiarray from .py simulator
 
         # create pattern example
@@ -34,7 +35,8 @@ class KalmanFilter:
         #self.states_drones = [0, 0, 1.5, 2.3, 4, 2, 1, 1]
         #self.velocities_drones = [0, 0, -1.5, 0.5, 1, -2, 1.5, 0.1]
         self.states_drones = None
-        self.velocities_drones = None
+        self.velocities_drones = np.array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1])
+        self.kalman_positions_estimation = np.array([])
         #self.state= [x1,y1,x2,y2,x3,y3 ...] size = nr_drones
         #self.relative_state
         # self.vel = [v1,v2,v3,v4 ...] size = nr_drones
@@ -71,7 +73,7 @@ class KalmanFilter:
             # Initial conditions
         self.id = np.zeros((self.nr_drones * self.nr_drones, 2))
         self.kalman_matrix = np.zeros((self.nr_drones, self.nr_drones))
-        self.pattern = array_operations.multiarray2np(resp)
+        self.pattern = array_operations.multiarray2np_sqr(resp)
         rospy.loginfo("Pattern input as matrix: ")
         rospy.loginfo(self.pattern)
         self.create_kalman_filters()
@@ -82,38 +84,32 @@ class KalmanFilter:
             pass
         rate = rospy.Rate(50)
         while not rospy.is_shutdown():
+            self.kalman_calculations()
             self.kalman_publisher()
             rate.sleep()
 
     def kalman_publisher(self):
 
 
-        kalman_multiarray = array_operations.np2multiarray(self.kalman_matrix)
-        print('Kalman_OUTPUT: ')
-        print(kalman_multiarray)
-        rospy.loginfo("Kalman_OUTPUT:")
-        rospy.loginfo(kalman_multiarray)
+        kalman_multiarray = array_operations.np2multiarray_3D(self.kalman_positions_estimation)
+        #rospy.loginfo("Kalman_OUTPUT:")
+        #rospy.loginfo(self.kalman_positions_estimation)
+        #print('KALMAN PUBLISHER', kalman_multiarray)
         self.kalman_pub.publish(kalman_multiarray)
-
-    def pattern_cb(self, pattern):
-
-        self.pattern = pattern
-        array_operations.multiarray2np(self.pattern)
 
     def pos_cb(self, pos_msg):
 
         self.states_drones = pos_msg.data
         self.pycopter_start = True
-        rospy.loginfo("START BOOL: ")
-        rospy.loginfo(self.pycopter_start)
+        #rospy.loginfo("START BOOL: %d"%(self.pycopter_start))
 
     def vel_cb(self, vel_msg):
 
+        #print('vel_msg', vel_msg)
         self.velocities_drones = vel_msg.data
+        #print('VEL CALLBACK: ', self.velocities_drones)
 
     def create_kalman_filters(self):
-
-
 
         drones = self.nr_drones
         # Here we create the kalman filters that we need for our drone to estimate the other drone distance.
@@ -132,44 +128,72 @@ class KalmanFilter:
                     self.id[nr_kalman_filters][0] = i
                     self.id[nr_kalman_filters][1] = j
                     nr_kalman_filters = nr_kalman_filters + 1
-                    rospy.loginfo("number of kalman filters: ")
-                    print(nr_kalman_filters)
+        rospy.loginfo("number of kalman filters: ")
+        print(nr_kalman_filters)
         print('ID:', self.id)
-        if self.pycopter_start:
-            self.kalman_calculations()
 
     def kalman_calculations(self):
 
         count = 0
-        print('STATE: ')
-        print(self.states_drones)
+        print('STATE: ', self.states_drones)
+        print('Velocities measured: ', self.velocities_drones)
 
-        relative_velocities = np.array([[0, 0]]).T
-        state_simulator = np.array([[0, 0]]).T
+        relative_velocities = np.array([[0.0, 0.0]]).T
+        state_simulator = np.array([[0.0, 0.0]]).T
+        self.kalman_positions_estimation = np.array([])
+        error = np.array([0.0])
         for i, kalman_loop in enumerate(self.kf):
+            # KALMAN FILTER FROM CONNECTION id_drone to id_estimation
             id_drone = int(self.id[count][0])
             id_estimation = int(self.id[count][1])
-            #print('id_drone: ')
-            #print(id_drone)
-            #print('id_estimation: ')
-            #print(id_estimation)
-            #print('STATE: ')
-            #print(self.state[0])
-            relative_x = self.states_drones[2*id_drone] - self.states_drones[2*id_estimation]
-            relative_y = self.states_drones[(2*id_drone) + 1] - self.states_drones[(2*id_estimation) + 1]
+            print('id_drone: ', id_drone)
+            print('id_estimation: ', id_estimation)
+            #print('X OF CONNECTION FROM: ', self.states_drones[2*id_drone])
+            #print('X OF CONNECTION TO: ', self.states_drones[2*id_estimation])
+
+            #print('Y OF CONNECTION FROM: ', self.states_drones[(2*id_drone) + 1])
+            #print('Y OF CONNECTION TO: ', self.states_drones[(2*id_estimation) + 1])
+
+            # RELATIVE POSITIONS (END - START)
+            relative_x = self.states_drones[2*id_estimation] - self.states_drones[2*id_drone]
+            relative_y = self.states_drones[(2*id_estimation) + 1] - self.states_drones[(2*id_drone) + 1]
+
+            state_simulator[0] = relative_x
+            state_simulator[1] = relative_y
+            #print('RELATIVE POSITIONS: ', state_simulator)
+
+            #  RELATIVE VELOCITIES
             velocity_relative_x = self.velocities_drones[2*id_drone] - self.velocities_drones[2*id_estimation]
             velocity_relative_y = self.velocities_drones[(2*id_drone)+1] - self.velocities_drones[2*id_estimation]
             relative_velocities[0] = velocity_relative_x
             relative_velocities[1] = velocity_relative_y
-            state_simulator[0] = relative_x
-            state_simulator[1] = relative_y
+            #print('V_REL X: ', relative_velocities[0])
+            #print('V_REL Y: ', relative_velocities[1])
+
 
             distance_sensor = kalman_loop.distance(relative_x, relative_y)
             kalman_loop.predict(state_simulator, relative_velocities)
             kalman_loop.update(state_simulator, distance_sensor)
+            self.kalman_positions_estimation = np.concatenate((self.kalman_positions_estimation,kalman_loop.state_X[0], kalman_loop.state_X[1]))
+            #rospy.loginfo("######### OUTPUT KF #########")
+            #print('KALMAN NUMBER: ', count)
+            #print('POSITION X: ', kalman_loop.state_X[0])
+            #print('POSITION Y: ', kalman_loop.state_X[1])
+
+            #rospy.loginfo("estimation in X :")
+            #rospy.loginfo(kalman_loop.state_X[0])
+            #rospy.loginfo("estimation in Y :")
+            #rospy.loginfo(kalman_loop.state_X[0])
+            #rospy.loginfo("APPEND TEST:")
+            #rospy.loginfo(self.kalman_positions_estimation)
+
 
             distance_prediction = kalman_loop.distance(kalman_loop.state_X[0], kalman_loop.state_X[1])
-            self.kalman_matrix[id_drone][id_estimation] = distance_prediction
+            print('DISTANCE PREDICTION', distance_prediction)
+            print('DISTANCE SENSOR', distance_sensor)
+            error = kalman_loop.err_class
+            print('ERROR: ', error)
+            #self.kalman_matrix[id_drone][id_estimation] = distance_prediction for generating matrix
 
             #print('distance_prediction: ')
             #print(distance_prediction)
@@ -179,6 +203,11 @@ class KalmanFilter:
            # print('relative _ y : ')
            # print(relative_y)
             count = count + 1
+
+        print('Vector KALMAN: ', self.kalman_positions_estimation)
+        #rospy.loginfo("######### OUTPUT KF JAVI #########")
+        #rospy.loginfo("estimation in ALL VECTOR :")
+        #rospy.loginfo(self.kalman_positions_estimation)
 
 
 if __name__ == "__main__":

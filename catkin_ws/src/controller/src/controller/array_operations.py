@@ -33,7 +33,7 @@ def np2multiarray(array):
     message.data = data.reshape(data.size).tolist()
     return message
 
-def np2multiarray_3D(array, coords=3):
+def np2multiarray_3D(array, n_drones=3, coords=2):
     # Copy the input data to avoid corruption of the input data.
     data = array.copy()
     # Define the 3 dimensions of the array.
