@@ -98,7 +98,7 @@ class SimNQuads():
             return -1
         return (X, V)
 
-    def final_plots(self, time):
+    def final_plots(self, time, it):
 
         plt.figure(1)
         plt.title("2D Position [m]")

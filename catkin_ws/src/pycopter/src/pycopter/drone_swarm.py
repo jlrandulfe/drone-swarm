@@ -201,8 +201,10 @@ class DroneSwarmNode():
                 velocities_message = self.np2multiarray(V)
                 self.positions_pub.publish(positions_message)
                 self.velocities_pub.publish(velocities_message)
+            if self.stop:
+                break
             rate.sleep()
-        self.quad_sim.final_plots(self.time)
+        self.quad_sim.final_plots(self.time, it)
         return
 
 
