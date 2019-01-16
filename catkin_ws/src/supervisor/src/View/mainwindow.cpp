@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <iostream>
 #include <cstdlib>
+#include <csignal>
 
 
 
@@ -31,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent, Supervisor &sup) :
     ui->startButton->setStyleSheet("background-color: green; color: rgb(0, 0, 0)");
     ui->stopButton->setStyleSheet("background-color: red; color: rgb(0, 0, 0)");
 
-    ui->applyButton->
+//    ui->applyButton->
 
 //    ui->plot->addGraph();
 //    ui->plot->graph(0)->setScatterStyle(QCPScatterStyle::ssCircle);
@@ -44,11 +45,14 @@ MainWindow::MainWindow(QWidget *parent, Supervisor &sup) :
 
 MainWindow::~MainWindow()
 {
+    system("killall -9 -e python");
     delete ui;
-    #include <cstdlib>
     system("rosnode kill execute");
-    system("rosnode kill drome_swarm_sim");
+    system("rosnode kill drone_swarm_sim");
     system("rosnode kill kalman_filter");
+    system("rosnode kill View");
+    system("rosnode kill p_control");
+    system("killall -9 -e roslaunch");
 }
 
 void MainWindow::on_shapeCombo_currentTextChanged(const QString &shape)
