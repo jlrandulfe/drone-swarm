@@ -32,4 +32,5 @@ private:
 	float simTime, simRes;
 	int movementPattern;
 	float x_vel, y_vel;
+	float sinusoid_freq;
 };
