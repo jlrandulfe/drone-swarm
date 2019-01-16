@@ -79,6 +79,7 @@ class DroneSwarmNode():
             self.n_drones = resp.n_rows
             self.tf = resp.param1
             self.dt = resp.param2 / 1000
+            self.timestamp = 0
             positions = resp.data
         except rospy.ServiceException as e:
             print("Service call failed: {}".format(e))
@@ -143,6 +144,7 @@ class DroneSwarmNode():
         layout = std_msgs.msg.MultiArrayLayout()
         layout.dim.append(dim_1)
         layout.dim.append(dim_2)
+        layout.data_offset(self.timestamp*1000)
         # Create the output message with the data and the created layout.
         message = std_msgs.msg.Float64MultiArray()
         message.layout = layout
@@ -190,6 +192,7 @@ class DroneSwarmNode():
         rate = rospy.Rate(100)
         while it < len(self.time):
             t = self.time[it]
+            self.timestamp = it*self.dt
             it += 1
             output = self.quad_sim.new_iteration(t, self.dt, self.U)
             if (output == -1):
@@ -201,8 +204,10 @@ class DroneSwarmNode():
                 velocities_message = self.np2multiarray(V)
                 self.positions_pub.publish(positions_message)
                 self.velocities_pub.publish(velocities_message)
+            if self.stop:
+                break
             rate.sleep()
-        self.quad_sim.final_plots(self.time)
+        self.quad_sim.final_plots(self.time, it)
         return
 
 

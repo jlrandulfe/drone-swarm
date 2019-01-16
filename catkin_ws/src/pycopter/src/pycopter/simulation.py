@@ -11,6 +11,7 @@ from pycopter import animation as ani
 class SimNQuads():
 
     def __init__(self, quads, fc, time, ndrones=3, alt_d=4, frames=10):
+        self.test = False
         self.ndrones = ndrones
         # Extract quadcopters from list
         self.quads = quads
@@ -50,7 +51,10 @@ class SimNQuads():
             U = self.fc.u_acc(X, V)
 
         for i in range(self.ndrones):
-            self.quads[i].set_a_2D_alt_lya(U[2*i:2*i+2], -self.alt_d)
+            if self.test:
+                self.quads[i].set_a_2D_alt_lya(U[2*i:2*i+2], -self.alt_d)
+            else:
+                self.quads[i].set_v_2D_alt_lya(U[2*i:2*i+2], -self.alt_d)
             self.quads[i].step(dt)
 
         # Animation
@@ -98,7 +102,7 @@ class SimNQuads():
             return -1
         return (X, V)
 
-    def final_plots(self, time):
+    def final_plots(self, time, it):
 
         plt.figure(1)
         plt.title("2D Position [m]")
@@ -111,7 +115,7 @@ class SimNQuads():
 
         plt.figure(2)
         for i in range(self.ndrones):
-            plt.plot(time, self.qlogs[i].att_h[:, 2], label="yaw q{}".format(i+1))
+            plt.plot(time[0:it], self.qlogs[i].att_h[:, 2][0:it], label="yaw q{}".format(i+1))
         plt.xlabel("Time [s]")
         plt.ylabel("Yaw [rad]")
         plt.grid()
@@ -119,7 +123,7 @@ class SimNQuads():
 
         plt.figure(3)
         for i in range(self.ndrones):
-            plt.plot(time, -self.qlogs[i].xyz_h[:, 2],
+            plt.plot(time[0:it], -self.qlogs[i].xyz_h[:, 2][0:it],
                      label="$q_{}$".format(i+1))
         plt.xlabel("Time [s]")
         plt.ylabel("Altitude [m]")
@@ -128,7 +132,7 @@ class SimNQuads():
 
         plt.figure(4)
         for i in range(self.ndrones):
-            plt.plot(time, self.Ed_log[:, i], label="$e_{}$".format(i+1))
+            plt.plot(time[0:it], self.Ed_log[:, i][0:it], label="$e_{}$".format(i+1))
         plt.xlabel("Time [s]")
         plt.ylabel("Formation distance error [m]")
         plt.grid()

@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <iostream>
 #include <cstdlib>
+#include <csignal>
 
 
 
@@ -17,12 +18,18 @@ MainWindow::MainWindow(QWidget *parent, Supervisor &sup) :
     droneRandomRange = 0.5;
     simTime = 30;
     simRes = 50;
+    movementPattern = 't';
 
     // Init UI
     ui->setupUi(this);
     ui->shapeCombo->addItem(tr("Grid"));
     ui->shapeCombo->addItem(tr("V-shape"));
     ui->shapeCombo->addItem(tr("Polygon"));
+
+    ui->testCombo->addItem(tr("Static"));
+    ui->testCombo->addItem(tr("Linear"));
+    ui->testCombo->addItem(tr("Sinusoidal"));
+
     ui->droneAmountSpinBox->setRange(3,20);
     ui->droneAmountLabel->setText(tr("Amount of drones (3-20)"));
     qDebug() << droneAngle;
@@ -31,7 +38,14 @@ MainWindow::MainWindow(QWidget *parent, Supervisor &sup) :
     ui->startButton->setStyleSheet("background-color: green; color: rgb(0, 0, 0)");
     ui->stopButton->setStyleSheet("background-color: red; color: rgb(0, 0, 0)");
 
-    ui->applyButton->
+    ui->centralWidget->setGeometry(
+        QStyle::alignedRect(
+            Qt::LeftToRight,
+            Qt::AlignRight,
+            ui->centralWidget->size(),
+            qApp->desktop()->availableGeometry()
+        )
+    );
 
 //    ui->plot->addGraph();
 //    ui->plot->graph(0)->setScatterStyle(QCPScatterStyle::ssCircle);
@@ -44,11 +58,14 @@ MainWindow::MainWindow(QWidget *parent, Supervisor &sup) :
 
 MainWindow::~MainWindow()
 {
+    system("killall -9 -e python");
     delete ui;
-    #include <cstdlib>
     system("rosnode kill execute");
-    system("rosnode kill drome_swarm_sim");
+    system("rosnode kill drone_swarm_sim");
     system("rosnode kill kalman_filter");
+    system("rosnode kill View");
+    system("rosnode kill p_control");
+    system("killall -9 -e roslaunch");
 }
 
 void MainWindow::on_shapeCombo_currentTextChanged(const QString &shape)
@@ -132,4 +149,16 @@ void MainWindow::on_simResSpinbox_valueChanged(int simRes_)
 {
     simRes = simRes_;
     qDebug() << "Simulation timestep resolution: " << simRes << " ms";
+}
+
+void MainWindow::on_testCombo_currentTextChanged(const QString &pattern)
+{
+    if (pattern.toStdString() == "Static")
+        movementPattern = STATIC;
+    else if (pattern.toStdString() == "Linear")
+        movementPattern = LINEAR;
+    else if (pattern.toStdString() == "Sinusoidal")
+        movementPattern = SINUSOIDAL;
+
+    qDebug() << "Movement pattern: " << pattern << "(" << movementPattern << ")";
 }

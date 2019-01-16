@@ -10,7 +10,7 @@ class Supervisor
 public:
 	Supervisor(ros::NodeHandle nh);
 	~Supervisor();
-	void setupSimulation(int amount_of_drones, float distance, float v_shape_angle, char shape, float range, float resolution, float simtime);
+	void setupSimulation(int amount_of_drones, float distance, float v_shape_angle, char shape, float range, float resolution, float simtime, int movementPattern, float x_vel, float y_vel, float sinusoid_freq);
 	void startSimulation();
 	void stopSimulation();
 
@@ -29,6 +29,7 @@ private:
 	std::vector<std::vector<double> > start_pose;
 	ros::ServiceServer pycopter_service;
 	ros::ServiceServer kalman_service;
-	float simTime;
-	float simRes;
+	float simTime, simRes;
+	int movementPattern;
+	float x_vel, y_vel;
 };

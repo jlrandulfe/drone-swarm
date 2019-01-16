@@ -11,18 +11,19 @@ import std_msgs.msg
 # Local libraries
 
 
-def np2multiarray(array):
+def np2multiarray(array, label1="drone_n", label2="coords"):
     """
-    Convert a 2D square numpy.array into a Float64MultiArray msg
+    Convert a 2D numpy.array into a Float64MultiArray msg
     """
     # Copy the input data to avoid corruption of the input data.
     data = array.copy()
-    n_drones = data.shape[0]
+    size_1 = data.shape[0]
+    size_2 = data.shape[1]
     # Define the 2 dimensions of the array.
-    dim_1 = std_msgs.msg.MultiArrayDimension(label="drone_n", size=n_drones,
-                                             stride=n_drones**2)
-    dim_2 = std_msgs.msg.MultiArrayDimension(label="drone_n", size=n_drones,
-                                             stride=n_drones)
+    dim_1 = std_msgs.msg.MultiArrayDimension(label=label1, size=size_1,
+                                             stride=size_1*size_2)
+    dim_2 = std_msgs.msg.MultiArrayDimension(label=label2, size=size_2,
+                                             stride=size_2)
     # Create the layout of the message, necessary for deserializing it.
     layout = std_msgs.msg.MultiArrayLayout()
     layout.dim.append(dim_1)
