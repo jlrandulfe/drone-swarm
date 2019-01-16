@@ -53,7 +53,8 @@ class Kalman:
 		#self.fig, self.axis = pl.subplots(3, 1)
 
 
-	def predict(self, state_sim, relative_velocities):
+	def predict(self, state_sim, relative_velocities, timestamp):
+		self.dt = timestamp
 		#print(" PREDICTION ")
 		#print("\n")
 		# predict the position in the plane of the drone
@@ -71,8 +72,8 @@ class Kalman:
 		#print(" state_X size: ", self.state_X.size)
 		#print("\n")
 
-		#print(" G size: ", self.G.shape)
-		#print("\n")
+		print(" G: ", self.G)
+		print("\n")
 
 		#print(" rel_velocities size: ", relative_velocities.shape)
 		#print("\n")
