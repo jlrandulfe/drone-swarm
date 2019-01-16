@@ -10,7 +10,7 @@ from pycopter import animation as ani
 
 class SimNQuads():
 
-    def __init__(self, quads, fc, time, ndrones=3, alt_d=4, frames=10):
+    def __init__(self, quads, fc, time, ndrones=3, alt_d=1, frames=10):
         self.test = False
         self.ndrones = ndrones
         # Extract quadcopters from list
@@ -48,6 +48,7 @@ class SimNQuads():
             X = np.append(X, self.quads[i].xyz[0:2])
             V = np.append(V, self.quads[i].v_ned[0:2])
         if U is None:
+            print('No U Present')
             U = self.fc.u_acc(X, V)
 
         for i in range(self.ndrones):
@@ -55,6 +56,7 @@ class SimNQuads():
                 self.quads[i].set_a_2D_alt_lya(U[2*i:2*i+2], -self.alt_d)
             else:
                 self.quads[i].set_v_2D_alt_lya(U[2*i:2*i+2], -self.alt_d)
+                print('drone ', i, ', velocity: ', U[2*i:2*i+2])
             self.quads[i].step(dt)
 
         # Animation

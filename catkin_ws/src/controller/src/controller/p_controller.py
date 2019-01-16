@@ -111,16 +111,30 @@ class PControlNode():
 
         # Unit vectors calculation. Create a virtual axis so the division is
         # dimension meaningful.
-        unit_vectors = (self.predicted_rel_positions
-                        / self.predicted_distances[:,:,None])
+        # print('predict dist',self.predicted_distances)
+        # print('predict pos',self.predicted_rel_positions)
+        # print('drone amount', len(self.predicted_distances))
+        # unit_vectors = (self.predicted_rel_positions
+        #                 / self.predicted_distances[:,:,None])
+        num_drone = len(self.predicted_distances)
+        unit_vectors = np.zeros((num_drone, num_drone, 2))
+        for x in range(0,len(self.predicted_distances)):
+            for y in range(0,len(self.predicted_distances)):
+                if x == y:
+                    unit_vectors[x][y][0] = 0.0
+                    unit_vectors[x][y][1] = 0.0
+                else:
+                    unit_vectors[x][y][0] = self.predicted_rel_positions[x][y][0]/self.predicted_distances[x][y]
+                    unit_vectors[x][y][1] = self.predicted_rel_positions[x][y][1]/self.predicted_distances[x][y]
 
+        # print("unit vec", unit_vectors)
         # Calculate and send the final control variable
         self.control_u = (self.errors[:,:,None] * unit_vectors).sum(axis=1) * Kp
         return
 
     def set_leader_velocity(self):
         if self.movement == "static":
-            pass
+            self.control_u[0] = 0
         elif self.movement == "linear":
             self.control_u[0] += self.velocity
         elif self.movement == "sinusoidal":
@@ -157,8 +171,8 @@ class PControlNode():
                 self.set_leader_velocity()
                 self.control_var_pub.publish(array_operations.np2multiarray(
                         self.control_u))
-                rospy.loginfo("Controller: published U {}, {}".format(
-                        self.control_u[0], self.control_u[1]))
+                rospy.loginfo("Controller: published U {}, {}, {}".format(
+                        self.control_u[0], self.control_u[1], self.control_u[2]))
                 self.new_it = False
             rate.sleep()
         rospy.spin()
