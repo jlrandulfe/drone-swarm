@@ -23,6 +23,7 @@ class PControlNode():
     def __init__(self):
         self.start = False
         self.n_drones = 0
+        self.timestamp = 0
         # Errors matrix
         self.errors = np.array([[0, 1, 2],[1, 0, 3],[2, 3, 0]])
         self.predicted_rel_positions = np.array([])
@@ -59,6 +60,7 @@ class PControlNode():
         # Get the relative positions from the Kalman node. With them, calculate
         # the predicted distances between the drones. Finally, get the errors to
         # the desired distances.
+        self.timestamp = data.data_offset
         self.predicted_rel_positions = array_operations.multiarray2np(data)
         self.predicted_distances = np.linalg.norm(self.predicted_rel_positions,
                                                   axis=2)

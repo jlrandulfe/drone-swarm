@@ -29,6 +29,7 @@ class KalmanFilter:
         self.pattern = []
         self.nr_drones = None
         self.kf = []
+        self.timestamp = 0
 
         ## MULTIARRAY OUTPUT x1,y1, x2,y2
 
@@ -98,6 +99,7 @@ class KalmanFilter:
 
 
         kalman_multiarray = array_operations.np2multiarray_3D(self.kalman_positions_estimation)
+        kalman_multiarray.data_offset = self.timestamp
         #rospy.loginfo("Kalman_OUTPUT:")
         #rospy.loginfo(self.kalman_positions_estimation)
         #print('KALMAN PUBLISHER', kalman_multiarray)
@@ -110,9 +112,10 @@ class KalmanFilter:
         #rospy.loginfo("START BOOL: %d"%(self.pycopter_start))
 
     def vel_cb(self, vel_msg):
-
+        
         #print('vel_msg', vel_msg)
         self.velocities_drones = vel_msg.data
+        self.timestamp = vel_msgs.data_offset
         #print('VEL CALLBACK: ', self.velocities_drones)
 
     def create_kalman_filters(self):
