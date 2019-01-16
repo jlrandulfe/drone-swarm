@@ -41,6 +41,7 @@ class KalmanFilter:
         self.error_col = 0
         self.error_matrix = []
         self.nr_kalman_filters = 0
+        self.kalman_positions_matrix = []
         #self.state= [x1,y1,x2,y2,x3,y3 ...] size = nr_drones
         #self.relative_state
         # self.vel = [v1,v2,v3,v4 ...] size = nr_drones
@@ -93,9 +94,13 @@ class KalmanFilter:
             self.kalman_publisher()
             rate.sleep()
         if rospy.is_shutdown():
-            print("ERROR MATRIX", self.error_matrix)
+            pass
+            #print("ERROR MATRIX", self.error_matrix)
 
     def kalman_publisher(self):
+<<<<<<< HEAD
+        kalman_multiarray = array_operations.np2multiarray_3D(self.kalman_positions_matrix)
+=======
 
 
         kalman_multiarray = array_operations.np2multiarray_3D(self.kalman_positions_estimation)
@@ -103,7 +108,9 @@ class KalmanFilter:
         #rospy.loginfo("Kalman_OUTPUT:")
         #rospy.loginfo(self.kalman_positions_estimation)
         #print('KALMAN PUBLISHER', kalman_multiarray)
+>>>>>>> 0a92011b093abc352a77407a8b0f872410b4dce2
         self.kalman_pub.publish(kalman_multiarray)
+        print('KALMAN MOTHERFUCKER MESSAGE:', kalman_multiarray.data)
 
     def pos_cb(self, pos_msg):
 
@@ -122,7 +129,7 @@ class KalmanFilter:
 
         drones = self.nr_drones
         # Here we create the kalman filters that we need for our drone to estimate the other drone distance.
-        nr_kalman_filters = 0
+        self.nr_kalman_filters = 0
         # we estimate the position of ALL other drones # job is sending a matrix of nr_drones x nr_drones, so we've to check the row and if it differs -1 we will create the kf filter
         for i in range(drones):
             #rospy.loginfo("number of drone with kalman: ")
@@ -131,16 +138,19 @@ class KalmanFilter:
 
                 if not self.pattern[i][j] == -1:
                     #rospy.loginfo("number of drone connected: ")
-                    #print(j)
+                    print(j)
 
                     self.kf.append(kalman.Kalman())
-                    self.id[nr_kalman_filters][0] = i
-                    self.id[nr_kalman_filters][1] = j
+                    self.id[self.nr_kalman_filters][0] = i
+                    self.id[self.nr_kalman_filters][1] = j
+                    print('I;', i)
+                    print('J', j)
+                    print('ID:', self.id)
                     self.nr_kalman_filters = self.nr_kalman_filters + 1
-        rospy.loginfo("number of kalman filters: ")
+        #rospy.loginfo("number of kalman filters: ")
         self.error_matrix = np.zeros((self.nr_kalman_filters, 1))
-        print(self.nr_kalman_filters)
-        print('ID:', self.id)
+        #print(self.nr_kalman_filters)
+        #print('ID:', self.id)
 
     def kalman_calculations(self):
 
@@ -150,7 +160,9 @@ class KalmanFilter:
 
         relative_velocities = np.array([[0.0, 0.0]]).T
         state_simulator = np.array([[0.0, 0.0]]).T
-        self.kalman_positions_estimation = np.array([])
+        #self.kalman_positions_estimation = np.zeros((self.nr_drones*self.nr_drones*2), dtype =float)
+        self.kalman_positions_matrix = np.zeros((self.nr_drones, self.nr_drones*2))
+        #print('KALMAN MATRIX: ', self.kalman_positions_matrix)
         error = np.array([0.0])
         error_vector = np.zeros((self.nr_kalman_filters, 1))
         for i, kalman_loop in enumerate(self.kf):
@@ -185,7 +197,12 @@ class KalmanFilter:
             distance_sensor = kalman_loop.distance(relative_x, relative_y)
             kalman_loop.predict(state_simulator, relative_velocities)
             kalman_loop.update(state_simulator, distance_sensor)
-            self.kalman_positions_estimation = np.concatenate((self.kalman_positions_estimation,kalman_loop.state_X[0], kalman_loop.state_X[1]))
+            #self.kalman_positions_estimation = np.concatenate((self.kalman_positions_estimation,kalman_loop.state_X[0], kalman_loop.state_X[1]))
+            self.kalman_positions_matrix[id_drone][id_estimation*2] = kalman_loop.state_X[0]
+            self.kalman_positions_matrix[id_drone][(id_estimation*2)+1] = kalman_loop.state_X[1]
+
+
+
             #rospy.loginfo("######### OUTPUT KF #########")
             #print('KALMAN NUMBER: ', count)
             #print('POSITION X: ', kalman_loop.state_X[0])
@@ -200,15 +217,15 @@ class KalmanFilter:
 
 
             distance_prediction = kalman_loop.distance(kalman_loop.state_X[0], kalman_loop.state_X[1])
-            print('DISTANCE PREDICTION', distance_prediction)
-            print('DISTANCE SENSOR', distance_sensor)
+            #print('DISTANCE PREDICTION', distance_prediction)
+            #print('DISTANCE SENSOR', distance_sensor)
             error = kalman_loop.err_class
-            print('ERROR: ', error)
+            #print('ERROR: ', error)
             #self.kalman_matrix[id_drone][id_estimation] = distance_prediction for generating matrix
             error_vector[count][0] = error
 
-            print('ERRROR_VECTOR SHAPE: ')
-            print(error_vector.shape)
+            #print('ERRROR_VECTOR SHAPE: ')
+            #print(error_vector.shape)
 
             #print('distance_prediction: ')
             #print(distance_prediction)
@@ -218,12 +235,18 @@ class KalmanFilter:
            # print('relative _ y : ')
            # print(relative_y)
             count = count + 1
-        print('ERROR_MATRIX SHAPE: ')
-        print(self.error_matrix.shape)
+
+        #for j in range(self.nr_drones):
+            #for k in range(self.nr_drones * 2):
+                #self.kalman_positions_estimation.np.append(self.kalman_positions_matrix[j][k])
+                #index = index +1
+        #self.kalman_positions_estimation = self.kalman_positions_estimation.transpose()
+       # print('ERROR_MATRIX SHAPE: ')
+       # print(self.error_matrix.shape)
         self.error_matrix= np.column_stack((self.error_matrix, error_vector))
-        print('ERROR_MATRIX SHAPE: ')
-        print(self.error_matrix.shape)
-        print('Vector KALMAN: ', self.kalman_positions_estimation)
+        #print('ERROR_MATRIX SHAPE: ')
+        #print(self.error_matrix.shape)
+        print('MATRIX KALMAN: ', self.kalman_positions_matrix)
         #rospy.loginfo("######### OUTPUT KF JAVI #########")
         #rospy.loginfo("estimation in ALL VECTOR :")
         #rospy.loginfo(self.kalman_positions_estimation)
