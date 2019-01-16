@@ -111,7 +111,7 @@ class SimNQuads():
 
         plt.figure(2)
         for i in range(self.ndrones):
-            plt.plot(time, self.qlogs[i].att_h[:, 2], label="yaw q{}".format(i+1))
+            plt.plot(time[0:it], self.qlogs[i].att_h[:, 2][0:it], label="yaw q{}".format(i+1))
         plt.xlabel("Time [s]")
         plt.ylabel("Yaw [rad]")
         plt.grid()
@@ -119,7 +119,7 @@ class SimNQuads():
 
         plt.figure(3)
         for i in range(self.ndrones):
-            plt.plot(time, -self.qlogs[i].xyz_h[:, 2],
+            plt.plot(time[0:it], -self.qlogs[i].xyz_h[:, 2][0:it],
                      label="$q_{}$".format(i+1))
         plt.xlabel("Time [s]")
         plt.ylabel("Altitude [m]")
@@ -128,7 +128,7 @@ class SimNQuads():
 
         plt.figure(4)
         for i in range(self.ndrones):
-            plt.plot(time, self.Ed_log[:, i], label="$e_{}$".format(i+1))
+            plt.plot(time[0:it], self.Ed_log[:, i][0:it], label="$e_{}$".format(i+1))
         plt.xlabel("Time [s]")
         plt.ylabel("Formation distance error [m]")
         plt.grid()
