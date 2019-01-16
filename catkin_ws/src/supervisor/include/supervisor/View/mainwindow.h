@@ -10,6 +10,10 @@
 #include <QDesktopWidget>
 #include "supervisor/Model/supervisor.hpp"
 
+#define STATIC 1
+#define LINEAR 2
+#define SINUSOIDAL 3
+
 namespace Ui {
 class MainWindow;
 }
@@ -19,7 +23,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    /*explicit*/ MainWindow(QWidget *parent/* = 0*/, Supervisor &sup/* = NULL*/);
+    MainWindow(QWidget *parent, Supervisor &sup);
     ~MainWindow();
 
 private slots:
@@ -52,7 +56,7 @@ private:
     float droneRandomRange;
     float simTime;
     float simRes;
-    char movementPattern;
+    int movementPattern;
 };
 
 #endif // MAINWINDOW_H

@@ -154,11 +154,11 @@ void MainWindow::on_simResSpinbox_valueChanged(int simRes_)
 void MainWindow::on_testCombo_currentTextChanged(const QString &pattern)
 {
     if (pattern.toStdString() == "Static")
-        movementPattern = 't';
+        movementPattern = STATIC;
     else if (pattern.toStdString() == "Linear")
-        movementPattern = 'l';
+        movementPattern = LINEAR;
     else if (pattern.toStdString() == "Sinusoidal")
-        movementPattern = 's';
+        movementPattern = SINUSOIDAL;
 
     qDebug() << "Movement pattern: " << pattern << "(" << movementPattern << ")";
 }
