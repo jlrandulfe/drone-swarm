@@ -31,17 +31,34 @@ Supervisor::~Supervisor()
 
 
 	
-void Supervisor::setupSimulation(int amount_of_drones, float distance, float v_shape_angle, char shape, float range, float resolution, float simtime)
+void Supervisor::setupSimulation(int amount_of_drones, float distance, float v_shape_angle, char shape, float range, float resolution, float simtime, int movementPattern_, float x_vel_, float y_vel_, float sinusoid_freq)
 {
 	simTime = simtime;
 	simRes = resolution;
+	movementPattern = movementPattern_;
+	x_vel = x_vel_;
+	y_vel = y_vel_;
+	
 	this->getFormation(amount_of_drones, distance, v_shape_angle, shape, range);
+	
 	//publish connection matrix to error_estimator/controller node and kalman_filter node
-	printf("Starting KalmanService\n");
-	kalman_service = n.advertiseService("supervisor/kalman", &Supervisor::serviceKalmanCallback, this);
+	if(!ros::service::exists("supervisor/kalman", false))
+	{
+		printf("Starting KalmanService\n");
+		kalman_service = n.advertiseService("supervisor/kalman", &Supervisor::serviceKalmanCallback, this);
+	}
+	else
+		printf("KalmanService already exists\n");
+	
 	//publish starting locations and number of drones to pycopter
-	printf("Starting PyCopterService\n");
-	pycopter_service = n.advertiseService("supervisor/pycopter", &Supervisor::servicePyCopterCallback, this);
+	if(!ros::service::exists("supervisor/pycopter", false))
+	{
+		printf("Starting PyCopterService\n");
+		pycopter_service = n.advertiseService("supervisor/pycopter", &Supervisor::servicePyCopterCallback, this);
+	}
+	else
+		printf("PyCopterService already exists\n");
+	
 	printf("Waiting for Pycopter to set up Start Stop Simulation service\n");
 	ros::service::waitForService("pycopter/start_stop");
 	pycopter_client = n.serviceClient<pycopter::PycopterStartStop>("pycopter/start_stop");
@@ -111,6 +128,9 @@ bool Supervisor::serviceKalmanCallback(pycopter::DroneSwarmMultiArray::Request  
 		}
 	res.data = connection_data;
 	res.n_rows = res.n_cols = connection_matrix.size();
+	res.param1 = x_vel;
+	res.param2 = y_vel;
+	res.param3 = sinusoid_freq;
 	return true;
 }
 
@@ -124,7 +144,6 @@ void Supervisor::getFormation(int amount_of_drones, float distance, float v_shap
 	srv.request.distance = distance;
 	srv.request.angle = v_shape_angle;
 	srv.request.random_range = range;
-	// float result[amount_of_drones][amount_of_drones];
 
 	ros::service::waitForService("formation_control", 10);
 	if (client.call(srv))
@@ -186,7 +205,7 @@ int main(int argc, char **argv)
 	Supervisor sup(n);
 
 
-	sup.setupSimulation(5, 5, 20, 'g', 0.9, 100, 5);
+	// sup.setupSimulation(5, 5, 20, 'g', 0.9, 100, 5);
 	ros::spin();
 	return 0;
 }

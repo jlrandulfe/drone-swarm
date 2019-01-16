@@ -10,6 +10,10 @@
 #include <QDesktopWidget>
 #include "supervisor/Model/supervisor.hpp"
 
+#define STATIC 1
+#define LINEAR 2
+#define SINUSOIDAL 3
+
 namespace Ui {
 class MainWindow;
 }
@@ -19,7 +23,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    /*explicit*/ MainWindow(QWidget *parent/* = 0*/, Supervisor &sup/* = NULL*/);
+    MainWindow(QWidget *parent, Supervisor &sup);
     ~MainWindow();
 
 private slots:
@@ -36,9 +40,7 @@ private slots:
     void on_simResSpinbox_valueChanged(int arg1);
     void on_testCombo_currentTextChanged(const QString &arg1);
     void on_freqSpinbox_valueChanged(double arg1);
-
     void on_xSpinbox_valueChanged(double arg1);
-
     void on_ySpinbox_valueChanged(double arg1);
 
 private:
@@ -56,10 +58,10 @@ private:
     float droneRandomRange;
     float simTime;
     float simRes;
-    char movementPattern;
     float frequency;
     float x;
     float y;
+    int movementPattern;
 };
 
 #endif // MAINWINDOW_H

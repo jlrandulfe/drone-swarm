@@ -54,8 +54,8 @@ class Kalman:
 
 
 	def predict(self, state_sim, relative_velocities):
-		print(" PREDICTION ")
-		print("\n")
+		#print(" PREDICTION ")
+		#print("\n")
 		# predict the position in the plane of the drone
 		# How the position evolvers -> dynamics
 		#self.next_pos_x = self.state_X[0] + relative_velocities[0] * self.dt
@@ -91,11 +91,11 @@ class Kalman:
 		self.predict_cov_P = self.F.dot(self.cov_P).dot(self.F.transpose()) + self.Q
 		self.state_X = self.predict_state_X
 		self.cov_P = self.predict_cov_P
-		print(" predict_State : ", self.predict_state_X)
-		print("\n")
+		#print(" predict_State : ", self.predict_state_X)
+		#print("\n")
 
-		print(" predict_cov_P : ", self.predict_cov_P)
-		print("\n")
+		#print(" predict_cov_P : ", self.predict_cov_P)
+		#print("\n")
 
 	def distance (self, x, y):
 
@@ -106,8 +106,8 @@ class Kalman:
 		return d
 
 	def update(self, state_sim, distance_sensor):
-		print(" UPDATE ") # STEP K
-		print("\n")
+		#print(" UPDATE ") # STEP K
+		#print("\n")
 		# correct the KF
 		#print(" predict_State size: ", self.predict_state_X.size)
 		#print("\n")
@@ -200,11 +200,11 @@ class Kalman:
 		#print(" cov_P: ", self.cov_P)
 		#print("\n")
 
-		print(" state_X: ", self.state_X)
-		print("\n")
+		#print(" state_X: ", self.state_X)
+		#print("\n")
 
-		print(" cov_P: ", self.cov_P)
-		print("\n")
+		#print(" cov_P: ", self.cov_P)
+		#print("\n")
 
 	def error(self, distance_sensor):
 

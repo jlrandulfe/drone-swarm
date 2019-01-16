@@ -22,12 +22,22 @@ class PControlNode():
 
     def __init__(self):
         self.start = False
+        self.new_it = False
         self.n_drones = 0
+        self.timestamp = 0
+        self.movement = "static"
+        self.velocity = np.array([0,0])         # [m/s, m/s]
+        self.sin_amplitude = np.array([0, 0])   # [m, m]
+        self.sin_frequency = 0.0                # [Hz]
+        self.timestamp = 0                      # [ms]
         # Errors matrix
         self.errors = np.array([[0, 1, 2],[1, 0, 3],[2, 3, 0]])
         self.predicted_rel_positions = np.array([])
         self.predicted_distances = np.array([])
         self.desired_distances = np.array([])
+
+        # Control variables matrix
+        self.control_u = np.array([])
 
         # Kalman filter topic susbscribers
         rospy.Subscriber("kalman/pos_estimation",
@@ -56,32 +66,10 @@ class PControlNode():
         # been given beforehand.
         if not self.start:
             return
-        # Get the relative positions from the Kalman node. With them, calculate
-        # the predicted distances between the drones. Finally, get the errors to
-        # the desired distances.
+        self.timestamp = data.data_offset
+        # Get the relative positions from the Kalman node.
         self.predicted_rel_positions = array_operations.multiarray2np(data)
-        self.predicted_distances = np.linalg.norm(self.predicted_rel_positions,
-                                                  axis=2)
-        self.errors = error_functions.simple_differences(
-                self.desired_distances, self.predicted_distances)
-
-        # Apply sign to errors, so they are symmetric.
-        sign_matrix = np.triu(np.ones((3)), 1) + np.tril(-1*np.ones((3)), -1)
-        self.errors *= sign_matrix
-        # P gain
-        Kp = 1.2
-
-        # Unit vectors calculation. Create a virtual axis so the division is
-        # dimension meaningful.
-        unit_vectors = (self.predicted_rel_positions
-                        / self.predicted_distances[:, :, None])
-
-        # Calculate and send the final control variable
-        control_u = (self.errors[:, :, None] * unit_vectors).sum(axis=1) * Kp
-
-        self.control_var_pub.publish(array_operations.np2multiarray(control_u))
-        rospy.loginfo("Controller: published U {}, {}".format(control_u[0],
-                                                              control_u[1]))
+        self.new_it = True
         return
 
     def pat_gen_start(self):
@@ -103,13 +91,76 @@ class PControlNode():
         rospy.loginfo("Controller: Received formation from supervisor.")
         return 0
 
+    def gradient_descent_control(self, Kp=1.2):
+        """
+        Apply gradient descent for finding the control action
+
+        For a given N number of agents, calculate the control action so
+        it minimizes the accumulated error of the drones positions.
+        """
+        # Calculate the predicted distances between the drones. Then, get the
+        # errors to the desired distances.
+        self.predicted_distances = np.linalg.norm(self.predicted_rel_positions,
+                                                  axis=2)
+        self.errors = error_functions.simple_differences(
+                self.desired_distances, self.predicted_distances)
+
+        # Apply sign to errors, so they are symmetric.
+        sign_matrix = np.triu(np.ones((3)), 1) + np.tril(-1*np.ones((3)), -1)
+        self.errors *= sign_matrix
+
+        # Unit vectors calculation. Create a virtual axis so the division is
+        # dimension meaningful.
+        unit_vectors = (self.predicted_rel_positions
+                        / self.predicted_distances[:,:,None])
+
+        # Calculate and send the final control variable
+        self.control_u = (self.errors[:,:,None] * unit_vectors).sum(axis=1) * Kp
+        return
+
+    def set_leader_velocity(self):
+        if self.movement == "static":
+            pass
+        elif self.movement == "linear":
+            self.control_u[0] += self.velocity
+        elif self.movement == "sinusoidal":
+            self.control_u[0] += self.sin_amplitude * np.sin(self.sin_frequency
+                                                             * self.timestamp)
+        else:
+            raise ValueError("Unrecognized movement type")
+        return
+
     def run(self):
+        """
+        Main routine. Wait for initialization and then do the main loop
+
+        It waits until the supervisor node service is active. Then, it
+        requests the desired formation from it.
+
+        Afterwards, it enters the main loop, where it continuously
+        waits for position predictions. After receiving a prediction, it
+        calculates the control action by using a gradient-descent based
+        controller. Finally, it applies to the leader of the formation
+        the desired movement of the swarm on top of the control action.
+        """
         rospy.loginfo("Controller started. Waiting for a desired formation")
         rospy.wait_for_service("/supervisor/kalman")
         rospy.loginfo("Online")
+        # Connect to the supervisor service and get the desired formation.
         self.pat_gen_start()
-        while not self.start:
-            rospy.sleep(1)
+
+        # Main loop. Wait for predictions and calculate the control action
+        rate = rospy.Rate(100)
+        while not rospy.is_shutdown():
+            if self.start and self.new_it:
+                self.gradient_descent_control()
+                self.set_leader_velocity()
+                self.control_var_pub.publish(array_operations.np2multiarray(
+                        self.control_u))
+                rospy.loginfo("Controller: published U {}, {}".format(
+                        self.control_u[0], self.control_u[1]))
+                self.new_it = False
+            rate.sleep()
         rospy.spin()
         return
 

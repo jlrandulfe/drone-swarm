@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent, Supervisor &sup) :
     droneRandomRange = 0.5;
     simTime = 30;
     simRes = 50;
-    movementPattern = 't';
+    movementPattern = STATIC;
     frequency = 0.0;
     x = 0.0;
     y = 0.0;
@@ -133,7 +133,10 @@ void MainWindow::on_droneAmountSpinBox_valueChanged(int amount)
 void MainWindow::on_applyButton_clicked()
 {
     qDebug() << "Save settings button clicked";
-    supervisor.setupSimulation(droneAmount, droneDistance, droneAngle, shapeSelection, droneRandomRange, simRes, simTime);
+    supervisor.setupSimulation(
+                droneAmount, droneDistance, droneAngle, shapeSelection, droneRandomRange,
+                simRes, simTime, movementPattern, x, y, frequency
+                );
 }
 
 void MainWindow::on_startButton_clicked()
@@ -170,10 +173,9 @@ void MainWindow::on_testCombo_currentTextChanged(const QString &pattern)
 {
     if (pattern.toStdString() == "Static")
     {
-        movementPattern = 't';
+        movementPattern = STATIC;
         ui->amplitudeLabel->setEnabled(false);
         ui->velLabel->setEnabled(false);
-//        ui->slashLabel->setEnabled(false);
         ui->xLabel->setEnabled(false);
         ui->yLabel->setEnabled(false);
         ui->xSpinbox->setEnabled(false);
@@ -185,10 +187,9 @@ void MainWindow::on_testCombo_currentTextChanged(const QString &pattern)
     }
     else if (pattern.toStdString() == "Linear")
     {
-        movementPattern = 'l';
+        movementPattern = LINEAR;
         ui->amplitudeLabel->setEnabled(false);
         ui->velLabel->setEnabled(true);
-//        ui->slashLabel->setEnabled(true);
         ui->xLabel->setEnabled(true);
         ui->yLabel->setEnabled(true);
         ui->xSpinbox->setEnabled(true);
@@ -200,10 +201,9 @@ void MainWindow::on_testCombo_currentTextChanged(const QString &pattern)
     }
     else if (pattern.toStdString() == "Sinusoidal")
     {
-        movementPattern = 's';
+        movementPattern = SINUSOIDAL;
         ui->amplitudeLabel->setEnabled(true);
         ui->velLabel->setEnabled(false);
-//        ui->slashLabel->setEnabled(true);
         ui->xLabel->setEnabled(true);
         ui->yLabel->setEnabled(true);
         ui->xSpinbox->setEnabled(true);
@@ -213,7 +213,6 @@ void MainWindow::on_testCombo_currentTextChanged(const QString &pattern)
         ui->amplitudeLabel->setStyleSheet("font-weight: bold");
         ui->velLabel->setStyleSheet("font-weight: normal");
     }
-
     qDebug() << "Movement pattern: " << pattern << "(" << movementPattern << ")";
 }
 
