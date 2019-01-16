@@ -1,4 +1,4 @@
-#include "supervisor/View/mainwindow.h"
+#include "../../include/supervisor/View/mainwindow.h"
 #include "ui_mainwindow.h"
 #include <iostream>
 #include <cstdlib>
@@ -19,6 +19,9 @@ MainWindow::MainWindow(QWidget *parent, Supervisor &sup) :
     simTime = 30;
     simRes = 50;
     movementPattern = 't';
+    frequency = 0.0;
+    x = 0.0;
+    y = 0.0;
 
     // Init UI
     ui->setupUi(this);
@@ -29,6 +32,16 @@ MainWindow::MainWindow(QWidget *parent, Supervisor &sup) :
     ui->testCombo->addItem(tr("Static"));
     ui->testCombo->addItem(tr("Linear"));
     ui->testCombo->addItem(tr("Sinusoidal"));
+
+    ui->amplitudeLabel->setEnabled(false);
+    ui->velLabel->setEnabled(false);
+    ui->slashLabel->setEnabled(true);
+    ui->xLabel->setEnabled(false);
+    ui->yLabel->setEnabled(false);
+    ui->xSpinbox->setEnabled(false);
+    ui->ySpinbox->setEnabled(false);
+    ui->freqLabel->setEnabled(false);
+    ui->freqSpinbox->setEnabled(false);
 
     ui->droneAmountSpinBox->setRange(3,20);
     ui->droneAmountLabel->setText(tr("Amount of drones (3-20)"));
@@ -46,6 +59,8 @@ MainWindow::MainWindow(QWidget *parent, Supervisor &sup) :
             qApp->desktop()->availableGeometry()
         )
     );
+
+    ui->splitter->setSizes(QList<int>() << 50 << 200);
 
 //    ui->plot->addGraph();
 //    ui->plot->graph(0)->setScatterStyle(QCPScatterStyle::ssCircle);
@@ -154,11 +169,68 @@ void MainWindow::on_simResSpinbox_valueChanged(int simRes_)
 void MainWindow::on_testCombo_currentTextChanged(const QString &pattern)
 {
     if (pattern.toStdString() == "Static")
+    {
         movementPattern = 't';
+        ui->amplitudeLabel->setEnabled(false);
+        ui->velLabel->setEnabled(false);
+//        ui->slashLabel->setEnabled(false);
+        ui->xLabel->setEnabled(false);
+        ui->yLabel->setEnabled(false);
+        ui->xSpinbox->setEnabled(false);
+        ui->ySpinbox->setEnabled(false);
+        ui->freqLabel->setEnabled(false);
+        ui->freqSpinbox->setEnabled(false);
+        ui->amplitudeLabel->setStyleSheet("font-weight: normal");
+        ui->velLabel->setStyleSheet("font-weight: normal");
+    }
     else if (pattern.toStdString() == "Linear")
+    {
         movementPattern = 'l';
+        ui->amplitudeLabel->setEnabled(false);
+        ui->velLabel->setEnabled(true);
+//        ui->slashLabel->setEnabled(true);
+        ui->xLabel->setEnabled(true);
+        ui->yLabel->setEnabled(true);
+        ui->xSpinbox->setEnabled(true);
+        ui->ySpinbox->setEnabled(true);
+        ui->freqLabel->setEnabled(false);
+        ui->freqSpinbox->setEnabled(false);
+        ui->amplitudeLabel->setStyleSheet("font-weight: normal");
+        ui->velLabel->setStyleSheet("font-weight: bold");
+    }
     else if (pattern.toStdString() == "Sinusoidal")
+    {
         movementPattern = 's';
+        ui->amplitudeLabel->setEnabled(true);
+        ui->velLabel->setEnabled(false);
+//        ui->slashLabel->setEnabled(true);
+        ui->xLabel->setEnabled(true);
+        ui->yLabel->setEnabled(true);
+        ui->xSpinbox->setEnabled(true);
+        ui->ySpinbox->setEnabled(true);
+        ui->freqLabel->setEnabled(true);
+        ui->freqSpinbox->setEnabled(true);
+        ui->amplitudeLabel->setStyleSheet("font-weight: bold");
+        ui->velLabel->setStyleSheet("font-weight: normal");
+    }
 
     qDebug() << "Movement pattern: " << pattern << "(" << movementPattern << ")";
+}
+
+void MainWindow::on_freqSpinbox_valueChanged(double freq)
+{
+    frequency = freq;
+    qDebug() << "Frequency: " << frequency << "Hz";
+}
+
+void MainWindow::on_xSpinbox_valueChanged(double xin)
+{
+    x = xin;
+    qDebug() << "x: " << x << ", y: " << y;
+}
+
+void MainWindow::on_ySpinbox_valueChanged(double yin)
+{
+    y = yin;
+    qDebug() << "x: " << x << ", y: " << y;
 }
