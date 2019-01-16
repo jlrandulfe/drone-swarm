@@ -118,7 +118,7 @@ void MainWindow::on_droneAmountSpinBox_valueChanged(int amount)
 void MainWindow::on_applyButton_clicked()
 {
     qDebug() << "Save settings button clicked";
-    supervisor.setupSimulation(droneAmount, droneDistance, droneAngle, shapeSelection, droneRandomRange, simRes, simTime);
+    supervisor.setupSimulation(droneAmount, droneDistance, droneAngle, shapeSelection, droneRandomRange, simRes, simTime, 1, 1, 1, 1);
 }
 
 void MainWindow::on_startButton_clicked()
