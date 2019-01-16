@@ -24,6 +24,7 @@ class PControlNode():
         self.start = False
         self.new_it = False
         self.n_drones = 0
+        self.timestamp = 0
         self.movement = "static"
         self.velocity = np.array([0,0])         # [m/s, m/s]
         self.sin_amplitude = np.array([0, 0])   # [m, m]
@@ -65,6 +66,7 @@ class PControlNode():
         # been given beforehand.
         if not self.start:
             return
+        self.timestamp = data.data_offset
         # Get the relative positions from the Kalman node.
         self.predicted_rel_positions = array_operations.multiarray2np(data)
         self.new_it = True
