@@ -11,6 +11,8 @@ import std_msgs.msg
 # Local libraries
 from controller import array_operations
 from controller import error_functions
+from pycopter.srv import DroneSwarmMultiArray
+
 
 def dist(vector):
     length = np.sqrt(pow(vector[0],2)+pow(vector[1],2))
@@ -20,6 +22,7 @@ class PControlNode():
 
     def __init__(self):
         self.start = False
+        self.n_drones = 0
         # Errors matrix
         self.errors = np.array([[0, 1, 2],[1, 0, 3],[2, 3, 0]])
         self.predicted_rel_positions = np.array([])
@@ -27,12 +30,9 @@ class PControlNode():
         self.desired_distances = np.array([])
 
         # Kalman filter topic susbscribers
-        rospy.Subscriber("kalman/state", std_msgs.msg.Float64MultiArray,
-                         self.kalman_callback, queue_size=1)
-        # Pattern generator topic susbscribers
-        rospy.Subscriber("pattern_generator/start",
+        rospy.Subscriber("kalman/pos_estimation",
                          std_msgs.msg.Float64MultiArray,
-                         self.pat_gen_start_callback, queue_size=1)
+                         self.kalman_callback, queue_size=1)
 
         # Drone controller topic publisher
         self.control_var_pub = rospy.Publisher(
@@ -71,22 +71,43 @@ class PControlNode():
         # P gain
         Kp = 1.2
 
+        # Unit vectors calculation. Create a virtual axis so the division is
+        # dimension meaningful.
+        unit_vectors = (self.predicted_rel_positions
+                        / self.predicted_distances[:, :, None])
+
         # Calculate and send the final control variable
-        control_u = self.errors.sum(axis=1) * Kp
+        control_u = (self.errors[:, :, None] * unit_vectors).sum(axis=1) * Kp
 
         self.control_var_pub.publish(array_operations.np2multiarray(control_u))
+        rospy.loginfo("Controller: published U {}, {}".format(control_u[0],
+                                                              control_u[1]))
         return
 
-    def pat_gen_start_callback(self, data):
+    def pat_gen_start(self):
         """
         Store the desired distances, and allow the controller to start
         """
-        self.desired_distances = array_operations.multiarray2np_sqr(data.data)
+        try:
+            setup_pycopter = rospy.ServiceProxy("supervisor/kalman",
+                                                DroneSwarmMultiArray)
+            resp = setup_pycopter(True)
+            self.n_drones = resp.n_rows
+        except rospy.ServiceException as e:
+            print("Service call failed: {}".format(e))
+            return -1
+        self.desired_distances = array_operations.multiarray2np_sqr(resp)
+
+        # self.desired_distances = array_operations.multiarray2np_sqr(data.data)
         self.start = True
-        return
+        rospy.loginfo("Controller: Received formation from supervisor.")
+        return 0
 
     def run(self):
         rospy.loginfo("Controller started. Waiting for a desired formation")
+        rospy.wait_for_service("/supervisor/kalman")
+        rospy.loginfo("Online")
+        self.pat_gen_start()
         while not self.start:
             rospy.sleep(1)
         rospy.spin()
