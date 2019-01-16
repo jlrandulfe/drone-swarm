@@ -66,7 +66,7 @@ class PControlNode():
         # been given beforehand.
         if not self.start:
             return
-        self.timestamp = data.data_offset
+        self.timestamp = data.layout.data_offset
         # Get the relative positions from the Kalman node.
         self.predicted_rel_positions = array_operations.multiarray2np(data)
         self.new_it = True

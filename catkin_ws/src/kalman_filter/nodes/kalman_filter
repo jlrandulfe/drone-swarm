@@ -106,7 +106,7 @@ class KalmanFilter:
     def kalman_publisher(self):
         kalman_multiarray = array_operations.np2multiarray_3D(self.kalman_positions_matrix)
 
-        kalman_multiarray.data_offset = self.timestamp
+        kalman_multiarray.layout.data_offset = self.timestamp
         #rospy.loginfo("Kalman_OUTPUT:")
         #rospy.loginfo(self.kalman_positions_estimation)
         #print('KALMAN PUBLISHER', kalman_multiarray)
@@ -123,7 +123,7 @@ class KalmanFilter:
         
         #print('vel_msg', vel_msg)
         self.velocities_drones = vel_msg.data
-        self.timestamp = vel_msg.data_offset
+        self.timestamp = vel_msg.layout.data_offset
         #print('VEL CALLBACK: ', self.velocities_drones)
 
     def create_kalman_filters(self):

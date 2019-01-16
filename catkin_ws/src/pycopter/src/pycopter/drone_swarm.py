@@ -144,7 +144,8 @@ class DroneSwarmNode():
         layout = std_msgs.msg.MultiArrayLayout()
         layout.dim.append(dim_1)
         layout.dim.append(dim_2)
-        layout.data_offset(self.timestamp*1000)
+       #print('timestamp', int(self.timestamp*1000))
+        layout.data_offset = int(self.timestamp*1000)
         # Create the output message with the data and the created layout.
         message = std_msgs.msg.Float64MultiArray()
         message.layout = layout
