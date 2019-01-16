@@ -1,7 +1,7 @@
 <launch>
   <node name="execute" pkg="formation_control" type="execute" output="screen"/>
   <node name="View" pkg="supervisor" type="View" output="screen"/>
-  <node name="kalman_filter" pkg="kalman_filter" type="kalman_filter" output="screen"/>
+  <node name="kalman_filter" pkg="kalman_filter" type="kalman_filter" output="log"/>
 
   <include file="$(find pycopter)/launch/drone_swarm.launch"/>
   
