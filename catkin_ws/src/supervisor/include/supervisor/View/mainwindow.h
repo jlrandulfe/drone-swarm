@@ -6,6 +6,8 @@
 #include <QDialog>
 #include <QtGui>
 #include <QtCore>
+#include <QStyle>
+#include <QDesktopWidget>
 #include "supervisor/Model/supervisor.hpp"
 
 namespace Ui {
@@ -33,6 +35,8 @@ private slots:
     void on_simTimeSpinbox_valueChanged(double arg1);
     void on_simResSpinbox_valueChanged(int arg1);
 
+    void on_testCombo_currentTextChanged(const QString &arg1);
+
 private:
 
     Ui::MainWindow *ui;
@@ -48,6 +52,7 @@ private:
     float droneRandomRange;
     float simTime;
     float simRes;
+    char movementPattern;
 };
 
 #endif // MAINWINDOW_H
