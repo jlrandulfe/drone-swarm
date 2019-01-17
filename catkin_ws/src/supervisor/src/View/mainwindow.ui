@@ -218,6 +218,9 @@
             </item>
             <item>
              <widget class="QDoubleSpinBox" name="simTimeSpinbox">
+              <property name="maximum">
+               <double>10000.000000000000000</double>
+              </property>
               <property name="value">
                <double>30.000000000000000</double>
               </property>

@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent, Supervisor &sup) :
     ui(new Ui::MainWindow),
     supervisor(sup)
 {
-    shapeSelection = 'g';
+    shapeSelection = 'v';
     droneAmount = 3;
     droneDistance = 5.0;
     droneAngle = 15.0;
@@ -25,8 +25,8 @@ MainWindow::MainWindow(QWidget *parent, Supervisor &sup) :
 
     // Init UI
     ui->setupUi(this);
-    ui->shapeCombo->addItem(tr("Grid"));
     ui->shapeCombo->addItem(tr("V-shape"));
+    ui->shapeCombo->addItem(tr("Grid"));
     ui->shapeCombo->addItem(tr("Polygon"));
 
     ui->testCombo->addItem(tr("Static"));
