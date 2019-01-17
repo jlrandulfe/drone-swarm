@@ -88,7 +88,7 @@ class KalmanFilter:
     def loop(self):
         while not self.pycopter_start:
             pass
-        rate = rospy.Rate(50)
+        rate = rospy.Rate(40)
         while not rospy.is_shutdown():
             #print('TIMESTAMP:', self.timestamp)
             #print('PREVIOUS TIME STAMP: ', self.previous)
@@ -106,7 +106,8 @@ class KalmanFilter:
             #print("ERROR MATRIX", self.error_matrix)
 
     def kalman_publisher(self):
-        kalman_multiarray = array_operations.np2multiarray_3D(self.kalman_positions_matrix)
+        kalman_multiarray = array_operations.np2multiarray_3D(
+                self.kalman_positions_matrix, self.nr_drones)
 
         kalman_multiarray.layout.data_offset = self.timestamp
         #rospy.loginfo("Kalman_OUTPUT:")

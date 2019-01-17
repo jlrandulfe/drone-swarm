@@ -12,12 +12,11 @@ def draw3d(ax, xyz, R, quadcolor):
     ax.quiver(xyz[1], xyz[0], -xyz[2], -R[2, 1], -R[2, 0], -R[2, 2], pivot='tail', \
             color='blue')
 
-def draw2d(fig, X, fc, quadcolor):
-    agents = fc.agents
+def draw2d(fig, X, fc, quadcolor, ndrones=3):
     m = fc.m
     pl.figure(fig)
 
-    for i in range(0, agents):
+    for i in range(0, ndrones):
         if m == 2:
                 pl.plot(X[m*i], X[m*i+1], 'o'+quadcolor[i])
 

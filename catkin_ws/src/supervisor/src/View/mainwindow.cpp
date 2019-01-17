@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent, Supervisor &sup) :
     ui(new Ui::MainWindow),
     supervisor(sup)
 {
-    shapeSelection = 'g';
+    shapeSelection = 'v';
     droneAmount = 3;
     droneDistance = 5.0;
     droneAngle = 15.0;
@@ -25,8 +25,8 @@ MainWindow::MainWindow(QWidget *parent, Supervisor &sup) :
 
     // Init UI
     ui->setupUi(this);
-    ui->shapeCombo->addItem(tr("Grid"));
     ui->shapeCombo->addItem(tr("V-shape"));
+    ui->shapeCombo->addItem(tr("Grid"));
     ui->shapeCombo->addItem(tr("Polygon"));
 
     ui->testCombo->addItem(tr("Static"));
@@ -90,8 +90,8 @@ void MainWindow::on_shapeCombo_currentTextChanged(const QString &shape)
         shapeSelection = 'g';
         ui->droneAngleLabel->setEnabled(false);
         ui->droneAngleSpinbox->setEnabled(false);
-        ui->droneAmountSpinBox->setRange(3,20);
-        ui->droneAmountLabel->setText(tr("Amount of drones (3-20)"));
+        ui->droneAmountSpinBox->setRange(4,20);
+        ui->droneAmountLabel->setText(tr("Amount of drones (4-20)"));
     }
     else if (shape.toStdString() == "Polygon")
     {

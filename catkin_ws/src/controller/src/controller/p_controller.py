@@ -49,6 +49,10 @@ class PControlNode():
                 "controller/control_value",
                 std_msgs.msg.Float64MultiArray,
                 queue_size=1)
+        self.errors_pub = rospy.Publisher(
+                "controller/errors",
+                std_msgs.msg.Float64MultiArray,
+                queue_size=1)
         return
 
     def kalman_callback(self, data):
@@ -86,12 +90,14 @@ class PControlNode():
             return -1
         self.desired_distances = array_operations.multiarray2np_sqr(resp)
 
+        rospy.loginfo("\n{}".format(self.desired_distances))
+
         # self.desired_distances = array_operations.multiarray2np_sqr(data.data)
         self.start = True
         rospy.loginfo("Controller: Received formation from supervisor.")
         return 0
 
-    def gradient_descent_control(self, Kp=1.2):
+    def gradient_descent_control(self, Kp=0.02):
         """
         Apply gradient descent for finding the control action
 
@@ -100,22 +106,23 @@ class PControlNode():
         """
         # Calculate the predicted distances between the drones. Then, get the
         # errors to the desired distances.
-        self.predicted_distances = np.linalg.norm(self.predicted_rel_positions,
+        predicted_distances = np.linalg.norm(self.predicted_rel_positions,
                                                   axis=2)
+        self.predicted_distances = predicted_distances
         self.errors = error_functions.simple_differences(
-                self.desired_distances, self.predicted_distances)
-
-        # Apply sign to errors, so they are symmetric.
-        sign_matrix = np.triu(np.ones((3)), 1) + np.tril(-1*np.ones((3)), -1)
-        self.errors *= sign_matrix
+                predicted_distances, self.desired_distances)
 
         # Unit vectors calculation. Create a virtual axis so the division is
         # dimension meaningful.
-        unit_vectors = (self.predicted_rel_positions
-                        / self.predicted_distances[:,:,None])
+        unit_vectors = np.zeros_like(self.predicted_rel_positions)
+        np.divide(self.predicted_rel_positions, predicted_distances[:,:,None],
+                  out=unit_vectors, where=predicted_distances[:,:,None]!=[0,0])
+
+        self.test_errors = (self.errors[:, :, None] * unit_vectors)
 
         # Calculate and send the final control variable
-        self.control_u = (self.errors[:,:,None] * unit_vectors).sum(axis=1) * Kp
+        self.errors = (self.errors[:, :, None] * unit_vectors).sum(axis=1)
+        self.control_u = self.errors * Kp
         return
 
     def set_leader_velocity(self):
@@ -150,15 +157,19 @@ class PControlNode():
         self.pat_gen_start()
 
         # Main loop. Wait for predictions and calculate the control action
-        rate = rospy.Rate(100)
+        rate = rospy.Rate(40)
         while not rospy.is_shutdown():
             if self.start and self.new_it:
                 self.gradient_descent_control()
                 self.set_leader_velocity()
                 self.control_var_pub.publish(array_operations.np2multiarray(
                         self.control_u))
-                rospy.loginfo("Controller: published U {}, {}".format(
-                        self.control_u[0], self.control_u[1]))
+                self.errors_pub.publish(array_operations.np2multiarray(
+                        self.errors))
+                rospy.loginfo("Kalman: published Z ")
+                rospy.loginfo("Controller: published U ")
+                for i in range(self.n_drones):
+                    rospy.loginfo("{}".format(self.control_u[i]))
                 self.new_it = False
             rate.sleep()
         rospy.spin()

@@ -3,6 +3,7 @@
 # Third-party libraries
 import matplotlib.pyplot as plt
 import numpy as np
+import rospy
 # Local libraries
 from pycopter import quadlog
 from pycopter import animation as ani
@@ -10,7 +11,7 @@ from pycopter import animation as ani
 
 class SimNQuads():
 
-    def __init__(self, quads, fc, time, ndrones=3, alt_d=4, frames=10):
+    def __init__(self, quads, fc, time, ndrones=3, alt_d=0.2, frames=100):
         self.test = False
         self.ndrones = ndrones
         # Extract quadcopters from list
@@ -25,10 +26,10 @@ class SimNQuads():
         self.qlogs = []
         for i in range(ndrones):
             self.qlogs.append(quadlog.quadlog(time))
-        self.Ed_log = np.zeros((time.size, self.fc.edges))
+        self.Ed_log = np.zeros((time.size, self.ndrones))
 
         # Plots
-        self.quadcolor = ["r", "g", "b"]
+        self.quadcolor = ["r", "g", "b", "c", "m", "y", "k"]
         plt.close("all")
         plt.ion()
         self.fig = plt.figure(0)
@@ -40,21 +41,32 @@ class SimNQuads():
 
         self.frames = frames
 
-    def new_iteration(self, t, dt, U=None):
+    def get_errors(self, errors):
+        errors_array = np.array(errors)
+        errors_array = errors_array.reshape([-1,  2])
+        norm_errors = np.linalg.norm(errors_array, axis=1)
+        return norm_errors.tolist()
+
+    def new_iteration(self, t, dt, U=None, errors=None):
         # Simulation
         X = np.array([])
         V = np.array([])
         for i in range(self.ndrones):
             X = np.append(X, self.quads[i].xyz[0:2])
             V = np.append(V, self.quads[i].v_ned[0:2])
-        if U is None:
-            U = self.fc.u_acc(X, V)
+        if t<5:
+            U = []
+            for i in range(self.ndrones):
+                U.append(0)
+                U.append(0)
+            print('No U Present')
 
         for i in range(self.ndrones):
             if self.test:
                 self.quads[i].set_a_2D_alt_lya(U[2*i:2*i+2], -self.alt_d)
             else:
                 self.quads[i].set_v_2D_alt_lya(U[2*i:2*i+2], -self.alt_d)
+                rospy.logwarn('drone {} velocity: {} {}'.format(i, U[2*i], U[2*i+1]))
             self.quads[i].step(dt)
 
         # Animation
@@ -76,8 +88,9 @@ class SimNQuads():
             
             plt.figure(1)
             plt.clf()
-            ani.draw2d(1, X, self.fc, self.quadcolor)
-            ani.draw_edges(1, X, self.fc, -1)
+            ani.draw2d(1, X, self.fc, self.quadcolor, self.ndrones)
+            if self.ndrones == 3:
+                ani.draw_edges(1, X, self.fc, -1)
             plt.xlabel('South [m]')
             plt.ylabel('West [m]')
             plt.title('2D Map')
@@ -93,7 +106,10 @@ class SimNQuads():
             self.qlogs[i].att_h[self.it, :] = self.quads[i].att
             self.qlogs[i].w_h[self.it, :] = self.quads[i].w
             self.qlogs[i].v_ned_h[self.it, :] = self.quads[i].v_ned
-        self.Ed_log[self.it, :] = self.fc.Ed
+        if errors:
+            self.Ed_log[self.it,:] = self.get_errors(errors)
+        else:
+            self.Ed_log[self.it, :] = [0] * self.ndrones
 
         self.it+=1
         
