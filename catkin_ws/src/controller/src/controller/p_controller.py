@@ -110,7 +110,8 @@ class PControlNode():
                 self.desired_distances, predicted_distances)
 
         # Apply sign to errors, so they are symmetric.
-        sign_matrix = np.triu(np.ones((3)), 1) + np.tril(-1*np.ones((3)), -1)
+        sign_matrix = (np.triu(np.ones((self.n_drones)), 1)
+                       + np.tril(-1*np.ones((self.n_drones)), -1))
         self.errors *= sign_matrix
 
         # Unit vectors calculation. Create a virtual axis so the division is
@@ -165,9 +166,9 @@ class PControlNode():
                         self.control_u))
                 self.errors_pub.publish(array_operations.np2multiarray(
                         self.errors))
-                rospy.loginfo("Controller: published U {}, {}, {}".format(
-                        self.control_u[0], self.control_u[1],
-                        self.control_u[2]))
+                rospy.loginfo("Controller: published U ")
+                for i in range(self.n_drones):
+                    rospy.loginfo("{}".format(self.control_u[i]))
                 self.new_it = False
             rate.sleep()
         rospy.spin()

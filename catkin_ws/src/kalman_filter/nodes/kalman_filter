@@ -104,7 +104,8 @@ class KalmanFilter:
             #print("ERROR MATRIX", self.error_matrix)
 
     def kalman_publisher(self):
-        kalman_multiarray = array_operations.np2multiarray_3D(self.kalman_positions_matrix)
+        kalman_multiarray = array_operations.np2multiarray_3D(
+                self.kalman_positions_matrix, self.nr_drones)
 
         kalman_multiarray.layout.data_offset = self.timestamp
         #rospy.loginfo("Kalman_OUTPUT:")

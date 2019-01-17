@@ -25,10 +25,10 @@ class SimNQuads():
         self.qlogs = []
         for i in range(ndrones):
             self.qlogs.append(quadlog.quadlog(time))
-        self.Ed_log = np.zeros((time.size, self.fc.edges))
+        self.Ed_log = np.zeros((time.size, self.ndrones))
 
         # Plots
-        self.quadcolor = ["r", "g", "b"]
+        self.quadcolor = ["r", "g", "b", "c", "m", "y", "k"]
         plt.close("all")
         plt.ion()
         self.fig = plt.figure(0)
@@ -54,8 +54,11 @@ class SimNQuads():
             X = np.append(X, self.quads[i].xyz[0:2])
             V = np.append(V, self.quads[i].v_ned[0:2])
         if U is None:
+            U = []
+            for i in range(self.ndrones):
+                U.append(0)
+                U.append(0)
             print('No U Present')
-            U = self.fc.u_acc(X, V)
 
         for i in range(self.ndrones):
             if self.test:
@@ -84,8 +87,9 @@ class SimNQuads():
             
             plt.figure(1)
             plt.clf()
-            ani.draw2d(1, X, self.fc, self.quadcolor)
-            ani.draw_edges(1, X, self.fc, -1)
+            ani.draw2d(1, X, self.fc, self.quadcolor, self.ndrones)
+            if self.ndrones == 3:
+                ani.draw_edges(1, X, self.fc, -1)
             plt.xlabel('South [m]')
             plt.ylabel('West [m]')
             plt.title('2D Map')
@@ -104,7 +108,7 @@ class SimNQuads():
         if errors:
             self.Ed_log[self.it,:] = self.get_errors(errors)
         else:
-            self.Ed_log[self.it, :] = self.fc.Ed
+            self.Ed_log[self.it, :] = [0] * self.ndrones
 
         self.it+=1
         
