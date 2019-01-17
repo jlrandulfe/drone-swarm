@@ -32,6 +32,7 @@ class PControlNode():
         self.timestamp = 0                      # [ms]
         # Errors matrix
         self.errors = np.array([[0, 1, 2],[1, 0, 3],[2, 3, 0]])
+        self.abs_errors = self.errors.copy()
         self.predicted_rel_positions = np.array([])
         self.predicted_distances = np.array([])
         self.desired_distances = np.array([])
@@ -118,7 +119,7 @@ class PControlNode():
         np.divide(self.predicted_rel_positions, predicted_distances[:,:,None],
                   out=unit_vectors, where=predicted_distances[:,:,None]!=[0,0])
 
-        self.test_errors = (self.errors[:, :, None] * unit_vectors)
+        self.abs_errors = self.errors.copy()
 
         # Calculate and send the final control variable
         self.errors = (self.errors[:, :, None] * unit_vectors).sum(axis=1)
@@ -165,7 +166,7 @@ class PControlNode():
                 self.control_var_pub.publish(array_operations.np2multiarray(
                         self.control_u))
                 self.errors_pub.publish(array_operations.np2multiarray(
-                        self.errors))
+                        self.abs_errors))
                 rospy.loginfo("Kalman: published Z ")
                 rospy.loginfo("Controller: published U ")
                 for i in range(self.n_drones):
