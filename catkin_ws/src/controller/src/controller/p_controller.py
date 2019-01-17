@@ -100,10 +100,10 @@ class PControlNode():
         """
         # Calculate the predicted distances between the drones. Then, get the
         # errors to the desired distances.
-        self.predicted_distances = np.linalg.norm(self.predicted_rel_positions,
+        predicted_distances = np.linalg.norm(self.predicted_rel_positions,
                                                   axis=2)
         self.errors = error_functions.simple_differences(
-                self.desired_distances, self.predicted_distances)
+                self.desired_distances, predicted_distances)
 
         # Apply sign to errors, so they are symmetric.
         sign_matrix = np.triu(np.ones((3)), 1) + np.tril(-1*np.ones((3)), -1)
@@ -111,23 +111,10 @@ class PControlNode():
 
         # Unit vectors calculation. Create a virtual axis so the division is
         # dimension meaningful.
-        # print('predict dist',self.predicted_distances)
-        # print('predict pos',self.predicted_rel_positions)
-        # print('drone amount', len(self.predicted_distances))
-        # unit_vectors = (self.predicted_rel_positions
-        #                 / self.predicted_distances[:,:,None])
-        num_drone = len(self.predicted_distances)
-        unit_vectors = np.zeros((num_drone, num_drone, 2))
-        for x in range(0,len(self.predicted_distances)):
-            for y in range(0,len(self.predicted_distances)):
-                if x == y:
-                    unit_vectors[x][y][0] = 0.0
-                    unit_vectors[x][y][1] = 0.0
-                else:
-                    unit_vectors[x][y][0] = self.predicted_rel_positions[x][y][0]/self.predicted_distances[x][y]
-                    unit_vectors[x][y][1] = self.predicted_rel_positions[x][y][1]/self.predicted_distances[x][y]
+        unit_vectors = np.zeros_like(self.predicted_rel_positions)
+        np.divide(self.predicted_rel_positions, predicted_distances[:,:,None],
+                  out=unit_vectors, where=predicted_distances[:,:,None]!=[0,0])
 
-        # print("unit vec", unit_vectors)
         # Calculate and send the final control variable
         self.control_u = (self.errors[:,:,None] * unit_vectors).sum(axis=1) * Kp
         return
