@@ -134,7 +134,7 @@ class PControlNode():
 
     def set_leader_velocity(self):
         if self.movement == "static":
-            self.control_u[0] = 0
+            pass
         elif self.movement == "linear":
             self.control_u[0] += self.velocity
         elif self.movement == "sinusoidal":
