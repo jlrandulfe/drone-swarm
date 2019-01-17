@@ -3,6 +3,7 @@
 # Third-party libraries
 import matplotlib.pyplot as plt
 import numpy as np
+import rospy
 # Local libraries
 from pycopter import quadlog
 from pycopter import animation as ani
@@ -10,7 +11,7 @@ from pycopter import animation as ani
 
 class SimNQuads():
 
-    def __init__(self, quads, fc, time, ndrones=3, alt_d=1, frames=10):
+    def __init__(self, quads, fc, time, ndrones=3, alt_d=0.2, frames=100):
         self.test = False
         self.ndrones = ndrones
         # Extract quadcopters from list
@@ -53,7 +54,7 @@ class SimNQuads():
         for i in range(self.ndrones):
             X = np.append(X, self.quads[i].xyz[0:2])
             V = np.append(V, self.quads[i].v_ned[0:2])
-        if U is None:
+        if t<5:
             U = []
             for i in range(self.ndrones):
                 U.append(0)
@@ -65,7 +66,7 @@ class SimNQuads():
                 self.quads[i].set_a_2D_alt_lya(U[2*i:2*i+2], -self.alt_d)
             else:
                 self.quads[i].set_v_2D_alt_lya(U[2*i:2*i+2], -self.alt_d)
-                print('drone ', i, ', velocity: ', U[2*i:2*i+2])
+                rospy.logwarn('drone {} velocity: {} {}'.format(i, U[2*i], U[2*i+1]))
             self.quads[i].step(dt)
 
         # Animation

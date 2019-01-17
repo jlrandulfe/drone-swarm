@@ -90,12 +90,14 @@ class PControlNode():
             return -1
         self.desired_distances = array_operations.multiarray2np_sqr(resp)
 
+        rospy.loginfo("\n{}".format(self.desired_distances))
+
         # self.desired_distances = array_operations.multiarray2np_sqr(data.data)
         self.start = True
         rospy.loginfo("Controller: Received formation from supervisor.")
         return 0
 
-    def gradient_descent_control(self, Kp=1.2):
+    def gradient_descent_control(self, Kp=0.02):
         """
         Apply gradient descent for finding the control action
 
@@ -106,19 +108,17 @@ class PControlNode():
         # errors to the desired distances.
         predicted_distances = np.linalg.norm(self.predicted_rel_positions,
                                                   axis=2)
+        self.predicted_distances = predicted_distances
         self.errors = error_functions.simple_differences(
-                self.desired_distances, predicted_distances)
-
-        # Apply sign to errors, so they are symmetric.
-        sign_matrix = (np.triu(np.ones((self.n_drones)), 1)
-                       + np.tril(-1*np.ones((self.n_drones)), -1))
-        self.errors *= sign_matrix
+                predicted_distances, self.desired_distances)
 
         # Unit vectors calculation. Create a virtual axis so the division is
         # dimension meaningful.
         unit_vectors = np.zeros_like(self.predicted_rel_positions)
         np.divide(self.predicted_rel_positions, predicted_distances[:,:,None],
                   out=unit_vectors, where=predicted_distances[:,:,None]!=[0,0])
+
+        self.test_errors = (self.errors[:, :, None] * unit_vectors)
 
         # Calculate and send the final control variable
         self.errors = (self.errors[:, :, None] * unit_vectors).sum(axis=1)
@@ -166,6 +166,7 @@ class PControlNode():
                         self.control_u))
                 self.errors_pub.publish(array_operations.np2multiarray(
                         self.errors))
+                rospy.loginfo("Kalman: published Z ")
                 rospy.loginfo("Controller: published U ")
                 for i in range(self.n_drones):
                     rospy.loginfo("{}".format(self.control_u[i]))

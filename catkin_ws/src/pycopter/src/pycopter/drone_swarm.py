@@ -95,6 +95,7 @@ class DroneSwarmNode():
             else:
                 new_pos = np.array([positions[2*i], positions[2*i+1], 0])
                 xyz_0 = np.vstack((xyz_0, new_pos))
+        xyz_0[:, 0:2] += (np.random.rand(self.n_drones, 2) - 0.5) * 10
         att_0 = np.array([0.0, 0.0, 0.0])
         pqr_0 = np.array([0.0, 0.0, 0.0])
         v_ned_0 = np.array([0.0, 0.0, 0.0])
@@ -103,15 +104,9 @@ class DroneSwarmNode():
             self.drones.append(quad.quadrotor(1, self.m, self.l, self.J, 
                     self.CDl, self.CDr, self.kt, self.km, self.kw, att_0,
                     pqr_0, xyz_0[i], v_ned_0, w_0))
-            if i <= self.n_drones/2:
-                self.drones[i].yaw_d = (2*np.pi/self.n_drones) * i
-            else:
-                self.drones[i].yaw_d = -((2*np.pi/self.n_drones)
-                                         * (self.n_drones-i))
-        # Desired heading.
-        self.drones[0].yaw_d = -np.pi
-        self.drones[1].yaw_d = np.pi/2
-        self.drones[2].yaw_d = 0
+            # Desired heading.
+            self.drones[i].yaw_d = 0
+
         # Instantiate the simulation class
         self.time = np.linspace(0, self.tf, self.tf/self.dt)
         self.quad_sim = simulation.SimNQuads(self.drones, self.fc, self.time,
