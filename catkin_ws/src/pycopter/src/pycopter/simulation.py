@@ -24,9 +24,9 @@ class SimNQuads():
 
         # Data log
         self.qlogs = []
-        for i in range(ndrones):
+        for _ in range(ndrones):
             self.qlogs.append(quadlog.quadlog(time))
-        self.Ed_log = np.zeros((time.size, 3))
+        self.Ed_log = np.zeros((time.size, 4))
 
         # Plots
         self.quadcolor = ["r", "g", "b", "c", "m", "y", "k", "r", "b"]
@@ -42,9 +42,11 @@ class SimNQuads():
         self.frames = frames
 
     def get_errors(self, errors):
-        errors_array = np.array(errors)
+        errors_array = np.array(errors[-1:])
         errors_array = errors_array.reshape([self.ndrones,  self.ndrones])
         errors_list = [errors_array[0,1], errors_array[0,2], errors_array[1,2]]
+        # Append the system error at the end of the list
+        errors_list.append(errors[-1])
         return errors_list
 
     def new_iteration(self, t, dt, U=None, errors=None):
@@ -109,7 +111,7 @@ class SimNQuads():
         if errors:
             self.Ed_log[self.it,:] = self.get_errors(errors)
         else:
-            self.Ed_log[self.it, :] = [0] * 3
+            self.Ed_log[self.it, :] = [0] * 4
 
         self.it+=1
         
@@ -150,6 +152,7 @@ class SimNQuads():
         plt.plot(time[0:it], self.Ed_log[:, 0][0:it], label="$e_{12}$")
         plt.plot(time[0:it], self.Ed_log[:, 1][0:it], label="$e_{13}$")
         plt.plot(time[0:it], self.Ed_log[:, 2][0:it], label="$e_{23}$")
+        plt.plot(time[0:it], self.Ed_log[:, 3][0:it], label="$e_{T}$")
         plt.xlabel("Time [s]")
         plt.ylabel("Formation distance error [m]")
         plt.grid()

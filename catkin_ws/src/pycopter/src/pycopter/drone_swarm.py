@@ -157,6 +157,7 @@ class DroneSwarmNode():
 
     def errors_callback(self, data):
         self.errors = data.data
+        self.errors.append(data.layout.data_offset)
         return
 
     def handle_start_stop(self, req):
