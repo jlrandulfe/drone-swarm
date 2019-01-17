@@ -23,6 +23,7 @@ class Kalman:
         # States p01_x and p01_y
         self.state_X = np.array([[0.0, 0.0]]).T
 
+
         # P Covariance matrix for the position meas
         self.cov_P = np.array([[0.5, 0.0],
                                [0.0, 0.5]])
@@ -49,22 +50,29 @@ class Kalman:
 
         #self.i = 0
         self.err_class = 0.0
+        self.start_prediction_flag = False
 
     #pl.ion()
     #self.fig, self.axis = pl.subplots(3, 1)
 
-
     def predict(self, state_sim, relative_velocities, timestamp):
+        print('STATE BEFORE FLAG', self.state_X)
+
+        if not self.start_prediction_flag:
+            self.state_X = state_sim + np.random.rand(2,1) * 0.1
+            self.start_prediction_flag = True
+            print('STATE AFTER FLAG: ', self.state_X)
         self.dt = timestamp
+
         #self.G = np.array([[self.dt, 0],
          #                  [0, self.dt]])
         #self.Q = (self.G * self.vel_sigma).dot(self.vel_sigma * self.G.transpose())
-        print("*****DT****:: ", self.dt)
+        #print("*****DT****:: ", self.dt)
         #self.G = np.array([[self.dt, 0],
         #                   [0, self.dt]])
 
-        print(" PREDICTION ")
-        print("\n")
+        #print(" PREDICTION ")
+        #print("\n")
         # predict the position in the plane of the drone
         # How the position evolvers -> dynamics
         #self.next_pos_x = self.state_X[0] + relative_velocities[0] * self.dt
@@ -125,7 +133,7 @@ class Kalman:
 
         # due the fact that the distance has a non linear relation with the position we calculate the jacobian
         # scalar * 2D array
-        #self.state_X = state_sim
+        #print("STATE SIMULATOR: ", state_sim)
         dist = (self.distance(self.state_X[0][0], self.state_X[1][0]))
         #print(" statex: ", self.state_X[0][0])
         #print("\n")
@@ -204,6 +212,8 @@ class Kalman:
 
         self.state_X = self.state_X + self.K * (self.error(distance_sensor))
 
+        #print("DISTANCE SENSOR: ", distance_sensor)
+
     #print(" H : ", self.H)
     #print("\n")
     #print(" cov_P: ", self.cov_P)
@@ -221,7 +231,7 @@ class Kalman:
         # by the position estimation.
         dist_estimation = self.distance(self.state_X[0][0], self.state_X[1][0])
         err = distance_sensor - dist_estimation
-        print('err:', err)
+        #print('err:', err)
         self.err_class = err
         #self.err_plot[self.i] = distance_sensor - dist_estimation
         #rmse = np.sqrt(dist_estimation*dist_estimation - distance_sensor*distance_sensor)
@@ -235,7 +245,7 @@ class Kalman:
 
     def variance_calculation(self, P):
         norm_cov = la.norm(P)
-        print('NORM COVARIANCE: ', norm_cov)
+        #print('NORM COVARIANCE: ', norm_cov)
 
 
     def animation(self, it, tf, time, err_plt):
