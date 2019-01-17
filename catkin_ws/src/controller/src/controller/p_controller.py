@@ -95,7 +95,7 @@ class PControlNode():
         rospy.loginfo("Controller: Received formation from supervisor.")
         return 0
 
-    def gradient_descent_control(self, Kp=1.2):
+    def gradient_descent_control(self, Kp=8):
         """
         Apply gradient descent for finding the control action
 
@@ -156,7 +156,7 @@ class PControlNode():
         self.pat_gen_start()
 
         # Main loop. Wait for predictions and calculate the control action
-        rate = rospy.Rate(40)
+        rate = rospy.Rate(200)
         while not rospy.is_shutdown():
             if self.start and self.new_it:
                 self.gradient_descent_control()

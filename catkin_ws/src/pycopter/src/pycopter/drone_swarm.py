@@ -198,7 +198,7 @@ class DroneSwarmNode():
         while not self.start:
             pass
         it = 0
-        rate = rospy.Rate(50)
+        rate = rospy.Rate(210)
         while it < len(self.time):
             t = self.time[it]
             self.timestamp = it*self.dt

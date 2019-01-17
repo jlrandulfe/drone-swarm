@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent, Supervisor &sup) :
     ui(new Ui::MainWindow),
     supervisor(sup)
 {
-    shapeSelection = 'g';
+    shapeSelection = 'v';
     droneAmount = 3;
     droneDistance = 5.0;
     droneAngle = 15.0;
