@@ -25,8 +25,8 @@ MainWindow::MainWindow(QWidget *parent, Supervisor &sup) :
 
     // Init UI
     ui->setupUi(this);
-    ui->shapeCombo->addItem(tr("Grid"));
     ui->shapeCombo->addItem(tr("V-shape"));
+    ui->shapeCombo->addItem(tr("Grid"));
     ui->shapeCombo->addItem(tr("Polygon"));
 
     ui->testCombo->addItem(tr("Static"));
