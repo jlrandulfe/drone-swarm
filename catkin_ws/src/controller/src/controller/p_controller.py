@@ -169,7 +169,7 @@ class PControlNode():
                 self.control_var_pub.publish(array_operations.np2multiarray(
                         self.control_u))
                 self.errors_pub.publish(array_operations.np2multiarray(
-                        self.abs_errors, offset=self.system_error))
+                        self.abs_errors, extra_val=self.system_error))
                 rospy.loginfo("Kalman: published Z ")
                 rospy.loginfo("Controller: published U ")
                 for i in range(self.n_drones):

@@ -11,7 +11,7 @@ import std_msgs.msg
 # Local libraries
 
 
-def np2multiarray(array, label1="drone_n", label2="coords", offset=0.0):
+def np2multiarray(array, label1="drone_n", label2="coords", extra_val=None):
     """
     Convert a 2D numpy.array into a Float64MultiArray msg
     """
@@ -28,12 +28,13 @@ def np2multiarray(array, label1="drone_n", label2="coords", offset=0.0):
     layout = std_msgs.msg.MultiArrayLayout()
     layout.dim.append(dim_1)
     layout.dim.append(dim_2)
-    # Add the offset value. Normally for indicating the system error.
-    layout.data_offset = offset
     # Create the output message with the data and the created layout.
     message = std_msgs.msg.Float64MultiArray()
     message.layout = layout
     message.data = data.reshape(data.size).tolist()
+    # Add the extra value. Normally for indicating the system error.
+    if extra_val is not None:
+        message.data.append(extra_val)
     return message
 
 def np2multiarray_3D(array, n_drones=3, coords=2):

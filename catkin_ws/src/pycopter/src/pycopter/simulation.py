@@ -42,7 +42,7 @@ class SimNQuads():
         self.frames = frames
 
     def get_errors(self, errors):
-        errors_array = np.array(errors[-1:])
+        errors_array = np.array(errors[:-1])
         errors_array = errors_array.reshape([self.ndrones,  self.ndrones])
         errors_list = [errors_array[0,1], errors_array[0,2], errors_array[1,2]]
         # Append the system error at the end of the list
