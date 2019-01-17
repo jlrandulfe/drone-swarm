@@ -49,6 +49,10 @@ class PControlNode():
                 "controller/control_value",
                 std_msgs.msg.Float64MultiArray,
                 queue_size=1)
+        self.errors_pub = rospy.Publisher(
+                "controller/errors",
+                std_msgs.msg.Float64MultiArray,
+                queue_size=1)
         return
 
     def kalman_callback(self, data):
@@ -116,7 +120,8 @@ class PControlNode():
                   out=unit_vectors, where=predicted_distances[:,:,None]!=[0,0])
 
         # Calculate and send the final control variable
-        self.control_u = (self.errors[:,:,None] * unit_vectors).sum(axis=1) * Kp
+        self.errors = (self.errors[:, :, None] * unit_vectors).sum(axis=1)
+        self.control_u = self.errors * Kp
         return
 
     def set_leader_velocity(self):
@@ -151,15 +156,18 @@ class PControlNode():
         self.pat_gen_start()
 
         # Main loop. Wait for predictions and calculate the control action
-        rate = rospy.Rate(100)
+        rate = rospy.Rate(40)
         while not rospy.is_shutdown():
             if self.start and self.new_it:
                 self.gradient_descent_control()
                 self.set_leader_velocity()
                 self.control_var_pub.publish(array_operations.np2multiarray(
                         self.control_u))
+                self.errors_pub.publish(array_operations.np2multiarray(
+                        self.errors))
                 rospy.loginfo("Controller: published U {}, {}, {}".format(
-                        self.control_u[0], self.control_u[1], self.control_u[2]))
+                        self.control_u[0], self.control_u[1],
+                        self.control_u[2]))
                 self.new_it = False
             rate.sleep()
         rospy.spin()

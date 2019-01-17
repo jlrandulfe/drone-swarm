@@ -25,6 +25,7 @@ class DroneSwarmNode():
         self.n_drones = 0
         self.fc = None
         self.U = None
+        self.errors = None
 
         # Quadrotors physical properties
         self.m = 0.65 # Kg
@@ -57,6 +58,9 @@ class DroneSwarmNode():
         rospy.Subscriber("controller/control_value",
                          std_msgs.msg.Float64MultiArray,
                          self.controller_callback, queue_size=1)
+        rospy.Subscriber("controller/errors",
+                         std_msgs.msg.Float64MultiArray,
+                         self.errors_callback, queue_size=1)
 
         # ROS publishers
         self.positions_pub = rospy.Publisher(
@@ -105,9 +109,9 @@ class DroneSwarmNode():
                 self.drones[i].yaw_d = -((2*np.pi/self.n_drones)
                                          * (self.n_drones-i))
         # Desired heading.
-        # self.drones[0].yaw_d = -np.pi
-        # self.drones[1].yaw_d = np.pi/2
-        # self.drones[2].yaw_d = 0
+        self.drones[0].yaw_d = -np.pi
+        self.drones[1].yaw_d = np.pi/2
+        self.drones[2].yaw_d = 0
         # Instantiate the simulation class
         self.time = np.linspace(0, self.tf, self.tf/self.dt)
         self.quad_sim = simulation.SimNQuads(self.drones, self.fc, self.time,
@@ -156,6 +160,10 @@ class DroneSwarmNode():
         self.U = data.data
         return
 
+    def errors_callback(self, data):
+        self.errors = data.data
+        return
+
     def handle_start_stop(self, req):
         if req.stop:
             self.stop = True
@@ -190,12 +198,13 @@ class DroneSwarmNode():
         while not self.start:
             pass
         it = 0
-        rate = rospy.Rate(100)
+        rate = rospy.Rate(50)
         while it < len(self.time):
             t = self.time[it]
             self.timestamp = it*self.dt
             it += 1
-            output = self.quad_sim.new_iteration(t, self.dt, self.U)
+            output = self.quad_sim.new_iteration(t, self.dt, self.U,
+                                                 self.errors)
             if (output == -1):
                 rospy.logerr("Pycopter simulator crashed")
                 break

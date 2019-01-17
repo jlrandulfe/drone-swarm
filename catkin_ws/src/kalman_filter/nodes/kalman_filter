@@ -88,7 +88,7 @@ class KalmanFilter:
     def loop(self):
         while not self.pycopter_start:
             pass
-        rate = rospy.Rate(50)
+        rate = rospy.Rate(40)
         while not rospy.is_shutdown():
 
             differential_timestamp = self.timestamp - self.previous

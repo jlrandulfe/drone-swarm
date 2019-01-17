@@ -40,7 +40,13 @@ class SimNQuads():
 
         self.frames = frames
 
-    def new_iteration(self, t, dt, U=None):
+    def get_errors(self, errors):
+        errors_array = np.array(errors)
+        errors_array = errors_array.reshape([-1,  2])
+        norm_errors = np.linalg.norm(errors_array, axis=1)
+        return norm_errors.tolist()
+
+    def new_iteration(self, t, dt, U=None, errors=None):
         # Simulation
         X = np.array([])
         V = np.array([])
@@ -95,7 +101,10 @@ class SimNQuads():
             self.qlogs[i].att_h[self.it, :] = self.quads[i].att
             self.qlogs[i].w_h[self.it, :] = self.quads[i].w
             self.qlogs[i].v_ned_h[self.it, :] = self.quads[i].v_ned
-        self.Ed_log[self.it, :] = self.fc.Ed
+        if errors:
+            self.Ed_log[self.it,:] = self.get_errors(errors)
+        else:
+            self.Ed_log[self.it, :] = self.fc.Ed
 
         self.it+=1
         
