@@ -90,8 +90,10 @@ class KalmanFilter:
             pass
         rate = rospy.Rate(40)
         while not rospy.is_shutdown():
-
-            differential_timestamp = self.timestamp - self.previous
+            #print('TIMESTAMP:', self.timestamp)
+            #print('PREVIOUS TIME STAMP: ', self.previous)
+            differential_timestamp = float((self.timestamp - self.previous)/1000.0)
+            print('DIFFERENTIAL_TIMESTAMP DT:', differential_timestamp)
             self.previous = self.timestamp
             self.kalman_calculations(differential_timestamp)
             self.error_col = self.error_col + 1
@@ -112,7 +114,7 @@ class KalmanFilter:
         #rospy.loginfo(self.kalman_positions_estimation)
         #print('KALMAN PUBLISHER', kalman_multiarray)
         self.kalman_pub.publish(kalman_multiarray)
-        print('KALMAN MOTHERFUCKER MESSAGE:', kalman_multiarray.data)
+        #print('KALMAN MOTHERFUCKER MESSAGE:', kalman_multiarray.data)
 
     def pos_cb(self, pos_msg):
 
@@ -140,25 +142,20 @@ class KalmanFilter:
 
                 if not self.pattern[i][j] == -1:
                     #rospy.loginfo("number of drone connected: ")
-                    print(j)
-
                     self.kf.append(kalman.Kalman())
                     self.id[self.nr_kalman_filters][0] = i
                     self.id[self.nr_kalman_filters][1] = j
-                    print('I;', i)
-                    print('J', j)
-                    print('ID:', self.id)
                     self.nr_kalman_filters = self.nr_kalman_filters + 1
         #rospy.loginfo("number of kalman filters: ")
         self.error_matrix = np.zeros((self.nr_kalman_filters, 1))
-        #print(self.nr_kalman_filters)
-        #print('ID:', self.id)
+        print(self.nr_kalman_filters)
+        print('ID:', self.id)
 
     def kalman_calculations(self, dt):
 
         count = 0
-        print('STATE: ', self.states_drones)
-        print('Velocities measured: ', self.velocities_drones)
+        #print('STATE: ', self.states_drones)
+        #print('Velocities measured: ', self.velocities_drones)
 
         relative_velocities = np.array([[0.0, 0.0]]).T
         state_simulator = np.array([[0.0, 0.0]]).T
@@ -171,8 +168,8 @@ class KalmanFilter:
             # KALMAN FILTER FROM CONNECTION id_drone to id_estimation
             id_drone = int(self.id[count][0])
             id_estimation = int(self.id[count][1])
-            print('id_drone: ', id_drone)
-            print('id_estimation: ', id_estimation)
+            #print('id_drone: ', id_drone)
+            #print('id_estimation: ', id_estimation)
             #print('X OF CONNECTION FROM: ', self.states_drones[2*id_drone])
             #print('X OF CONNECTION TO: ', self.states_drones[2*id_estimation])
 
@@ -195,18 +192,18 @@ class KalmanFilter:
             #print('V_REL X: ', relative_velocities[0])
             #print('V_REL Y: ', relative_velocities[1])
 
-
             distance_sensor = kalman_loop.distance(relative_x, relative_y)
+            kalman_loop.variance_calculation(kalman_loop.cov_P)
             kalman_loop.predict(state_simulator, relative_velocities, dt)
             kalman_loop.update(state_simulator, distance_sensor)
             #self.kalman_positions_estimation = np.concatenate((self.kalman_positions_estimation,kalman_loop.state_X[0], kalman_loop.state_X[1]))
-            self.kalman_positions_matrix[id_drone][id_estimation*2] = kalman_loop.state_X[0]
-            self.kalman_positions_matrix[id_drone][(id_estimation*2)+1] = kalman_loop.state_X[1]
+            self.kalman_positions_matrix[id_drone][id_estimation*2] = kalman_loop.state_X[0][0]
+            self.kalman_positions_matrix[id_drone][(id_estimation*2)+1] = kalman_loop.state_X[1][0]
 
 
 
             #rospy.loginfo("######### OUTPUT KF #########")
-            #print('KALMAN NUMBER: ', count)
+            #print('KALMAN NUMBER: ', self.kalman_positions_matrix)
             #print('POSITION X: ', kalman_loop.state_X[0])
             #print('POSITION Y: ', kalman_loop.state_X[1])
 
@@ -218,7 +215,7 @@ class KalmanFilter:
             #rospy.loginfo(self.kalman_positions_estimation)
 
 
-            distance_prediction = kalman_loop.distance(kalman_loop.state_X[0], kalman_loop.state_X[1])
+            distance_prediction = kalman_loop.distance(kalman_loop.state_X[0][0], kalman_loop.state_X[1][0])
             #print('DISTANCE PREDICTION', distance_prediction)
             #print('DISTANCE SENSOR', distance_sensor)
             error = kalman_loop.err_class
