@@ -32,6 +32,8 @@ class PControlNode():
         self.timestamp = 0                      # [ms]
         # Errors matrix
         self.errors = np.array([[0, 1, 2],[1, 0, 3],[2, 3, 0]])
+        self.abs_errors = self.errors.copy()
+        self.system_error = 0.0
         self.predicted_rel_positions = np.array([])
         self.predicted_distances = np.array([])
         self.desired_distances = np.array([])
@@ -80,15 +82,35 @@ class PControlNode():
         """
         Store the desired distances, and allow the controller to start
         """
+        x_value, y_value = 0, 0
         try:
             setup_pycopter = rospy.ServiceProxy("supervisor/kalman",
                                                 DroneSwarmMultiArray)
             resp = setup_pycopter(True)
             self.n_drones = resp.n_rows
+            x_value = resp.param1
+            y_value = resp.param2
+            freq = resp.param3
+            movement = resp.param4
         except rospy.ServiceException as e:
             print("Service call failed: {}".format(e))
             return -1
         self.desired_distances = array_operations.multiarray2np_sqr(resp)
+        if movement == 1:
+            self.movement = "static"
+            self.velocity = np.array([0, 0])
+            self.sin_amplitude = np.array([0, 0])
+        elif movement == 2:
+            self.movement = "linear"
+            self.velocity = np.array([x_value, y_value])
+            self.sin_amplitude = np.array([0, 0])
+        elif movement == 3:
+            self.movement = "sinusoidal"
+            self.velocity = np.array([0, 0])
+            self.sin_amplitude = np.array([x_value, y_value])
+            self.sin_frequency = freq
+        else:
+            raise ValueError("Non recognized movement int: {}".format(movement))
 
         rospy.loginfo("\n{}".format(self.desired_distances))
 
@@ -118,10 +140,12 @@ class PControlNode():
         np.divide(self.predicted_rel_positions, predicted_distances[:,:,None],
                   out=unit_vectors, where=predicted_distances[:,:,None]!=[0,0])
 
-        self.test_errors = (self.errors[:, :, None] * unit_vectors)
+        self.abs_errors = self.errors.copy()
 
         # Calculate and send the final control variable
-        self.errors = (self.errors[:, :, None] * unit_vectors).sum(axis=1)
+        vectorial_errors = self.errors[:, :, None] * unit_vectors
+        self.system_error = np.linalg.norm(vectorial_errors, axis=2).sum()
+        self.errors = (vectorial_errors).sum(axis=1)
         self.control_u = self.errors * Kp
         return
 
@@ -157,7 +181,7 @@ class PControlNode():
         self.pat_gen_start()
 
         # Main loop. Wait for predictions and calculate the control action
-        rate = rospy.Rate(40)
+        rate = rospy.Rate(200)
         while not rospy.is_shutdown():
             if self.start and self.new_it:
                 self.gradient_descent_control()
@@ -165,7 +189,7 @@ class PControlNode():
                 self.control_var_pub.publish(array_operations.np2multiarray(
                         self.control_u))
                 self.errors_pub.publish(array_operations.np2multiarray(
-                        self.errors))
+                        self.abs_errors, extra_val=self.system_error))
                 rospy.loginfo("Kalman: published Z ")
                 rospy.loginfo("Controller: published U ")
                 for i in range(self.n_drones):

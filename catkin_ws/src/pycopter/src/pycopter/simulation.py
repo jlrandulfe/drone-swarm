@@ -11,7 +11,8 @@ from pycopter import animation as ani
 
 class SimNQuads():
 
-    def __init__(self, quads, fc, time, ndrones=3, alt_d=0.2, frames=100):
+    def __init__(self, quads, fc, time, ndrones=3, alt_d=0.2, frames=50):
+
         self.test = False
         self.ndrones = ndrones
         # Extract quadcopters from list
@@ -24,12 +25,12 @@ class SimNQuads():
 
         # Data log
         self.qlogs = []
-        for i in range(ndrones):
+        for _ in range(ndrones):
             self.qlogs.append(quadlog.quadlog(time))
-        self.Ed_log = np.zeros((time.size, self.ndrones))
+        self.Ed_log = np.zeros((time.size, 4))
 
         # Plots
-        self.quadcolor = ["r", "g", "b", "c", "m", "y", "k"]
+        self.quadcolor = ["r", "g", "b", "c", "m", "y", "k", "r", "b"]
         plt.close("all")
         plt.ion()
         self.fig = plt.figure(0)
@@ -38,14 +39,19 @@ class SimNQuads():
         self.init_area = 5
         self.s = 2
         self.alt_d = alt_d
+        
+        self.counter_reach_alt = 0
+
 
         self.frames = frames
 
     def get_errors(self, errors):
-        errors_array = np.array(errors)
-        errors_array = errors_array.reshape([-1,  2])
-        norm_errors = np.linalg.norm(errors_array, axis=1)
-        return norm_errors.tolist()
+        errors_array = np.array(errors[:-1])
+        errors_array = errors_array.reshape([self.ndrones,  self.ndrones])
+        errors_list = [errors_array[0,1], errors_array[0,2], errors_array[1,2]]
+        # Append the system error at the end of the list
+        errors_list.append(errors[-1])
+        return errors_list
 
     def new_iteration(self, t, dt, U=None, errors=None):
         # Simulation
@@ -61,7 +67,13 @@ class SimNQuads():
                 U.append(0)
             print('No U Present')
 
+
         for i in range(self.ndrones):
+            # print("z: ", self.quads[i].xyz[2], "des_z: ", self.alt_d)
+            if self.quads[i].xyz[2] < -self.alt_d and self.counter_reach_alt < self.ndrones*5:
+                # print("Reached Altitude")
+                self.counter_reach_alt+=1
+
             if self.test:
                 self.quads[i].set_a_2D_alt_lya(U[2*i:2*i+2], -self.alt_d)
             else:
@@ -109,7 +121,7 @@ class SimNQuads():
         if errors:
             self.Ed_log[self.it,:] = self.get_errors(errors)
         else:
-            self.Ed_log[self.it, :] = [0] * self.ndrones
+            self.Ed_log[self.it, :] = [0] * 4
 
         self.it+=1
         
@@ -147,8 +159,10 @@ class SimNQuads():
         plt.legend(loc=2)
 
         plt.figure(4)
-        for i in range(self.ndrones):
-            plt.plot(time[0:it], self.Ed_log[:, i][0:it], label="$e_{}$".format(i+1))
+        plt.plot(time[0:it], self.Ed_log[:, 0][0:it], label="$e_{12}$")
+        plt.plot(time[0:it], self.Ed_log[:, 1][0:it], label="$e_{13}$")
+        plt.plot(time[0:it], self.Ed_log[:, 2][0:it], label="$e_{23}$")
+        plt.plot(time[0:it], self.Ed_log[:, 3][0:it], label="$e_{T}$")
         plt.xlabel("Time [s]")
         plt.ylabel("Formation distance error [m]")
         plt.grid()
