@@ -167,6 +167,7 @@ class PControlNode():
 
         # Print system error and settling time
         rospy.loginfo("System error: {}".format(self.system_error))
+        rospy.loginfo("System error percentage: {}".format((self.system_error/self.init_error)*100))
         rospy.loginfo("Settling time: {}".format(self.set_time))
         return
 

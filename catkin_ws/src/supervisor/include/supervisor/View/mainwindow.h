@@ -46,6 +46,8 @@ private slots:
     void on_resetButton_clicked();
 
 
+    void on_gainSpinbox_valueChanged(double arg1);
+
 private:
 
     Ui::MainWindow *ui;
@@ -66,6 +68,7 @@ private:
     float y;
     int movementPattern;
     float noiseConstant;
+    float controllerGain;
 };
 
 #endif // MAINWINDOW_H
