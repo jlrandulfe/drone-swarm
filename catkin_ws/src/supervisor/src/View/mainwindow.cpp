@@ -90,8 +90,8 @@ void MainWindow::on_shapeCombo_currentTextChanged(const QString &shape)
         shapeSelection = 'g';
         ui->droneAngleLabel->setEnabled(false);
         ui->droneAngleSpinbox->setEnabled(false);
-        ui->droneAmountSpinBox->setRange(3,20);
-        ui->droneAmountLabel->setText(tr("Amount of drones (3-20)"));
+        ui->droneAmountSpinBox->setRange(4,20);
+        ui->droneAmountLabel->setText(tr("Amount of drones (4-20)"));
     }
     else if (shape.toStdString() == "Polygon")
     {

@@ -32,6 +32,8 @@ class PControlNode():
         self.timestamp = 0                      # [ms]
         # Errors matrix
         self.errors = np.array([[0, 1, 2],[1, 0, 3],[2, 3, 0]])
+        self.abs_errors = self.errors.copy()
+        self.system_error = 0.0
         self.predicted_rel_positions = np.array([])
         self.predicted_distances = np.array([])
         self.desired_distances = np.array([])
@@ -94,12 +96,14 @@ class PControlNode():
             return -1
         self.desired_distances = array_operations.multiarray2np_sqr(resp)
 
+        rospy.loginfo("\n{}".format(self.desired_distances))
+
         # self.desired_distances = array_operations.multiarray2np_sqr(data.data)
         self.start = True
         rospy.loginfo("Controller: Received formation from supervisor.")
         return 0
 
-    def gradient_descent_control(self, Kp=8):
+    def gradient_descent_control(self, Kp=0.02):
         """
         Apply gradient descent for finding the control action
 
@@ -110,12 +114,9 @@ class PControlNode():
         # errors to the desired distances.
         predicted_distances = np.linalg.norm(self.predicted_rel_positions,
                                                   axis=2)
+        self.predicted_distances = predicted_distances
         self.errors = error_functions.simple_differences(
-                self.desired_distances, predicted_distances)
-
-        # Apply sign to errors, so they are symmetric.
-        sign_matrix = np.triu(np.ones((3)), 1) + np.tril(-1*np.ones((3)), -1)
-        self.errors *= sign_matrix
+                predicted_distances, self.desired_distances)
 
         # Unit vectors calculation. Create a virtual axis so the division is
         # dimension meaningful.
@@ -123,8 +124,12 @@ class PControlNode():
         np.divide(self.predicted_rel_positions, predicted_distances[:,:,None],
                   out=unit_vectors, where=predicted_distances[:,:,None]!=[0,0])
 
+        self.abs_errors = self.errors.copy()
+
         # Calculate and send the final control variable
-        self.errors = (self.errors[:, :, None] * unit_vectors).sum(axis=1)
+        vectorial_errors = self.errors[:, :, None] * unit_vectors
+        self.system_error = np.linalg.norm(vectorial_errors, axis=2).sum()
+        self.errors = (vectorial_errors).sum(axis=1)
         self.control_u = self.errors * Kp
         return
 
@@ -168,10 +173,11 @@ class PControlNode():
                 self.control_var_pub.publish(array_operations.np2multiarray(
                         self.control_u))
                 self.errors_pub.publish(array_operations.np2multiarray(
-                        self.errors))
-                # rospy.loginfo("Controller: published U {}, {}, {}".format(
-                #         self.control_u[0], self.control_u[1],
-                #         self.control_u[2]))
+                        self.abs_errors, extra_val=self.system_error))
+                rospy.loginfo("Kalman: published Z ")
+                rospy.loginfo("Controller: published U ")
+                for i in range(self.n_drones):
+                    rospy.loginfo("{}".format(self.control_u[i]))
                 self.new_it = False
             rate.sleep()
         rospy.spin()
