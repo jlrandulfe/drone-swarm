@@ -85,6 +85,10 @@ class PControlNode():
                                                 DroneSwarmMultiArray)
             resp = setup_pycopter(True)
             self.n_drones = resp.n_rows
+            print(resp.param1)
+            print(resp.param2)
+            print(resp.param3)
+            print(resp.param4)
         except rospy.ServiceException as e:
             print("Service call failed: {}".format(e))
             return -1
@@ -165,9 +169,9 @@ class PControlNode():
                         self.control_u))
                 self.errors_pub.publish(array_operations.np2multiarray(
                         self.errors))
-                rospy.loginfo("Controller: published U {}, {}, {}".format(
-                        self.control_u[0], self.control_u[1],
-                        self.control_u[2]))
+                # rospy.loginfo("Controller: published U {}, {}, {}".format(
+                #         self.control_u[0], self.control_u[1],
+                #         self.control_u[2]))
                 self.new_it = False
             rate.sleep()
         rospy.spin()

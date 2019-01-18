@@ -37,6 +37,9 @@ class SimNQuads():
         self.init_area = 5
         self.s = 2
         self.alt_d = alt_d
+        
+        self.counter_reach_alt = 0
+
 
         self.frames = frames
 
@@ -57,12 +60,23 @@ class SimNQuads():
             print('No U Present')
             U = self.fc.u_acc(X, V)
 
+
         for i in range(self.ndrones):
+            # print("z: ", self.quads[i].xyz[2], "des_z: ", self.alt_d)
+            if self.quads[i].xyz[2] < -self.alt_d and self.counter_reach_alt < self.ndrones*5:
+                # print("Reached Altitude")
+                self.counter_reach_alt+=1
+
             if self.test:
                 self.quads[i].set_a_2D_alt_lya(U[2*i:2*i+2], -self.alt_d)
             else:
-                self.quads[i].set_v_2D_alt_lya(U[2*i:2*i+2], -self.alt_d)
-                print('drone ', i, ', velocity: ', U[2*i:2*i+2])
+                if self.counter_reach_alt < self.ndrones*5:
+                    U_zeros = np.zeros_like(U)
+                    self.quads[i].set_v_2D_alt_lya(U_zeros[2*i:2*i+2], -self.alt_d)
+                else:
+                    self.quads[i].set_v_2D_alt_lya(U[2*i:2*i+2], -self.alt_d)
+                # if self.counter_reach_alt > 5 
+                # print('drone ', i, ', velocity: ', U[2*i:2*i+2])
             self.quads[i].step(dt)
 
         # Animation

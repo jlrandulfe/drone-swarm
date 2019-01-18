@@ -112,6 +112,7 @@ bool Supervisor::servicePyCopterCallback(pycopter::DroneSwarmMultiArray::Request
 	res.n_cols = 2;
 	res.param1 = simTime;
 	res.param2 = simRes;
+
 	return true;
 }
 
@@ -131,6 +132,7 @@ bool Supervisor::serviceKalmanCallback(pycopter::DroneSwarmMultiArray::Request  
 	res.param1 = x_vel;
 	res.param2 = y_vel;
 	res.param3 = sinusoid_freq;
+	res.param4 = movementPattern;
 	return true;
 }
 
