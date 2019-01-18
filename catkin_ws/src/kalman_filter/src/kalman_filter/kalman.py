@@ -11,7 +11,7 @@ class Kalman:
         # Kalman matrices init!
 
         # Observation matrix H 1/d * [ px, py ] JACOBIAN because we've non linear measure
-        self.H = np.array([[1.0, 1.0]])
+        self.H = np.array([[1, 1]])
         # time step
         self.dt = 5e-2
         # distance sensor noise
@@ -34,8 +34,8 @@ class Kalman:
         self.predict_cov_P = np.array([[0.0, 0.0],
                                        [0.0, 0.0]])
 
-        self.F = np.array([[1.0, 0.0],
-                           [0.0, 1.0]])
+        self.F = np.array([[1, 0],
+                           [0, 1]])
         # Matrix G is for determine the dynamics of the states based on the sensor measures in this case velocity to
         # estimate position.!
         self.G = np.array([[self.dt, 0.0],
@@ -49,7 +49,7 @@ class Kalman:
         self.K = np.array([[0.1, 0.1]]).T
 
         #self.i = 0
-        self.err_class = 0.0
+        self.err_class = 0
         self.start_prediction_flag = False
 
     #pl.ion()
