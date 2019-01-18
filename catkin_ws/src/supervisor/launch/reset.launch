@@ -1,0 +1,7 @@
+<launch>
+  <node name="kalman_filter" pkg="kalman_filter" type="kalman_filter" output="screen"/>
+  <node name="controller" pkg="controller" type="p_control" output="screen"/>
+
+  <include file="$(find pycopter)/launch/drone_swarm.launch"/>
+  
+</launch>

@@ -42,6 +42,9 @@ private slots:
     void on_freqSpinbox_valueChanged(double arg1);
     void on_xSpinbox_valueChanged(double arg1);
     void on_ySpinbox_valueChanged(double arg1);
+    void on_noiseSpinbox_valueChanged(double arg1);
+    void on_resetButton_clicked();
+
 
 private:
 
@@ -62,6 +65,7 @@ private:
     float x;
     float y;
     int movementPattern;
+    float noiseConstant;
 };
 
 #endif // MAINWINDOW_H

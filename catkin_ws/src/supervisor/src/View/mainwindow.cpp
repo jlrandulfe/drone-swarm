@@ -16,12 +16,13 @@ MainWindow::MainWindow(QWidget *parent, Supervisor &sup) :
     droneDistance = 5.0;
     droneAngle = 15.0;
     droneRandomRange = 0.5;
-    simTime = 30;
+    simTime = 400;
     simRes = 50;
     movementPattern = STATIC;
     frequency = 0.0;
-    x = 0.0;
-    y = 0.0;
+    x = 0.1;
+    y = 0.1;
+    noiseConstant = 0.5;
 
     // Init UI
     ui->setupUi(this);
@@ -47,9 +48,17 @@ MainWindow::MainWindow(QWidget *parent, Supervisor &sup) :
     ui->droneAmountLabel->setText(tr("Amount of drones (3-20)"));
     qDebug() << droneAngle;
 
-    ui->applyButton->setStyleSheet("background-color: blue; color: rgb(0, 0, 0)");
-    ui->startButton->setStyleSheet("background-color: green; color: rgb(0, 0, 0)");
+    ui->applyButton->setStyleSheet("background-color: blue;color: rgb(0, 0, 0)");
+    ui->startButton->setStyleSheet("background-color: rgb(0,255,30); color: rgb(0, 0, 0)");
     ui->stopButton->setStyleSheet("background-color: red; color: rgb(0, 0, 0)");
+    ui->resetButton->setStyleSheet("background-color: rgb(255,220,0); color: rgb(0, 0, 0)");
+
+    ui->startButton->setEnabled(false);
+    ui->stopButton->setEnabled(false);
+    ui->resetButton->setEnabled(false);
+    ui->startButton->setStyleSheet(QString::fromUtf8("QPushButton:disabled; color: gray"));
+    ui->stopButton->setStyleSheet(QString::fromUtf8("QPushButton:disabled; color: gray"));
+    ui->resetButton->setStyleSheet(QString::fromUtf8("QPushButton:disabled; color: gray"));
 
     ui->centralWidget->setGeometry(
         QStyle::alignedRect(
@@ -79,7 +88,7 @@ MainWindow::~MainWindow()
     system("rosnode kill drone_swarm_sim");
     system("rosnode kill kalman_filter");
     system("rosnode kill View");
-    system("rosnode kill p_control");
+    system("rosnode kill controller");
     system("killall -9 -e roslaunch");
 }
 
@@ -132,23 +141,87 @@ void MainWindow::on_droneAmountSpinBox_valueChanged(int amount)
 
 void MainWindow::on_applyButton_clicked()
 {
+    ui->startButton->setEnabled(true);
+    ui->stopButton->setEnabled(false);
+    ui->resetButton->setEnabled(false);
+
+    ui->startButton->setStyleSheet("background-color: rgb(0,255,30); color: rgb(0, 0, 0)");
+    ui->stopButton->setStyleSheet(QString::fromUtf8("QPushButton:disabled; color: gray"));
+    ui->resetButton->setStyleSheet(QString::fromUtf8("QPushButton:disabled; color: gray"));
+
+
+    qDebug() << "\n\n---------------------";
     qDebug() << "Save settings button clicked";
+    qDebug() << "Shape selected:\t" << shapeSelection;
+    qDebug() << "Amount:\t\t" << droneAmount;
+    qDebug() << "Angle:\t\t" << droneAngle;
+    qDebug() << "Distance:\t" << droneDistance;
+    qDebug() << "Init range:\t" << droneRandomRange;
+    qDebug() << "Simulation time: " << simTime << " s";
+    qDebug() << "Simulation timestep resolution:\t" << simRes << " ms";
+    qDebug() << "Movement pattern:\t" << "(" << movementPattern << ")";
+    qDebug() << "Frequency:\t" << frequency << "Hz";
+    qDebug() << "x: " << x << ", y: " << y;
+    qDebug() << "Noise constant:\t" << noiseConstant;
+    qDebug() << "---------------------\n\n";
+
     supervisor.setupSimulation(
                 droneAmount, droneDistance, droneAngle, shapeSelection, droneRandomRange,
                 simRes, simTime, movementPattern, x, y, frequency
                 );
 }
 
+void MainWindow::on_resetButton_clicked()
+{
+    qDebug() << "Reset button clicked";
+    ui->resetButton->setEnabled(false);
+    ui->resetButton->setStyleSheet(QString::fromUtf8("QPushButton:disabled; color: gray"));
+
+    system("rosnode kill kalman_filter");
+    system("rosnode kill controller");
+    system("rosnode kill drone_swarm_sim");
+    system("killall -9 -e python");
+    system("(roslaunch supervisor reset.launch &)");
+
+    ui->applyButton->setEnabled(true);
+    ui->startButton->setEnabled(true);
+    ui->stopButton->setEnabled(false);
+
+    ui->applyButton->setStyleSheet("background-color: blue;color: rgb(0, 0, 0)");
+    ui->startButton->setStyleSheet("background-color: rgb(0,255,30); color: rgb(0, 0, 0)");
+    ui->stopButton->setStyleSheet(QString::fromUtf8("QPushButton:disabled; color: gray"));
+}
+
 void MainWindow::on_startButton_clicked()
 {
     qDebug() << "Start button clicked";
+    ui->applyButton->setEnabled(false);
+    ui->startButton->setEnabled(false);
+    ui->stopButton->setEnabled(true);
+    ui->resetButton->setEnabled(true);
+    ui->applyButton->setStyleSheet(QString::fromUtf8("QPushButton:disabled; color: gray"));
+    ui->startButton->setStyleSheet(QString::fromUtf8("QPushButton:disabled; color: gray"));
+    ui->stopButton->setStyleSheet("background-color: red; color: rgb(0, 0, 0)");
+    ui->resetButton->setStyleSheet("background-color: rgb(255,220,0); color: rgb(0, 0, 0)");
+
+
     supervisor.startSimulation();
 }
 
 void MainWindow::on_stopButton_clicked()
 {
     qDebug() << "Stop button clicked";
+    ui->applyButton->setEnabled(false);
+    ui->startButton->setEnabled(false);
+    ui->stopButton->setEnabled(false);
+    ui->resetButton->setEnabled(true);
+    ui->applyButton->setStyleSheet(QString::fromUtf8("QPushButton:disabled; color: gray"));
+    ui->startButton->setStyleSheet(QString::fromUtf8("QPushButton:disabled; color: gray"));
+    ui->stopButton->setStyleSheet(QString::fromUtf8("QPushButton:disabled; color: gray"));
+    ui->resetButton->setStyleSheet("background-color: rgb(255,220,0); color: rgb(0, 0, 0)");
+
     supervisor.stopSimulation();
+    system("rosnode kill kalman_filter");
 }
 
 void MainWindow::on_initRangeSpinBox_valueChanged(double range)
@@ -232,4 +305,10 @@ void MainWindow::on_ySpinbox_valueChanged(double yin)
 {
     y = yin;
     qDebug() << "x: " << x << ", y: " << y;
+}
+
+void MainWindow::on_noiseSpinbox_valueChanged(double noise)
+{
+    noiseConstant = noise;
+    qDebug() << "Noise constant: " << noiseConstant;
 }
