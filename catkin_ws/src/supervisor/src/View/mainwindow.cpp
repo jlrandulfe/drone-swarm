@@ -163,6 +163,7 @@ void MainWindow::on_applyButton_clicked()
     qDebug() << "Frequency:\t" << frequency << "Hz";
     qDebug() << "x: " << x << ", y: " << y;
     qDebug() << "Noise constant:\t" << noiseConstant;
+    qDebug() << "Controller gain (Kp): " << controllerGain;
     qDebug() << "---------------------\n\n";
 
     supervisor.setupSimulation(
@@ -173,23 +174,22 @@ void MainWindow::on_applyButton_clicked()
 
 void MainWindow::on_resetButton_clicked()
 {
-    qDebug() << "Reset button clicked";
-    ui->resetButton->setEnabled(false);
-    ui->resetButton->setStyleSheet("color: gray");
+//    ui->resetButton->setEnabled(false);
+//    ui->resetButton->setStyleSheet("color: gray");
 
-    system("rosnode kill kalman_filter");
-    system("rosnode kill controller");
-    system("rosnode kill drone_swarm_sim");
-    system("killall -9 -e python");
-    system("(roslaunch supervisor reset.launch &)");
+//    system("rosnode kill kalman_filter");
+//    system("rosnode kill controller");
+//    system("rosnode kill drone_swarm_sim");
+//    system("killall -9 -e python");
+//    system("(roslaunch supervisor reset.launch &)");
 
-    ui->applyButton->setEnabled(true);
-    ui->startButton->setEnabled(true);
-    ui->stopButton->setEnabled(false);
+//    ui->applyButton->setEnabled(true);
+//    ui->startButton->setEnabled(true);
+//    ui->stopButton->setEnabled(false);
 
-    ui->applyButton->setStyleSheet("background-color: blue;color: rgb(0, 0, 0)");
-    ui->startButton->setStyleSheet("background-color: rgb(0,255,30); color: rgb(0, 0, 0)");
-    ui->stopButton->setStyleSheet("color: gray");
+//    ui->applyButton->setStyleSheet("background-color: blue;color: rgb(0, 0, 0)");
+//    ui->startButton->setStyleSheet("background-color: rgb(0,255,30); color: rgb(0, 0, 0)");
+//    ui->stopButton->setStyleSheet("color: gray");
 }
 
 void MainWindow::on_startButton_clicked()
@@ -198,11 +198,11 @@ void MainWindow::on_startButton_clicked()
     ui->applyButton->setEnabled(false);
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(true);
-    ui->resetButton->setEnabled(true);
+    ui->resetButton->setEnabled(false);
     ui->applyButton->setStyleSheet("color: gray");
     ui->startButton->setStyleSheet("color: gray");
     ui->stopButton->setStyleSheet("background-color: red; color: rgb(0, 0, 0)");
-    ui->resetButton->setStyleSheet("background-color: rgb(255,220,0); color: rgb(0, 0, 0)");
+    ui->resetButton->setStyleSheet("color: gray");
 
 
     supervisor.startSimulation();
@@ -214,11 +214,11 @@ void MainWindow::on_stopButton_clicked()
     ui->applyButton->setEnabled(false);
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(false);
-    ui->resetButton->setEnabled(true);
+    ui->resetButton->setEnabled(false);
     ui->applyButton->setStyleSheet("color: gray");
     ui->startButton->setStyleSheet("color: gray");
     ui->stopButton->setStyleSheet("color: gray");
-    ui->resetButton->setStyleSheet("background-color: rgb(255,220,0); color: rgb(0, 0, 0)");
+    ui->resetButton->setStyleSheet("color: gray");
 
     supervisor.stopSimulation();
     system("rosnode kill kalman_filter");
@@ -311,4 +311,10 @@ void MainWindow::on_noiseSpinbox_valueChanged(double noise)
 {
     noiseConstant = noise;
     qDebug() << "Noise constant: " << noiseConstant;
+}
+
+void MainWindow::on_gainSpinbox_valueChanged(double controllerGain_)
+{
+    controllerGain = controllerGain_;
+    qDebug() << "Controller gain (Kp): " << controllerGain;
 }
