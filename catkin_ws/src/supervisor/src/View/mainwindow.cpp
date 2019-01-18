@@ -12,17 +12,18 @@ MainWindow::MainWindow(QWidget *parent, Supervisor &sup) :
     supervisor(sup)
 {
     shapeSelection = 'v';
-    droneAmount = 6;
+    droneAmount = 5;
     droneDistance = 8.0;
-    droneAngle = 15.0;
-    droneRandomRange = 2.5;
+    droneAngle = 30.0;
+    droneRandomRange = 1.5;
     simTime = 500;
-    simRes = 50;
+    simRes = 40;
     movementPattern = STATIC;
     frequency = 0.0;
     x = 0.1;
     y = 0.1;
     noiseConstant = 0.05;
+    controllerGain = 0.02;
 
     // Init UI
     ui->setupUi(this);
