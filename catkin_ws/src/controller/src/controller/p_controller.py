@@ -20,7 +20,7 @@ def dist(vector):
 
 class PControlNode():
 
-    def __init__(self):
+    def __init__(self, kp=0.05):
         self.start = False
         self.new_it = False
         self.n_drones = 0
@@ -30,6 +30,7 @@ class PControlNode():
         self.sin_amplitude = np.array([0, 0])   # [m, m]
         self.sin_frequency = 0.0                # [Hz]
         self.timestamp = 0                      # [ms]
+        self.kp = kp
         # Errors matrix
         self.errors = np.array([[0, 1, 2],[1, 0, 3],[2, 3, 0]])
         self.abs_errors = self.errors.copy()
@@ -92,6 +93,8 @@ class PControlNode():
             y_value = resp.param2
             freq = resp.param3
             movement = resp.param4
+            if resp.param6 > 0.0:
+                self.kp = resp.param6
         except rospy.ServiceException as e:
             print("Service call failed: {}".format(e))
             return -1
@@ -119,7 +122,7 @@ class PControlNode():
         rospy.loginfo("Controller: Received formation from supervisor.")
         return 0
 
-    def gradient_descent_control(self, Kp=0.02):
+    def gradient_descent_control(self):
         """
         Apply gradient descent for finding the control action
 
@@ -129,7 +132,7 @@ class PControlNode():
         # Calculate the predicted distances between the drones. Then, get the
         # errors to the desired distances.
         predicted_distances = np.linalg.norm(self.predicted_rel_positions,
-                                                  axis=2)
+                                             axis=2)
         self.predicted_distances = predicted_distances
         self.errors = error_functions.simple_differences(
                 predicted_distances, self.desired_distances)
@@ -146,7 +149,8 @@ class PControlNode():
         vectorial_errors = self.errors[:, :, None] * unit_vectors
         self.system_error = np.linalg.norm(vectorial_errors, axis=2).sum()
         self.errors = (vectorial_errors).sum(axis=1)
-        self.control_u = self.errors * Kp
+        self.control_u = np.clip(self.errors * self.kp, -1, 1)
+        rospy.loginfo("System error: {}".format(self.system_error))
         return
 
     def set_leader_velocity(self):
@@ -155,8 +159,8 @@ class PControlNode():
         elif self.movement == "linear":
             self.control_u[0] += self.velocity
         elif self.movement == "sinusoidal":
-            self.control_u[0] += self.sin_amplitude * np.sin(self.sin_frequency
-                                                             * self.timestamp)
+            self.control_u[0] += self.sin_amplitude * np.sin(
+                    0.01*self.sin_frequency * (self.timestamp/1000.0))
         else:
             raise ValueError("Unrecognized movement type")
         return
@@ -190,8 +194,8 @@ class PControlNode():
                         self.control_u))
                 self.errors_pub.publish(array_operations.np2multiarray(
                         self.abs_errors, extra_val=self.system_error))
-                rospy.loginfo("Kalman: published Z ")
-                rospy.loginfo("Controller: published U ")
+                rospy.logdebug("Kalman: published Z ")
+                rospy.logdebug("Controller: published U ")
                 for i in range(self.n_drones):
                     rospy.loginfo("{}".format(self.control_u[i]))
                 self.new_it = False
