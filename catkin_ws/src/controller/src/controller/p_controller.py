@@ -176,7 +176,7 @@ class PControlNode():
             pass
         elif self.movement == "linear":
             for i in range(self.n_drones):
-                self.control_u[i] = self.velocity
+                self.control_u[i] += self.velocity
         elif self.movement == "sinusoidal":
             self.control_u[0] += self.sin_amplitude * np.sin(
                     0.01*self.sin_frequency * (self.timestamp/1000.0))
