@@ -11,7 +11,7 @@ from pycopter import animation as ani
 
 class SimNQuads():
 
-    def __init__(self, quads, fc, time, ndrones=3, alt_d=0.2, frames=50):
+    def __init__(self, quads, fc, time, ndrones=3, alt_d=0.2, frames=200):
 
         self.test = False
         self.ndrones = ndrones
