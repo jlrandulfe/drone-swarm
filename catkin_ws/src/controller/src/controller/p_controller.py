@@ -82,15 +82,35 @@ class PControlNode():
         """
         Store the desired distances, and allow the controller to start
         """
+        x_value, y_value = 0, 0
         try:
             setup_pycopter = rospy.ServiceProxy("supervisor/kalman",
                                                 DroneSwarmMultiArray)
             resp = setup_pycopter(True)
             self.n_drones = resp.n_rows
+            x_value = resp.param1
+            y_value = resp.param2
+            freq = resp.param3
+            movement = resp.param4
         except rospy.ServiceException as e:
             print("Service call failed: {}".format(e))
             return -1
         self.desired_distances = array_operations.multiarray2np_sqr(resp)
+        if movement == 1:
+            self.movement = "static"
+            self.velocity = np.array([0, 0])
+            self.sin_amplitude = np.array([0, 0])
+        elif movement == 2:
+            self.movement = "linear"
+            self.velocity = np.array([x_value, y_value])
+            self.sin_amplitude = np.array([0, 0])
+        elif movement == 3:
+            self.movement = "sinusoidal"
+            self.velocity = np.array([0, 0])
+            self.sin_amplitude = np.array([x_value, y_value])
+            self.sin_frequency = freq
+        else:
+            raise ValueError("Non recognized movement int: {}".format(movement))
 
         rospy.loginfo("\n{}".format(self.desired_distances))
 
