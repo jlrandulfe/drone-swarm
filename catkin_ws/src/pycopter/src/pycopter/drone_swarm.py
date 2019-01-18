@@ -95,7 +95,7 @@ class DroneSwarmNode():
             else:
                 new_pos = np.array([positions[2*i], positions[2*i+1], 0])
                 xyz_0 = np.vstack((xyz_0, new_pos))
-        xyz_0[:, 0:2] += (np.random.rand(self.n_drones, 2) - 0.5) * 10
+        #xyz_0[:, 0:2] += (np.random.rand(self.n_drones, 2) - 0.5) * 10
         att_0 = np.array([0.0, 0.0, 0.0])
         pqr_0 = np.array([0.0, 0.0, 0.0])
         v_ned_0 = np.array([0.0, 0.0, 0.0])
