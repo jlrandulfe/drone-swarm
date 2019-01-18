@@ -56,9 +56,9 @@ MainWindow::MainWindow(QWidget *parent, Supervisor &sup) :
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(false);
     ui->resetButton->setEnabled(false);
-    ui->startButton->setStyleSheet(QString::fromUtf8("QPushButton:disabled; color: gray"));
-    ui->stopButton->setStyleSheet(QString::fromUtf8("QPushButton:disabled; color: gray"));
-    ui->resetButton->setStyleSheet(QString::fromUtf8("QPushButton:disabled; color: gray"));
+    ui->startButton->setStyleSheet("color: gray");
+    ui->stopButton->setStyleSheet("color: gray");
+    ui->resetButton->setStyleSheet("color: gray");
 
     ui->centralWidget->setGeometry(
         QStyle::alignedRect(
@@ -146,8 +146,8 @@ void MainWindow::on_applyButton_clicked()
     ui->resetButton->setEnabled(false);
 
     ui->startButton->setStyleSheet("background-color: rgb(0,255,30); color: rgb(0, 0, 0)");
-    ui->stopButton->setStyleSheet(QString::fromUtf8("QPushButton:disabled; color: gray"));
-    ui->resetButton->setStyleSheet(QString::fromUtf8("QPushButton:disabled; color: gray"));
+    ui->stopButton->setStyleSheet("color: gray");
+    ui->resetButton->setStyleSheet("color: gray");
 
 
     qDebug() << "\n\n---------------------";
@@ -175,7 +175,7 @@ void MainWindow::on_resetButton_clicked()
 {
     qDebug() << "Reset button clicked";
     ui->resetButton->setEnabled(false);
-    ui->resetButton->setStyleSheet(QString::fromUtf8("QPushButton:disabled; color: gray"));
+    ui->resetButton->setStyleSheet("color: gray");
 
     system("rosnode kill kalman_filter");
     system("rosnode kill controller");
@@ -189,7 +189,7 @@ void MainWindow::on_resetButton_clicked()
 
     ui->applyButton->setStyleSheet("background-color: blue;color: rgb(0, 0, 0)");
     ui->startButton->setStyleSheet("background-color: rgb(0,255,30); color: rgb(0, 0, 0)");
-    ui->stopButton->setStyleSheet(QString::fromUtf8("QPushButton:disabled; color: gray"));
+    ui->stopButton->setStyleSheet("color: gray");
 }
 
 void MainWindow::on_startButton_clicked()
@@ -199,8 +199,8 @@ void MainWindow::on_startButton_clicked()
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(true);
     ui->resetButton->setEnabled(true);
-    ui->applyButton->setStyleSheet(QString::fromUtf8("QPushButton:disabled; color: gray"));
-    ui->startButton->setStyleSheet(QString::fromUtf8("QPushButton:disabled; color: gray"));
+    ui->applyButton->setStyleSheet("color: gray");
+    ui->startButton->setStyleSheet("color: gray");
     ui->stopButton->setStyleSheet("background-color: red; color: rgb(0, 0, 0)");
     ui->resetButton->setStyleSheet("background-color: rgb(255,220,0); color: rgb(0, 0, 0)");
 
@@ -215,9 +215,9 @@ void MainWindow::on_stopButton_clicked()
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(false);
     ui->resetButton->setEnabled(true);
-    ui->applyButton->setStyleSheet(QString::fromUtf8("QPushButton:disabled; color: gray"));
-    ui->startButton->setStyleSheet(QString::fromUtf8("QPushButton:disabled; color: gray"));
-    ui->stopButton->setStyleSheet(QString::fromUtf8("QPushButton:disabled; color: gray"));
+    ui->applyButton->setStyleSheet("color: gray");
+    ui->startButton->setStyleSheet("color: gray");
+    ui->stopButton->setStyleSheet("color: gray");
     ui->resetButton->setStyleSheet("background-color: rgb(255,220,0); color: rgb(0, 0, 0)");
 
     supervisor.stopSimulation();
