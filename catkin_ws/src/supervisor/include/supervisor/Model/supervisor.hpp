@@ -10,7 +10,7 @@ class Supervisor
 public:
 	Supervisor(ros::NodeHandle nh);
 	~Supervisor();
-	void setupSimulation(int, float, float, char, float, float, float, int, float, float, float, float );
+	void setupSimulation(int, float, float, char, float, float, float, int, float, float, float, float ,float);
 	void startSimulation();
 	void stopSimulation();
 
@@ -33,4 +33,5 @@ private:
 	float x_vel, y_vel;
 	float sinusoid_freq;
 	float noise_constant;
+	float controller_gain;
 };

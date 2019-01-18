@@ -31,7 +31,7 @@ Supervisor::~Supervisor()
 
 
 	
-void Supervisor::setupSimulation(int amount_of_drones, float distance, float v_shape_angle, char shape, float range, float resolution, float simtime, int movementPattern_, float x_vel_, float y_vel_, float sinusoid_freq, float noise_constant_)
+void Supervisor::setupSimulation(int amount_of_drones, float distance, float v_shape_angle, char shape, float range, float resolution, float simtime, int movementPattern_, float x_vel_, float y_vel_, float sinusoid_freq, float noise_constant_, float controller_gain_)
 {
 	simTime = simtime;
 	simRes = resolution;
@@ -39,6 +39,7 @@ void Supervisor::setupSimulation(int amount_of_drones, float distance, float v_s
 	x_vel = x_vel_;
 	y_vel = y_vel_;
 	noise_constant = noise_constant_;
+	controller_gain = controller_gain_;
 	
 	this->getFormation(amount_of_drones, distance, v_shape_angle, shape, range);
 	
@@ -150,6 +151,7 @@ bool Supervisor::serviceKalmanCallback(pycopter::DroneSwarmMultiArray::Request  
 	res.param3 = sinusoid_freq;
 	res.param4 = movementPattern;
 	res.param5 = noise_constant;
+	res.param6 = controller_gain;
 	return true;
 }
 

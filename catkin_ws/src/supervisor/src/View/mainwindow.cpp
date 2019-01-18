@@ -168,7 +168,7 @@ void MainWindow::on_applyButton_clicked()
 
     supervisor.setupSimulation(
                 droneAmount, droneDistance, droneAngle, shapeSelection, droneRandomRange,
-                simRes, simTime, movementPattern, x, y, frequency, noiseConstant
+                simRes, simTime, movementPattern, x, y, frequency, noiseConstant, controllerGain
                 );
 }
 

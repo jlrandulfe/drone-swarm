@@ -15,6 +15,8 @@ class SimNQuads():
 
         self.test = False
         self.ndrones = ndrones
+        self.xlim = 20
+        self.ylim = 20
         # Extract quadcopters from list
         self.quads = quads
 
@@ -87,8 +89,8 @@ class SimNQuads():
             for i in range(self.ndrones):
                 ani.draw3d(self.axis3d, self.quads[i].xyz,
                            self.quads[i].Rot_bn(), self.quadcolor[i])
-            self.axis3d.set_xlim(-5, 5)
-            self.axis3d.set_ylim(-5, 5)
+            self.axis3d.set_xlim(-self.xlim, self.xlim)
+            self.axis3d.set_ylim(-self.ylim, self.ylim)
             self.axis3d.set_zlim(0, 10)
             self.axis3d.set_xlabel('South [m]')
             self.axis3d.set_ylabel('East [m]')
@@ -105,8 +107,10 @@ class SimNQuads():
             plt.xlabel('South [m]')
             plt.ylabel('West [m]')
             plt.title('2D Map')
-            plt.xlim(-self.s*self.init_area, self.s*self.init_area)
-            plt.ylim(-self.s*self.init_area, self.s*self.init_area)
+            plt.xlim(-self.xlim, self.xlim)
+            plt.ylim(-self.ylim, self.ylim)
+            # plt.xlim(-self.s*self.init_area, self.s*self.init_area)
+            # plt.ylim(-self.s*self.init_area, self.s*self.init_area)
             plt.grid()
             plt.pause(0.001)
             plt.draw()
