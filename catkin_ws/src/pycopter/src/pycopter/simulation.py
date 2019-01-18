@@ -19,6 +19,7 @@ class SimNQuads():
         self.ylim = 20
         # Extract quadcopters from list
         self.quads = quads
+        self.lw = 3.0
 
         self.fc = fc
 
@@ -92,10 +93,10 @@ class SimNQuads():
             self.axis3d.set_xlim(-self.xlim, self.xlim)
             self.axis3d.set_ylim(-self.ylim, self.ylim)
             self.axis3d.set_zlim(0, 10)
-            self.axis3d.set_xlabel('South [m]')
-            self.axis3d.set_ylabel('East [m]')
-            self.axis3d.set_zlabel('Up [m]')
-            self.axis3d.set_title("Time %.3f s" %t)
+            self.axis3d.set_xlabel('South [m]', fontsize = 'xx-large')
+            self.axis3d.set_ylabel('East [m]', fontsize = 'xx-large')
+            self.axis3d.set_zlabel('Up [m]', fontsize = 'xx-large')
+            self.axis3d.set_title("3D Map", fontsize = 'xx-large')
             plt.pause(0.001)
             plt.draw()
             
@@ -134,42 +135,53 @@ class SimNQuads():
         return (X, V)
 
     def final_plots(self, time, it):
-
         plt.figure(1)
-        plt.title("2D Position [m]")
+        plt.title("2D Position [m]", fontsize = 'xx-large')
         for i in range(self.ndrones):
             plt.plot(self.qlogs[i].xyz_h[:, 0], self.qlogs[i].xyz_h[:, 1],
-                     label="q{}".format(i+1), color=self.quadcolor[i])
-        plt.xlabel("East")
-        plt.ylabel("South")
-        plt.legend()
+                     label="q{}".format(i+1), color=self.quadcolor[i], linewidth=self.lw)
+        plt.xlabel("East", fontsize = 'xx-large')
+        plt.ylabel("South", fontsize = 'xx-large')
+        plt.tick_params(labelsize = 'xx-large')
+        plt.legend( fontsize = 'xx-large')
 
         plt.figure(2)
-        for i in range(self.ndrones):
-            plt.plot(time[0:it], self.qlogs[i].att_h[:, 2][0:it], label="yaw q{}".format(i+1))
-        plt.xlabel("Time [s]")
-        plt.ylabel("Yaw [rad]")
-        plt.grid()
-        plt.legend()
+        plt.title("Yaw", fontsize = 'xx-large')
 
+        for i in range(self.ndrones):
+            plt.plot(time[0:it], self.qlogs[i].att_h[:, 2][0:it], label="yaw q{}".format(i+1), linewidth=self.lw)
+        plt.xlabel("Time [s]", fontsize = 'xx-large')
+        plt.ylabel("Yaw [rad]", fontsize = 'xx-large' )
+        plt.tick_params(labelsize = 'xx-large')
+
+        plt.grid()
+        plt.legend(fontsize = 'xx-large')
         plt.figure(3)
+        plt.title("Altitude", fontsize = 'xx-large')
+
         for i in range(self.ndrones):
             plt.plot(time[0:it], -self.qlogs[i].xyz_h[:, 2][0:it],
-                     label="$q_{}$".format(i+1))
-        plt.xlabel("Time [s]")
-        plt.ylabel("Altitude [m]")
+                     label="$q_{}$".format(i+1), linewidth=self.lw)
+        plt.xlabel("Time [s]", fontsize = 'xx-large')
+        plt.ylabel("Altitude [m]", fontsize = 'xx-large')
+        plt.tick_params(labelsize = 'xx-large')
+
         plt.grid()
-        plt.legend(loc=2)
+        plt.legend(fontsize = 'xx-large')
 
         plt.figure(4)
-        plt.plot(time[0:it], self.Ed_log[:, 0][0:it], label="$e_{12}$")
-        plt.plot(time[0:it], self.Ed_log[:, 1][0:it], label="$e_{13}$")
-        plt.plot(time[0:it], self.Ed_log[:, 2][0:it], label="$e_{23}$")
-        plt.plot(time[0:it], self.Ed_log[:, 3][0:it], label="$e_{T}$")
-        plt.xlabel("Time [s]")
-        plt.ylabel("Formation distance error [m]")
+        plt.title("Formation error", fontsize = 'xx-large')
+
+        plt.plot(time[0:it], self.Ed_log[:, 0][0:it], label="$e_{12}$", linewidth=self.lw)
+        plt.plot(time[0:it], self.Ed_log[:, 1][0:it], label="$e_{13}$", linewidth=self.lw)
+        plt.plot(time[0:it], self.Ed_log[:, 2][0:it], label="$e_{23}$", linewidth=self.lw)
+        plt.plot(time[0:it], self.Ed_log[:, 3][0:it], label="$e_{T}$", linewidth=self.lw)
+        plt.xlabel("Time [s]", fontsize = 'xx-large')
+        plt.ylabel("Formation distance error [m]", fontsize = 'xx-large')
+        plt.tick_params(labelsize = 'xx-large')
+
         plt.grid()
-        plt.legend()
+        plt.legend(fontsize = 'xx-large')
 
         try:
             plt.pause(0)
