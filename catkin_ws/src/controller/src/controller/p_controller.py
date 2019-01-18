@@ -20,7 +20,7 @@ def dist(vector):
 
 class PControlNode():
 
-    def __init__(self, kp=0.05):
+    def __init__(self, kp=0.02):
         self.start = False
         self.new_it = False
         self.n_drones = 0
@@ -174,7 +174,8 @@ class PControlNode():
         if self.movement == "static":
             pass
         elif self.movement == "linear":
-            self.control_u[0] += self.velocity
+            for i in range(self.n_drones):
+                self.control_u[i] = self.velocity
         elif self.movement == "sinusoidal":
             self.control_u[0] += self.sin_amplitude * np.sin(
                     0.01*self.sin_frequency * (self.timestamp/1000.0))
