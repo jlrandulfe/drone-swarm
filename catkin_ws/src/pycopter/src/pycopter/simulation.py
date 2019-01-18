@@ -51,7 +51,7 @@ class SimNQuads():
     def get_errors(self, errors):
         errors_array = np.array(errors[:-1])
         errors_array = errors_array.reshape([self.ndrones,  self.ndrones])
-        errors_list = [errors_array[0,1], errors_array[0,2], errors_array[2,3]]
+        errors_list = [errors_array[0,1], errors_array[0,4], errors_array[2,3]]
         # Append the system error at the end of the list
         errors_list.append(errors[-1])
         return errors_list
@@ -173,7 +173,7 @@ class SimNQuads():
         plt.title("Formation error", fontsize = 'xx-large')
 
         plt.plot(time[0:it], self.Ed_log[:, 0][0:it], label="$e_{12}$", linewidth=self.lw)
-        plt.plot(time[0:it], self.Ed_log[:, 1][0:it], label="$e_{13}$", linewidth=self.lw)
+        plt.plot(time[0:it], self.Ed_log[:, 1][0:it], label="$e_{15}$", linewidth=self.lw)
         plt.plot(time[0:it], self.Ed_log[:, 2][0:it], label="$e_{34}$", linewidth=self.lw)
         plt.plot(time[0:it], self.Ed_log[:, 3][0:it], label="$e_{T}$", linewidth=self.lw)
         plt.xlabel("Time [s]", fontsize = 'xx-large')
