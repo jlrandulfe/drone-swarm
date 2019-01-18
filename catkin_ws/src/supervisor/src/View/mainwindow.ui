@@ -118,6 +118,9 @@
                 <property name="correctionMode">
                  <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
                 </property>
+                <property name="value">
+                 <number>6</number>
+                </property>
                </widget>
               </item>
              </layout>
@@ -146,7 +149,7 @@
                  </sizepolicy>
                 </property>
                 <property name="value">
-                 <double>5.000000000000000</double>
+                 <double>8.000000000000000</double>
                 </property>
                </widget>
               </item>
@@ -200,7 +203,7 @@
               <item>
                <widget class="QDoubleSpinBox" name="initRangeSpinBox">
                 <property name="value">
-                 <double>0.500000000000000</double>
+                 <double>2.500000000000000</double>
                 </property>
                </widget>
               </item>
@@ -227,7 +230,7 @@
                  <double>10000.000000000000000</double>
                 </property>
                 <property name="value">
-                 <double>400.000000000000000</double>
+                 <double>500.000000000000000</double>
                 </property>
                </widget>
               </item>
@@ -329,7 +332,7 @@
                  <double>0.010000000000000</double>
                 </property>
                 <property name="value">
-                 <double>0.500000000000000</double>
+                 <double>0.050000000000000</double>
                 </property>
                </widget>
               </item>
