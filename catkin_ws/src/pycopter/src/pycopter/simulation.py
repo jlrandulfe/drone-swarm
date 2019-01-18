@@ -11,7 +11,8 @@ from pycopter import animation as ani
 
 class SimNQuads():
 
-    def __init__(self, quads, fc, time, ndrones=3, alt_d=0.2, frames=100):
+    def __init__(self, quads, fc, time, ndrones=3, alt_d=0.2, frames=50):
+
         self.test = False
         self.ndrones = ndrones
         # Extract quadcopters from list
@@ -38,6 +39,9 @@ class SimNQuads():
         self.init_area = 5
         self.s = 2
         self.alt_d = alt_d
+        
+        self.counter_reach_alt = 0
+
 
         self.frames = frames
 
@@ -63,7 +67,13 @@ class SimNQuads():
                 U.append(0)
             print('No U Present')
 
+
         for i in range(self.ndrones):
+            # print("z: ", self.quads[i].xyz[2], "des_z: ", self.alt_d)
+            if self.quads[i].xyz[2] < -self.alt_d and self.counter_reach_alt < self.ndrones*5:
+                # print("Reached Altitude")
+                self.counter_reach_alt+=1
+
             if self.test:
                 self.quads[i].set_a_2D_alt_lya(U[2*i:2*i+2], -self.alt_d)
             else:

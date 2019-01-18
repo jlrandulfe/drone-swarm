@@ -181,7 +181,7 @@ class PControlNode():
         self.pat_gen_start()
 
         # Main loop. Wait for predictions and calculate the control action
-        rate = rospy.Rate(40)
+        rate = rospy.Rate(200)
         while not rospy.is_shutdown():
             if self.start and self.new_it:
                 self.gradient_descent_control()
