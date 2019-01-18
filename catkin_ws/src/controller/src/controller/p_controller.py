@@ -31,6 +31,11 @@ class PControlNode():
         self.sin_frequency = 0.0                # [Hz]
         self.timestamp = 0                      # [ms]
         self.kp = kp
+        # Variables for getting the settling time
+        self.t1 = 0.0
+        self.t2 = 0.0
+        self.init_error = 0.0
+        self.set_time = 0.0
         # Errors matrix
         self.errors = np.array([[0, 1, 2],[1, 0, 3],[2, 3, 0]])
         self.abs_errors = self.errors.copy()
@@ -150,7 +155,19 @@ class PControlNode():
         self.system_error = np.linalg.norm(vectorial_errors, axis=2).sum()
         self.errors = (vectorial_errors).sum(axis=1)
         self.control_u = np.clip(self.errors * self.kp, -1, 1)
+
+        # Settling time calculations
+        if self.init_error == 0.0:
+            self.init_error = self.system_error
+        if self.t1 == 0.0 and self.system_error < 0.9*self.init_error:
+            self.t1 = self.timestamp
+        if self.t2 == 0.0 and self.system_error < 0.1*self.init_error:
+            self.t2 = self.timestamp
+        self.set_time = self.t2 - self.t1
+
+        # Print system error and settling time
         rospy.loginfo("System error: {}".format(self.system_error))
+        rospy.loginfo("Settling time: {}".format(self.set_time))
         return
 
     def set_leader_velocity(self):
@@ -197,7 +214,7 @@ class PControlNode():
                 rospy.logdebug("Kalman: published Z ")
                 rospy.logdebug("Controller: published U ")
                 for i in range(self.n_drones):
-                    rospy.loginfo("{}".format(self.control_u[i]))
+                    rospy.logdebug("{}".format(self.control_u[i]))
                 self.new_it = False
             rate.sleep()
         rospy.spin()

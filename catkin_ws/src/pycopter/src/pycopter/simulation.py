@@ -78,7 +78,6 @@ class SimNQuads():
                 self.quads[i].set_a_2D_alt_lya(U[2*i:2*i+2], -self.alt_d)
             else:
                 self.quads[i].set_v_2D_alt_lya(U[2*i:2*i+2], -self.alt_d)
-                rospy.logwarn('drone {} velocity: {} {}'.format(i, U[2*i], U[2*i+1]))
             self.quads[i].step(dt)
 
         # Animation
