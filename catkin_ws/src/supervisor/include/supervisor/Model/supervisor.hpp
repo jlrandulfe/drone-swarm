@@ -10,7 +10,7 @@ class Supervisor
 public:
 	Supervisor(ros::NodeHandle nh);
 	~Supervisor();
-	void setupSimulation(int amount_of_drones, float distance, float v_shape_angle, char shape, float range, float resolution, float simtime, int movementPattern, float x_vel, float y_vel, float sinusoid_freq);
+	void setupSimulation(int, float, float, char, float, float, float, int, float, float, float, float );
 	void startSimulation();
 	void stopSimulation();
 
@@ -19,7 +19,6 @@ private:
 	void getFormation(int amount_of_drones, float distance, float v_shape_angle, char shape, float range);
 	bool servicePyCopterCallback(pycopter::DroneSwarmMultiArray::Request  &req, pycopter::DroneSwarmMultiArray::Response &res);
 	bool serviceKalmanCallback(pycopter::DroneSwarmMultiArray::Request  &req, pycopter::DroneSwarmMultiArray::Response &res);
-	// void servicePyCopter(int amount_of_drones);
 	ros::ServiceClient pycopter_client;
 
 	bool is_simulation_running;
@@ -33,4 +32,5 @@ private:
 	int movementPattern;
 	float x_vel, y_vel;
 	float sinusoid_freq;
+	float noise_constant;
 };

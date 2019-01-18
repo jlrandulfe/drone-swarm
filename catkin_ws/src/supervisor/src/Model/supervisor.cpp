@@ -31,13 +31,14 @@ Supervisor::~Supervisor()
 
 
 	
-void Supervisor::setupSimulation(int amount_of_drones, float distance, float v_shape_angle, char shape, float range, float resolution, float simtime, int movementPattern_, float x_vel_, float y_vel_, float sinusoid_freq)
+void Supervisor::setupSimulation(int amount_of_drones, float distance, float v_shape_angle, char shape, float range, float resolution, float simtime, int movementPattern_, float x_vel_, float y_vel_, float sinusoid_freq, float noise_constant_)
 {
 	simTime = simtime;
 	simRes = resolution;
 	movementPattern = movementPattern_;
 	x_vel = x_vel_;
 	y_vel = y_vel_;
+	noise_constant = noise_constant_;
 	
 	this->getFormation(amount_of_drones, distance, v_shape_angle, shape, range);
 	
@@ -91,7 +92,22 @@ void Supervisor::stopSimulation()
   	}
   	else
   		printf("Service call to pycopter/start_stop failed\n");
+
+	if(ros::service::exists("supervisor/kalman", false))
+	{
+		printf("Stopping KalmanService\n");
+		kalman_service.shutdown();
+	}
+	else
+		printf("KalmanService doesnt exists\n");
 	
+	if(ros::service::exists("supervisor/pycopter", false))
+	{
+		printf("Stopping PyCopterService\n");
+		pycopter_service.shutdown();
+	}
+	else
+		printf("PyCopterService doesnt exists\n");	
 }
 
 
@@ -133,6 +149,7 @@ bool Supervisor::serviceKalmanCallback(pycopter::DroneSwarmMultiArray::Request  
 	res.param2 = y_vel;
 	res.param3 = sinusoid_freq;
 	res.param4 = movementPattern;
+	res.param5 = noise_constant;
 	return true;
 }
 
