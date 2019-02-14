@@ -1,0 +1,14 @@
+K = 0.02
+1. time = 48.480sec, error = 0.0150m,0.0958%
+2. time = 104.000sec, error = 0.0049m,0.3140%
+3. time = 215.080sec, error = 0.5467m,3.4656%
+
+K = 0.05
+1. time = none sec, error = 3.663m,18.1380%
+2. time = 129.720sec, error = 0.1559m,1.4416%
+3. time = 65.000sec, error = 0.3813m,2.1038%
+
+K = 0.06
+1. time = none sec, error = 3989.7259m,33130.0832%
+2. time = none sec, error = 1865.3470m,8864.4888%
+3. time = 120.480sec, error = 1.2638m,10.2693%
